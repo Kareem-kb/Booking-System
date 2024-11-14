@@ -1,0 +1,13 @@
+{
+    "NavBar":{
+        "NavAbout":"About us",
+        "NavLanguage":"Choose a language",
+        "NavList":"Cakes",
+        "NavSign":"Sign in"
+    },
+    "AboutUs":{
+        "title": "welcome you do",
+        "content": "this is the content"
+    }
+    
+}
