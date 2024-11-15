@@ -1,5 +1,6 @@
 // app/[locale]/admin/layout.tsx
-import SideBar from '@/app/components/SideBar';
+import SideBar from '@/app/components/bars/SideBar';
+import '../globals.css';
 
 export default function AdminLayout({
   children,
