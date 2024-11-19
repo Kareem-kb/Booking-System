@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import NavBar from '@/app/components/bars/NavBar';
-import Footer from '@/app/components/bars/Footer';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 
@@ -30,10 +28,9 @@ export default async function RootLayout({
   const messages = await getMessages();
   return (
     <NextIntlClientProvider messages={messages}>
-      <html lang="en">
+      <html className="h-full bg-gray-50">
         <body
-          className={`flex min-h-screen flex-col px-10 ${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+          className={`flex h-full flex-col px-10 ${geistSans.variable} ${geistMono.variable} antialiased`} >
           <main className="flex-grow">{children}</main>
         </body>
       </html>
