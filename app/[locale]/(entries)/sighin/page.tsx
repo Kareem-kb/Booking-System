@@ -12,7 +12,7 @@ export default function SignIn() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <div className="flex flex-row-reverse">
-              <DropDown />
+              {/* <DropDown /> */}
             </div>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <Image
