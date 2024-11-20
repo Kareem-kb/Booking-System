@@ -1,0 +1,25 @@
+{
+  "AboutUs": {
+    "title": "مرحبا بكم",
+    "content": "هذا هو المحتوى"
+  },
+  "NavBar": {
+    "NavAbout": "معلومات عنا",
+    "NavLanguage": "اختر لغة",
+    "NavList": "كعكات",
+    "NavSign": "تسجيل الدخول"
+  },
+  "Register": {
+    "title": "تسجيل الدخول إلى حسابك",
+    "firstName": "الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "conformPassword": "كلمة مرور مطابقة",
+    "content1": "تذكرني",
+    "content2": "نسيت كلمة المرور؟",
+    "content3": "تسجيل",
+    "content4": "أو الاستمرار مع",
+    "content5": "لست عضوًا؟"
+  }
+}

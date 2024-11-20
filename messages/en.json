@@ -1,0 +1,26 @@
+{
+  "AboutUs": {
+    "title": "welcome you do",
+    "content": "this is the content"
+  },
+  "NavBar": {
+    "NavAbout": "About us",
+    "NavLanguage": "Choose a language",
+    "NavList": "Cakes",
+    "NavSign": "Sign in"
+  },
+  "Register": {
+    "title": "Sign in to your account",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "password": "password",
+    "conformPassword": "conform Password",
+    "content1": "Remember me",
+    "content2": "Forgot password?",
+    "content3": "Register",
+    "content4": "Or continue with",
+    "content5": "Not a member?"
+  },
+  "Signin": {}
+}
