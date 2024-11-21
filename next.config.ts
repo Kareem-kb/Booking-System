@@ -1,11 +1,13 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
-module.exports = withNextIntl({
+/**@type {import ('next').NextConfig} */
+const NextConfig = {
   env: {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
   },
-  // Your other Next.js config
   // ...existing code...
-});
+};
+
+export default withNextIntl(NextConfig);

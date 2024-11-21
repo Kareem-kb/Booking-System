@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import Logo from '@/public/Facebook icon.svg';
+import Logo from '@/public/images/Facebook icon.svg';
 import { Link, useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import LanguageChanger from '@/app/components/inputs/dropdowns';
@@ -53,7 +53,7 @@ export default function register() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
         <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12 relative">
           <div className="absolute right-5 top-5">
-            <LanguageChanger local={locale} />
+            <LanguageChanger locale={locale} />
           </div>
           <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
             {t('title')}
