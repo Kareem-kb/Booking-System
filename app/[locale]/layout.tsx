@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from '../../i18n';
 import { locales } from '@/navigation';
-import RootLayout from '../layout';
 
 export default async function LocaleLayout({
   children,
@@ -10,8 +9,7 @@ export default async function LocaleLayout({
 }: {
   children: React.ReactNode;
   params: { locale: string };
-}) 
-{
+}) {
   const { locale } = await params;
 
   // Validate the locale
@@ -31,10 +29,8 @@ export default async function LocaleLayout({
   }
 
   return (
-    <RootLayout>
-      <NextIntlClientProvider locale={locale} messages={messages}>
-        <main className="flex-grow">{children}</main>
-      </NextIntlClientProvider>
-    </RootLayout>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <main className="flex-grow">{children}</main>
+    </NextIntlClientProvider>
   );
 }

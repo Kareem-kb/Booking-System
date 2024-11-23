@@ -10,9 +10,6 @@ const clientSchema = Yup.object().shape({
     password: Yup.string()
     .required("Password is required")
     .min(6, "Password must be at least 6 characters"),
-  passwordConfirm: Yup.string()
-    .required("Please confirm your password")
-    .oneOf([Yup.ref("password")], "Passwords must match"),
 });
 
 export default clientSchema

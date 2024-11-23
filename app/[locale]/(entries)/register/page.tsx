@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Logo from '@/public/images/Facebook icon.svg';
 import { Link, useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
-import LanguageChanger from '@/app/components/inputs/dropdowns';
+import LanguageChanger from '@/app/components/inputs/LanguageChanger';
 import { FormikProvider, useFormik } from 'formik';
 import clientSchema from '@/app/validation/client';
 
@@ -134,49 +134,26 @@ export default function register() {
                   ) : null}
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div>
-                  {' '}
-                  <label
-                    htmlFor="password"
-                    className="block text-sm/6 font-medium text-gray-900"
-                  >
-                    {t('password')}
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                      value={formik.values.password}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                    />
-                  </div>
-                </div>
-                <div>
-                  {' '}
-                  <label
-                    htmlFor="conformPassword"
-                    className="block text-sm/6 font-medium text-gray-900"
-                  >
-                    {t('conformPassword')}
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="conformPassword"
-                      name="conformPassword"
-                      type="password"
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                      value={formik.values.conformPassword}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                    />
-                  </div>
+              <div>
+                {' '}
+                <label
+                  htmlFor="password"
+                  className="block text-sm/6 font-medium text-gray-900"
+                >
+                  {t('password')}
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.password}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                  />
                 </div>
               </div>
-
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <input

@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import Logo from '@/public/Facebook icon.svg';
+import Logo from '@/public/images/Facebook icon.svg';
 import { Link } from '@/navigation';
-import DropDown from '@/app/components/inputs/dropdowns';
+import DropDown from '@/app/components/inputs/LanguageChanger';
 
 export default function SignIn() {
   return (
@@ -11,9 +11,7 @@ export default function SignIn() {
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <div className="flex flex-row-reverse">
-              {/* <DropDown /> */}
-            </div>
+            <div className="flex flex-row-reverse">{/* <DropDown /> */}</div>
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
               <Image
                 alt="Your Company"
@@ -27,6 +25,10 @@ export default function SignIn() {
               </h2>
             </div>
             <form action="#" method="POST" className="space-y-6">
+              <select>
+                <option value="en">English</option>
+                <option value="ar">Arabic</option>
+              </select>
               <div>
                 <label
                   htmlFor="email"
