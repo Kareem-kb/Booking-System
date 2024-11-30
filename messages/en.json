@@ -10,17 +10,14 @@
     "NavSign": "Sign in"
   },
   "Register": {
-    "title": "Sign in to your account",
+    "title": "Register a new account",
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email",
     "password": "password",
-    "conformPassword": "conform Password",
-    "content1": "Remember me",
-    "content2": "Forgot password?",
+    "content2": "Already have an account?",
     "content3": "Register",
-    "content4": "Or continue with",
-    "content5": "Not a member?"
+    "content4": "Or continue with"
   },
   "Signin": {}
 }

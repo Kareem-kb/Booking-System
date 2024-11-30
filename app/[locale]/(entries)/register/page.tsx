@@ -11,31 +11,48 @@ import clientSchema from '@/app/validation/client';
 export default function register() {
   interface FormValues {
     role: string;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     email: string;
-    password: string;
-    conformPassword: string;
+    password_hash: string;
   }
   const pathname = usePathname();
-  const locale = pathname.split('/')[1] || 'en'; // Assuming locale is the first segment of the path
-
+  const locale = pathname.split('/')[1] || 'en'; 
   const t = useTranslations('Register');
+  const router = useRouter();
 
   const formik = useFormik<FormValues>({
     initialValues: {
       role: 'client',
-      firstName: '',
-      lastName: '',
+      first_name: '',
+      last_name: '',
       email: '',
-      password: '',
-      conformPassword: '',
+      password_hash: '',
     },
 
     validationSchema: clientSchema,
 
-    onSubmit: (values) => {
-      console.log('here are :', values);
+    onSubmit: async (values) => {
+      try {
+        const res = await fetch('/api/users/', {
+          method: 'POST',
+          headers: {
+            'Content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            role: values.role,
+            first_name: values.first_name,
+            last_name: values.last_name,
+            email: values.email,
+            password_hash: values.password_hash,
+          }),
+        });
+        if (res.ok) {
+          router.push('/signin');
+        }
+      } catch (error) {
+        console.log('user was not created', error);
+      }
     },
   });
 
@@ -63,48 +80,48 @@ export default function register() {
               <div className="flex flex-col sm:flex-row gap-4">
                 <div>
                   <label
-                    htmlFor="firstName"
+                    htmlFor="first_name"
                     className="block text-sm/6 font-medium text-gray-900"
                   >
                     {t('firstName')}
                   </label>
                   <div className="mt-2">
                     <input
-                      id="firstName"
-                      name="firstName"
+                      id="first_name"
+                      name="first_name"
                       type="text"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.firstName}
+                      value={formik.values.first_name}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                     />
-                    {formik.touched.firstName && formik.errors.firstName ? (
+                    {formik.touched.first_name && formik.errors.first_name ? (
                       <p className="ml-2 text-xs text-red-500">
-                        {formik.errors.firstName}
+                        {formik.errors.first_name}
                       </p>
                     ) : null}
                   </div>
                 </div>
                 <div>
                   <label
-                    htmlFor="lastName"
+                    htmlFor="last_name"
                     className="block text-sm/6 font-medium text-gray-900"
                   >
                     {t('lastName')}
                   </label>
                   <div className="mt-2">
                     <input
-                      id="lastName"
-                      name="lastName"
+                      id="last_name"
+                      name="last_name"
                       type="text"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      value={formik.values.lastName}
+                      value={formik.values.last_name}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                     />
-                    {formik.touched.lastName && formik.errors.lastName ? (
+                    {formik.touched.last_name && formik.errors.last_name ? (
                       <p className="ml-2 text-xs text-red-500">
-                        {formik.errors.lastName}
+                        {formik.errors.last_name}
                       </p>
                     ) : null}
                   </div>
@@ -137,46 +154,31 @@ export default function register() {
               <div>
                 {' '}
                 <label
-                  htmlFor="password"
+                  htmlFor="password_hash"
                   className="block text-sm/6 font-medium text-gray-900"
                 >
                   {t('password')}
                 </label>
                 <div className="mt-2">
                   <input
-                    id="password"
-                    name="password"
+                    id="password_hash"
+                    name="password_hash"
                     type="password"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    value={formik.values.password}
+                    value={formik.values.password_hash}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                   />
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="size-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-3 block text-sm/6 text-gray-900"
-                  >
-                    {t('content1')}
-                  </label>
-                </div>
-
                 <div className="text-sm/6">
-                  <a
-                    href="#"
+                  <Link
+                    href="/signin"
                     className="font-semibold text-indigo-600 hover:text-indigo-500"
                   >
                     {t('content2')}
-                  </a>
+                  </Link>
                 </div>
               </div>
               <button
@@ -201,7 +203,6 @@ export default function register() {
                 </span>
               </div>
             </div>
-
             <div className="mt-6">
               <a
                 href="#"
@@ -230,15 +231,6 @@ export default function register() {
             </div>
           </div>
         </div>
-        <p className="mt-10 text-center text-sm/6 text-gray-500">
-          {t('content5')}
-          <a
-            href="#"
-            className="font-semibold text-indigo-600 hover:text-indigo-500"
-          >
-            Start a 14 day free trial
-          </a>
-        </p>
       </div>
     </div>
   );
