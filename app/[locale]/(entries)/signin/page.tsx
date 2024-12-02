@@ -1,5 +1,6 @@
 'use client';
 
+import { signIn } from '@/auth';
 import Image from 'next/image';
 import Logo from '@/public/images/Facebook icon.svg';
 import { Link, useRouter, usePathname } from '@/navigation';
@@ -12,7 +13,7 @@ export default function SignIn() {
   const pathname = usePathname();
   const locale = pathname.split('/')[1] || 'en';
   const t = useTranslations('Register');
-  const router = useRouter();
+  const router = useRouter(); // did't activate yet
 
   interface FormValues {
     email: string;
@@ -28,7 +29,10 @@ export default function SignIn() {
     validationSchema: signinSchema,
 
     onSubmit: async (values) => {
-      console.log(values);
+      await signIn('email', {
+        email: values.email,
+        callbackUrl: `${window.location.origin}/dashboard`,
+      });
     },
   });
 

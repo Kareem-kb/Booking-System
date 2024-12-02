@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import LanguageChanger from '@/app/components/inputs/LanguageChanger';
 import { FormikProvider, useFormik } from 'formik';
 import clientSchema from '@/app/validation/client';
+import { signIn } from '@/auth';
 
 export default function register() {
   interface FormValues {
@@ -17,7 +18,7 @@ export default function register() {
     password_hash: string;
   }
   const pathname = usePathname();
-  const locale = pathname.split('/')[1] || 'en'; 
+  const locale = pathname.split('/')[1] || 'en';
   const t = useTranslations('Register');
   const router = useRouter();
 

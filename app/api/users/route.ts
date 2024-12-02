@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import executeQuery from '@/app/lib/db';
-import bcrypt from 'bcrypt';
+import AppDataSource from '@/AppDataSource';
+import { UserEntity } from '@/app/lib/entities';
 
-interface userBody {
+interface UserBody {
   first_name: string;
   last_name: string;
   email: string;
@@ -10,7 +10,7 @@ interface userBody {
   role: 'admin' | 'partner' | 'client';
 }
 
-interface userUpdate {
+interface UserUpdate {
   id: number;
   updates: {
     [key: string]: string | number;
@@ -19,44 +19,51 @@ interface userUpdate {
 
 export async function GET() {
   try {
-    const users = await executeQuery({
-      query: 'SELECT * FROM users',
-      values: [],
-    });
-
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
+    const userRepository = AppDataSource.getRepository(UserEntity);
+    const users = await userRepository.find();
     return NextResponse.json(users);
   } catch (error) {
+    console.error('Error fetching users:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch users' },
+      { error: 'Internal Server Error' },
       { status: 500 }
     );
   }
 }
 
 export async function POST(req: Request) {
-  const body: userBody = await req.json();
+  const body: UserBody = await req.json();
   const { first_name, last_name, email, password_hash, role } = body;
   try {
-    const users = await executeQuery({
-      query:
-        'INSERT INTO users (first_name, last_name, email, password_hash, role) VALUES (?, ?, ?, ?, ?)',
-      values: [first_name, last_name, email, password_hash, role],
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
+    const userRepository = AppDataSource.getRepository(UserEntity);
+    const newUser = userRepository.create({
+      first_name,
+      last_name,
+      email,
+      password_hash,
+      role,
     });
-
-    return NextResponse.json(users);
+    const result = await userRepository.save(newUser);
+    return NextResponse.json(result);
   } catch (error) {
+    console.error('Error creating user:', error);
     return NextResponse.json(
-      { error: 'Failed to post users' },
+      { error: 'Failed to create user' },
       { status: 500 }
     );
   }
 }
 
 export async function PUT(req: Request) {
-  const body: userUpdate = await req.json();
+  const body: UserUpdate = await req.json();
   const { id, updates } = body;
 
-  // Validate input
   if (!id || !updates || Object.keys(updates).length === 0) {
     return NextResponse.json(
       { error: 'Missing required data' },
@@ -64,7 +71,6 @@ export async function PUT(req: Request) {
     );
   }
 
-  // Validate fields
   const allowedFields = ['first_name', 'last_name', 'email', 'role'];
   const invalidFields = Object.keys(updates).filter(
     (field) => !allowedFields.includes(field)
@@ -78,17 +84,11 @@ export async function PUT(req: Request) {
   }
 
   try {
-    const setClause = Object.keys(updates)
-      .map((field) => `${field} = ?`)
-      .join(', ');
-
-    const values = [...Object.values(updates), id];
-
-    const result = await executeQuery({
-      query: `UPDATE users SET ${setClause} WHERE id = ?`,
-      values: values,
-    });
-
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
+    const userRepository = AppDataSource.getRepository(UserEntity);
+    await userRepository.update(id, updates);
     return NextResponse.json(
       { message: 'User updated successfully' },
       { status: 200 }
@@ -102,15 +102,20 @@ export async function PUT(req: Request) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(req: Request) {
+  const { id } = await req.json();
+  if (!id) {
+    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+  }
   try {
-    const users = await executeQuery({
-      query: "DELETE FROM users WHERE id = '1'",
-      values: [],
-    });
-
-    return NextResponse.json(users);
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
+    const userRepository = AppDataSource.getRepository(UserEntity);
+    await userRepository.delete(id);
+    return NextResponse.json({ message: 'User deleted successfully' });
   } catch (error) {
+    console.error('Error deleting user:', error);
     return NextResponse.json(
       { error: 'Failed to delete user' },
       { status: 500 }
