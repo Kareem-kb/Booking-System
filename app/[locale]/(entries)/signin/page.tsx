@@ -29,10 +29,7 @@ export default function SignIn() {
     validationSchema: signinSchema,
 
     onSubmit: async (values) => {
-      await signIn('email', {
-        email: values.email,
-        callbackUrl: `${window.location.origin}/dashboard`,
-      });
+      console.log('working');
     },
   });
 

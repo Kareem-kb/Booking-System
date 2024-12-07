@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import AppDataSource from '@/AppDataSource';
+import { AppDataSource } from '@/app/lib/db';
 import { UserEntity } from '@/app/lib/entities';
 
 interface UserBody {
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
   password_hash: string;
   role: 'admin' | 'partner' | 'client';
@@ -36,15 +35,14 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body: UserBody = await req.json();
-  const { first_name, last_name, email, password_hash, role } = body;
+  const { name, email, password_hash, role } = body;
   try {
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
     }
     const userRepository = AppDataSource.getRepository(UserEntity);
     const newUser = userRepository.create({
-      first_name,
-      last_name,
+      name,
       email,
       password_hash,
       role,

@@ -1,34 +1,32 @@
-import mysql from 'mysql2/promise';
+import {
+  UserEntity,
+  AccountEntity,
+  SessionEntity,
+  VerificationTokenEntity,
+} from '@/app/lib/entities'; // Ensure the correct path
+import { DataSourceOptions, DataSource } from 'typeorm';
+import mysql from 'mysql2';
 
-const db = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT || '3306'),
-  database: process.env.DATABASE_NAME,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD || '', // Use an empty string if no password is set
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const dataSourceOptions: DataSourceOptions = {
+  type: 'mysql',
+  host: process.env.MYSQL_HOST,
+  port: parseInt(process.env.MYSQL_PORT || '3306'),
+  username: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD, // Use an empty string if no password is set
+  database: process.env.MYSQL_DATABASE,
+  entities: [UserEntity, AccountEntity, SessionEntity, VerificationTokenEntity],
+  synchronize: false, // Set to false in production
+  driver: mysql,
+};
 
-export default async function executeQuery<T>({
-  query,
-  values,
-}: {
-  query: string;
-  values: any[];
-}): Promise<T> {
-  try {
-    console.log('Attempting database connection...');
-    console.log('Query:', query);
-    console.log('Values:', values);
+const AppDataSource = new DataSource(dataSourceOptions);
 
-    const [results] = await db.query(query, values);
-    console.log('Query results:', results);
+AppDataSource.initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!');
+  })
+  .catch((err) => {
+    console.error('Error during Data Source initialization:', err);
+  });
 
-    return results as T;
-  } catch (error) {
-    console.error('Database error:', error);
-    throw new Error(error as string);
-  }
-}
+export { dataSourceOptions, AppDataSource }; // Export the DataSource for use in other parts of the application

@@ -1,6 +1,7 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
 import Head from 'next/head';
+import { SessionProvider } from 'next-auth/react';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,7 +23,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={`flex h-full flex-col ${inter.className}`}>
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
   );

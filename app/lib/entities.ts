@@ -24,16 +24,13 @@ export class UserEntity {
   id!: string;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  first_name!: string | null;
-
-  @Column({ type: 'varchar', length: 50, nullable: true })
-  last_name!: string | null;
+  name!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
-  email!: string | null;
+  email!: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  password_hash!: string | null;
+  password_hash!: string;
 
   @Column({
     type: 'enum',
@@ -42,6 +39,8 @@ export class UserEntity {
     nullable: true,
   })
   role!: 'client' | 'admin' | 'partner';
+  @Column({ type: 'timestamp', nullable: true })
+  emailVerified!: Date | null;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at!: Date;
@@ -99,7 +98,7 @@ export class AccountEntity {
   @Column({ type: 'varchar', nullable: true })
   scope!: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   id_token!: string | null;
 
   @Column({ type: 'varchar', nullable: true })

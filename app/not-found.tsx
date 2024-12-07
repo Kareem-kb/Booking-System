@@ -1,4 +1,3 @@
-'use clint';
 
 export default function notFound() {
   return (
