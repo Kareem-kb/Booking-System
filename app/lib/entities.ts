@@ -29,8 +29,11 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email!: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  password_hash!: string;
+  @Column({ type: 'timestamp', nullable: true })
+  emailVerified!: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  image!: string | null;
 
   @Column({
     type: 'enum',
@@ -39,8 +42,6 @@ export class UserEntity {
     nullable: true,
   })
   role!: 'client' | 'admin' | 'partner';
-  @Column({ type: 'timestamp', nullable: true })
-  emailVerified!: Date | null;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at!: Date;

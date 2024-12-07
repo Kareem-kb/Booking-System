@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
-import { AppDataSource } from '@/app/lib/db';
+import { AppDataSource } from '@/auth';
 import { UserEntity } from '@/app/lib/entities';
 
 interface UserBody {
   name: string;
   email: string;
-  password_hash: string;
   role: 'admin' | 'partner' | 'client';
 }
 
@@ -35,7 +34,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body: UserBody = await req.json();
-  const { name, email, password_hash, role } = body;
+  const { name, email, role } = body;
   try {
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
@@ -44,7 +43,6 @@ export async function POST(req: Request) {
     const newUser = userRepository.create({
       name,
       email,
-      password_hash,
       role,
     });
     const result = await userRepository.save(newUser);
@@ -117,6 +115,6 @@ export async function DELETE(req: Request) {
     return NextResponse.json(
       { error: 'Failed to delete user' },
       { status: 500 }
-    );
+);
   }
 }
