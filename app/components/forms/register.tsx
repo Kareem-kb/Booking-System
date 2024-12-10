@@ -4,9 +4,9 @@ import clientSchema from '@/app/validation/client';
 import { Link, useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import LanguageChanger from '@/app/components/inputs/LanguageChanger';
-// import createUser from '@/app/actions/userActions';
-import { signIn } from 'next-auth/react';
 import createUser from '@/app/actions/userActions';
+import { signIn } from 'next-auth/react';
+// import createUser from '@/app/actions/userActions';
 import { redirect } from 'next/dist/server/api-utils';
 
 export default function RegisterForm() {
@@ -31,38 +31,11 @@ export default function RegisterForm() {
     validationSchema: clientSchema,
 
     onSubmit: async (formData) => {
-      // console.log(formData);
-      // const redirectURL = await createUser(formData);
-      // router.push(redirectURL as string);
-
-      //confirm email and message field are not empty
-      if (!formData.email) {
-        console.log('need to ne filled');
-        return;
-      }
-
       try {
-        const response = await fetch('/api/verification', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            role: formData.role,
-            name: formData.name,
-            email: formData.email,
-          }),
-        });
-
-        // handle success
-        if (response.ok) {
-          console.log('Email Sent Successfully!');
-        } else {
-          console.log('There was a problem sending email. Pls try again!');
-        }
+        await createUser(formData);
+        console.log('/success');
       } catch (error) {
-        console.log('Error sending email:', error);
-      } finally {
+        console.error('Error creating user:', error);
       }
     },
   });

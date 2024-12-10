@@ -53,7 +53,7 @@ export class UserEntity {
   })
   updated_at!: Date;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: true })
   is_active!: boolean;
 
   @OneToMany(() => SessionEntity, (session) => session.userId)

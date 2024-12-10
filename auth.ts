@@ -35,9 +35,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     Resend({
-      apiKey: process.env.AUTH_RESEND_KEY,
+      apiKey: process.env.RESEND_API_KEY,
       from: 'Acme <onboarding@resend.dev>',
-      maxAge: 15 * 60,
     }),
   ],
   adapter: TypeORMAdapter(dataSourceOptions, { entities }),
@@ -46,7 +45,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: '/signin',
-    verifyRequest: '/verification',
+    verifyRequest: '/en/verification',
   },
   callbacks: {
     async session({ session, user }) {
@@ -55,6 +54,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.email = user.email;
       }
       return session;
+    },
+    async signIn({ user }) {
+      // Update the is_active field in the database
+      const AppDataSource = new DataSource(dataSourceOptions); // Ensure your data source is imported correctly
+      const userRepository = AppDataSource.getRepository('users'); // Replace 'User' with your user entity name
+      try {
+        await AppDataSource.initialize(); // Ensure data source is initialized
+        await userRepository.update({ id: user.id }, { is_active: true });
+        console.log(`User ${user.email} is now active.`);
+      } catch (error) {
+        console.error('Error updating user is_active:', error);
+      } finally {
+        await AppDataSource.destroy(); // Close the connection after updating
+      }
+      return true; // Allow the sign-in to continue
     },
   },
 });
