@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { AppDataSource } from '@/auth';
 import { UserEntity } from '@/app/lib/entities';
+import { error } from 'console';
 
 interface UserBody {
   name: string;
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
     if (!AppDataSource.isInitialized) {
       await AppDataSource.initialize();
     }
+
     const userRepository = AppDataSource.getRepository(UserEntity);
     const newUser = userRepository.create({
       name,
@@ -115,6 +117,6 @@ export async function DELETE(req: Request) {
     return NextResponse.json(
       { error: 'Failed to delete user' },
       { status: 500 }
-);
+    );
   }
 }

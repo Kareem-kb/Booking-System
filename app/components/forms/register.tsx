@@ -4,6 +4,10 @@ import clientSchema from '@/app/validation/client';
 import { Link, useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import LanguageChanger from '@/app/components/inputs/LanguageChanger';
+// import createUser from '@/app/actions/userActions';
+import { signIn } from 'next-auth/react';
+import createUser from '@/app/actions/userActions';
+import { redirect } from 'next/dist/server/api-utils';
 
 export default function RegisterForm() {
   const pathname = usePathname();
@@ -13,47 +17,56 @@ export default function RegisterForm() {
 
   interface FormValues {
     role: string;
-    first_name: string;
-    last_name: string;
+    name: string;
     email: string;
-    password_hash: string;
   }
 
   const formik = useFormik<FormValues>({
     initialValues: {
       role: 'client',
-      first_name: '',
-      last_name: '',
+      name: '',
       email: '',
-      password_hash: '',
     },
 
     validationSchema: clientSchema,
 
-    onSubmit: async (values) => {
+    onSubmit: async (formData) => {
+      // console.log(formData);
+      // const redirectURL = await createUser(formData);
+      // router.push(redirectURL as string);
+
+      //confirm email and message field are not empty
+      if (!formData.email) {
+        console.log('need to ne filled');
+        return;
+      }
+
       try {
-        const res = await fetch('/api/users/', {
+        const response = await fetch('/api/verification', {
           method: 'POST',
           headers: {
-            'Content-type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            role: values.role,
-            first_name: values.first_name,
-            last_name: values.last_name,
-            email: values.email,
-            password_hash: values.password_hash,
+            role: formData.role,
+            name: formData.name,
+            email: formData.email,
           }),
         });
-        if (res.ok) {
-          router.push('/signin');
+
+        // handle success
+        if (response.ok) {
+          console.log('Email Sent Successfully!');
+        } else {
+          console.log('There was a problem sending email. Pls try again!');
         }
       } catch (error) {
-        console.log('user was not created', error);
+        console.log('Error sending email:', error);
+      } finally {
       }
     },
   });
-  
+
   return (
     <>
       <div className="absolute right-5 top-5">
@@ -64,54 +77,28 @@ export default function RegisterForm() {
       </h2>
       <FormikProvider value={formik}>
         <form onSubmit={formik.handleSubmit} className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div>
-              <label
-                htmlFor="first_name"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                {t('firstName')}
-              </label>
-              <div className="mt-2">
-                <input
-                  id="first_name"
-                  name="first_name"
-                  type="text"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.first_name}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                />
-                {formik.touched.first_name && formik.errors.first_name ? (
-                  <p className="ml-2 text-xs text-red-500">
-                    {formik.errors.first_name}
-                  </p>
-                ) : null}
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="last_name"
-                className="block text-sm/6 font-medium text-gray-900"
-              >
-                {t('lastName')}
-              </label>
-              <div className="mt-2">
-                <input
-                  id="last_name"
-                  name="last_name"
-                  type="text"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.last_name}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                />
-                {formik.touched.last_name && formik.errors.last_name ? (
-                  <p className="ml-2 text-xs text-red-500">
-                    {formik.errors.last_name}
-                  </p>
-                ) : null}
-              </div>
+          <div>
+            <label
+              htmlFor="first_name"
+              className="block text-sm/6 font-medium text-gray-900"
+            >
+              {t('firstName')}
+            </label>
+            <div className="mt-2">
+              <input
+                id="name"
+                name="name"
+                type="text"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.name}
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+              />
+              {formik.touched.name && formik.errors.name ? (
+                <p className="ml-2 text-xs text-red-500">
+                  {formik.errors.name}
+                </p>
+              ) : null}
             </div>
           </div>
           <div>
@@ -136,26 +123,6 @@ export default function RegisterForm() {
                   {formik.errors.email}
                 </p>
               ) : null}
-            </div>
-          </div>
-          <div>
-            {' '}
-            <label
-              htmlFor="password_hash"
-              className="block text-sm/6 font-medium text-gray-900"
-            >
-              {t('password')}
-            </label>
-            <div className="mt-2">
-              <input
-                id="password_hash"
-                name="password_hash"
-                type="password"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                value={formik.values.password_hash}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-              />
             </div>
           </div>
           <div className="flex items-center justify-between">
