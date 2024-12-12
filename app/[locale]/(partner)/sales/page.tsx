@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
 import {
   Dialog,
   DialogBackdrop,
@@ -15,31 +14,16 @@ import {
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
-  UserIcon,
+  UsersIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
-  { name: 'Dashboard', href: 'dashbord', icon: HomeIcon, current: true },
-  { name: 'Products', href: 'products', icon: FolderIcon, current: false },
-  {
-    name: 'Business ',
-    href: 'businesssettings',
-    icon: CalendarIcon,
-    current: false,
-  },
-  {
-    name: 'Account ',
-    href: 'accountsettings',
-    icon: UserIcon,
-    current: false,
-  },
-  {
-    name: 'Sales',
-    href: 'sales',
-    icon: DocumentDuplicateIcon,
-    current: false,
-  },
+  { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
+  { name: 'Team', href: '#', icon: UsersIcon, current: false },
+  { name: 'Projects', href: '#', icon: FolderIcon, current: false },
+  { name: 'Calendar', href: '#', icon: CalendarIcon, current: false },
+  { name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false },
   { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
 ];
 
@@ -47,9 +31,8 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Example() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const pathname = usePathname();
+export default function sideBar() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <>

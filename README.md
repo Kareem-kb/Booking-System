@@ -8,6 +8,7 @@ B) PWA
 
 
 C) Partner 
-1- create the product page adding.
+1- create the navBar.
+2- create the product page adding.
 2- create the data schema for it.
 3- creat the product details page.
