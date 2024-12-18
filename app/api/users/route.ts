@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { AppDataSource } from '@/auth';
 import { UserEntity } from '@/app/lib/entities';
-import { error } from 'console';
+import { Resend } from 'resend';
+import sendWelcomeEmail from '@/app/emails/VerificationEmail';
+import crypto from 'crypto';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface UserBody {
   name: string;
@@ -18,9 +22,6 @@ interface UserUpdate {
 
 export async function GET() {
   try {
-    if (!AppDataSource.isInitialized) {
-      await AppDataSource.initialize();
-    }
     const userRepository = AppDataSource.getRepository(UserEntity);
     const users = await userRepository.find();
     return NextResponse.json(users);
@@ -34,25 +35,50 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body: UserBody = await req.json();
-  const { name, email, role } = body;
   try {
-    if (!AppDataSource.isInitialized) {
-      await AppDataSource.initialize();
-    }
+    const body: UserBody = await req.json();
+    const { name, email, role } = body;
 
     const userRepository = AppDataSource.getRepository(UserEntity);
-    const newUser = userRepository.create({
-      name,
-      email,
-      role,
+    const existingUser = await userRepository.findOneBy({ email });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { message: 'Email already exists' },
+        { status: 409 }
+      );
+    }
+
+    const user = userRepository.create({ email, name, role });
+    await userRepository.save(user);
+
+    const { data, error } = await resend.emails.send({
+      from: 'Kareem-kb <no-repl@kareem-kb.tech>',
+      to: email,
+      subject: 'Welcome',
+      react: sendWelcomeEmail({ email, name }),
     });
-    const result = await userRepository.save(newUser);
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error('Error creating user:', error);
+
+    if (error) {
+      console.error('Email sending error:', error);
+      return NextResponse.json(
+        { message: 'Failed to send welcome email' },
+        { status: 500 }
+      );
+    }
+
+    // Return success response
     return NextResponse.json(
-      { error: 'Failed to create user' },
+      { message: 'User registered successfully', data },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    // Handle errors gracefully
+    console.error('Error during user registration:', error);
+
+    // Default to internal server error for unknown issues
+    return NextResponse.json(
+      { message: 'Internal server error' },
       { status: 500 }
     );
   }
@@ -69,7 +95,7 @@ export async function PUT(req: Request) {
     );
   }
 
-  const allowedFields = ['first_name', 'last_name', 'email', 'role'];
+  const allowedFields = ['name', 'email', 'role'];
   const invalidFields = Object.keys(updates).filter(
     (field) => !allowedFields.includes(field)
   );
@@ -82,9 +108,6 @@ export async function PUT(req: Request) {
   }
 
   try {
-    if (!AppDataSource.isInitialized) {
-      await AppDataSource.initialize();
-    }
     const userRepository = AppDataSource.getRepository(UserEntity);
     await userRepository.update(id, updates);
     return NextResponse.json(
@@ -106,9 +129,6 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
   }
   try {
-    if (!AppDataSource.isInitialized) {
-      await AppDataSource.initialize();
-    }
     const userRepository = AppDataSource.getRepository(UserEntity);
     await userRepository.delete(id);
     return NextResponse.json({ message: 'User deleted successfully' });

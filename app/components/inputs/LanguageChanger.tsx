@@ -31,14 +31,17 @@ export default function LanguageChanger({ locale }: LanguageChangerProps) {
           <Image
             src="/images/Arrow-Down-Icon.svg"
             alt="Window icon"
-            width={13}
-            height={6}
+            width={10}
+            height={10}
+            style={{ width: 'auto', height: 'auto' }}
           />
           <Image
             src="/images/Language-icon.svg"
             alt="Window icon"
-            width={20}
+            width={10}
             height={10}
+            style={{ width: 'auto', height: 'auto' }}
+            priority
           />
         </button>
         {showList && (

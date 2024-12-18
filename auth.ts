@@ -2,41 +2,26 @@ import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Resend from 'next-auth/providers/resend';
 import { TypeORMAdapter } from '@auth/typeorm-adapter';
-import { DataSourceOptions, DataSource } from 'typeorm';
-import mysql2 from 'mysql2';
-import * as entities from '@/app/lib/entities'; // Ensure the correct path
+import { AppDataSource, dataSourceOptions } from '@/app/lib/db';
+import * as entities from '@/app/lib/entities';
 
-const dataSourceOptions: DataSourceOptions = {
-  type: 'mysql',
-  host: process.env.MYSQL_HOST,
-  port: parseInt(process.env.MYSQL_PORT || '3306'),
-  username: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD, // Use an empty string if no password is set
-  database: process.env.MYSQL_DATABASE,
-  entities: entities,
-  synchronize: false, // Set to false in production
-  driver: mysql2,
-};
-
-const AppDataSource = new DataSource(dataSourceOptions);
-
+// Initialize the database connection globally
 AppDataSource.initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-  })
+  .then(() => console.log('Data Source has been initialized!'))
   .catch((err) => {
     console.error('Error during Data Source initialization:', err);
+    process.exit(1); // Exit the process if the database connection fails
   });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     Resend({
-      apiKey: process.env.RESEND_API_KEY,
-      from: 'Acme <onboarding@resend.dev>',
+      apiKey: process.env.RESEND_API_KEY!,
+      from: process.env.RESEND_FROM_EMAIL, // Use environment variables
     }),
   ],
   adapter: TypeORMAdapter(dataSourceOptions, { entities }),
@@ -45,32 +30,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: '/signin',
-    verifyRequest: '/en/verification',
   },
   callbacks: {
     async session({ session, user }) {
       if (user) {
         session.user.id = user.id;
         session.user.email = user.email;
+        session.user.role = user.role; // Include role in the session
       }
       return session;
     },
-    async signIn({ user }) {
-      // Update the is_active field in the database
-      const AppDataSource = new DataSource(dataSourceOptions); // Ensure your data source is imported correctly
-      const userRepository = AppDataSource.getRepository('users'); // Replace 'User' with your user entity name
+    async signIn({ user }): Promise<boolean> {
       try {
-        await AppDataSource.initialize(); // Ensure data source is initialized
+        const userRepository = AppDataSource.getRepository('users');
         await userRepository.update({ id: user.id }, { is_active: true });
         console.log(`User ${user.email} is now active.`);
+        return true;
       } catch (error) {
-        console.error('Error updating user is_active:', error);
-      } finally {
-        await AppDataSource.destroy(); // Close the connection after updating
+        console.error('Error activating user:', error);
+        return false;
       }
-      return true; // Allow the sign-in to continue
+    },
+    // Redirect based on role
+    async redirect({ baseUrl, url }) {
+      return url.startsWith(baseUrl) ? url : `${baseUrl}/dashboard`;
     },
   },
 });
 
-export { dataSourceOptions, AppDataSource }; // Export the DataSource for use in other parts of the application
+export { dataSourceOptions, AppDataSource };

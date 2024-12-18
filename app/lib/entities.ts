@@ -9,12 +9,13 @@ import {
 
 const transformer: Record<'date' | 'bigint', ValueTransformer> = {
   date: {
-    from: (date: string | null) => date && new Date(parseInt(date, 10)),
-    to: (date?: Date) => date?.valueOf().toString(),
+    from: (date: string | null) => (date ? new Date(date) : null), // MySQL datetime to JS Date
+    to: (date?: Date) =>
+      date ? date.toISOString().slice(0, 19).replace('T', ' ') : null, // JS Date to MySQL datetime
   },
   bigint: {
-    from: (bigInt: string | null) => bigInt && parseInt(bigInt, 10),
-    to: (bigInt?: number) => bigInt?.toString(),
+    from: (bigInt: string | null) => (bigInt ? parseInt(bigInt, 10) : null),
+    to: (bigInt?: number) => (bigInt ? bigInt.toString() : null),
   },
 };
 
@@ -29,7 +30,10 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email!: string;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({
+    type: 'datetime',
+    nullable: true,
+  })
   emailVerified!: string | null;
 
   @Column({ type: 'varchar', nullable: true })
