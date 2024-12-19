@@ -8,7 +8,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   const headersList = await headers();
   const localeHeader = headersList.get('X-NEXT-INTL-LOCALE') || requestLocale;
 
-  if (!locales.includes(localeHeader as any)) {
+  if (!locales.includes(localeHeader as string)) {
     notFound();
   }
   return {
