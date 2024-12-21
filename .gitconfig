@@ -1,0 +1,38 @@
+[core]
+    ; Use VS Code as the default editor (customize if you prefer something else)
+    editor = code --wait
+    ; Auto-detect text encodings
+    autocrlf = input
+    ; If you prefer to always have 'main' as default branch:
+    ; init.defaultBranch = main
+
+[user]
+    name = Kareem Bakarbashat
+    email = though.kb@gmail.com
+    signingkey = 85ADAF0A1B87B6B8     ; <-- Replace with your GPG key’s ID or fingerprint
+
+[commit]
+    ; Always sign commits
+    gpgsign = true
+
+[gpg]
+    ; If you installed gpg via Homebrew on macOS:
+    program = /opt/homebrew/bin/gpg
+    ; Or if gpg is somewhere else, adjust accordingly:
+    ; program = /usr/local/bin/gpg
+
+[push]
+    ; How Git pushes by default (e.g., current branch only):
+    default = current
+
+[pull]
+    ; Keep merges by default or set rebase = true if you prefer rebasing
+    rebase = false
+
+[alias]
+    ; Some helpful aliases
+    st = status
+    co = checkout
+    br = branch
+    cm = commit
+    lg = log --oneline --graph --decorate --all

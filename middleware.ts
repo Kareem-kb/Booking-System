@@ -1,25 +1,22 @@
-// import createMiddleware from 'next-intl/middleware';
-
-// export default createMiddleware({
-//   locales: ['en', 'ar'],
-//   defaultLocale: 'en',
-// });
-
-// // only applies this middleware to files in the app directory
-// export const config = {
-//   matcher: ['/', '/(en|ar)/:path*'],
-// };
-
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import createMiddleware from 'next-intl/middleware';
+import verificationPage from './app/[locale]/(entries)/verification/page';
 
 const intlMiddleware = createMiddleware({
   locales: ['en', 'ar'],
   defaultLocale: 'en',
 });
 
-const publicPaths = ['/', '/register', '/login', '/verification'];
+const publicPaths = [
+  '/',
+  '/register',
+  '/login',
+  '/verification',
+  '/not-found',
+  '/en',
+  '/ar',
+];
 
 const rolePaths = {
   client: ['/aboutUs', '/cakesection', '/Process', '/report'],
@@ -28,34 +25,32 @@ const rolePaths = {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-
-  // Step 1: Extract locale and normalize the path
   const localeMatch = pathname.match(/^\/(en|ar)/);
   const locale = localeMatch ? localeMatch[1] : 'en';
-  const normalizedPath = pathname.replace(/^\/(en|ar)/, '');
+  const normalizedPath = pathname.replace(/^\/(en|ar)/, '') || '/';
 
-  // Step 2: Allow access to public paths
+  // Public paths: skip auth
   if (publicPaths.some((path) => normalizedPath === path)) {
     console.log('This is a public path');
     return intlMiddleware(req);
   }
 
-  // Step 3: Fetch the token for authentication
+  // Try decoding JWT
   const token = await getToken({
     req,
+    // Must match the same secret from your NextAuth config
     secret: process.env.AUTH_SECRET,
-    cookieName: 'next-auth.session-token',
+    // Omit cookieName to let getToken auto-detect (recommended)
+    // cookieName: 'next-auth.session-token',
   });
-  // Step 4: Redirect to signin if no token is found
+
+  // If no token, redirect to login
   if (!token) {
     console.log('There is no token');
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
-  console.log('Middleware called. Request URL:', req.url);
-  console.log('Environment:', process.env.NODE_ENV);
-  console.log('NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
-  console.log('Token:', token);
-  // Step 5: Role-based access control
+
+  // Role-based routing
   if (
     token.role === 'client' &&
     rolePaths.client.some((path) => normalizedPath.startsWith(path))
@@ -70,13 +65,13 @@ export async function middleware(req: NextRequest) {
     return intlMiddleware(req);
   }
 
-  // Step 6: Redirect to not-found for unauthorized access
+  // If none of the above, redirect to not-found
   return NextResponse.redirect(new URL(`/${locale}/not-found`, req.url));
 }
 
 export const config = {
   matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|images/).*)',
     '/(en|ar)/:path*',
-    '/((?!api|_next/static|_next/image|favicon.ico|_next).*)',
   ],
 };
