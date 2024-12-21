@@ -8,7 +8,7 @@
 
 [user]
     name = Kareem Bakarbashat
-    email = though.kb@gmail.com
+    email = thought.kb@gmail.com
     signingkey = 85ADAF0A1B87B6B8     ; <-- Replace with your GPG key’s ID or fingerprint
 
 [commit]
