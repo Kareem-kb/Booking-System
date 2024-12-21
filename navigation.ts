@@ -1,6 +1,14 @@
-import { createNavigation } from 'next-intl/navigation';
-import { locales } from './i18n';
+import { createSharedPathnamesNavigation } from 'next-intl/navigation';
 
-export const { Link, redirect, usePathname, useRouter } = createNavigation({
-  locales /*...*/,
-});
+export const locales = ['en', 'ar'];
+export const localePrefix = 'as-needed';
+
+export const { Link, redirect, usePathname, useRouter } =
+  createSharedPathnamesNavigation({ locales, localePrefix });
+
+// Ensure the locale is correctly derived from the URL
+export function useLocale() {
+  const pathname = usePathname();
+  const locale = pathname.split('/')[1];
+  return locales.includes(locale) ? locale : 'en';
+}

@@ -1,13 +1,23 @@
 {
-    "NavBar":{
-        "NavAbout":"About us",
-        "NavLanguage":"Choose a language",
-        "NavList":"Cakes",
-        "NavSign":"Sign in"
-    },
-    "AboutUs":{
-        "title": "welcome you do",
-        "content": "this is the content"
-    }
-    
+  "AboutUs": {
+    "title": "welcome you do",
+    "content": "this is the content"
+  },
+  "NavBar": {
+    "NavAbout": "About us",
+    "NavLanguage": "Choose a language",
+    "NavList": "Cakes",
+    "NavSign": "Sign in"
+  },
+  "Register": {
+    "title": "Register a new account",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "password": "password",
+    "content2": "Already have an account?",
+    "content3": "Register",
+    "content4": "Or continue with"
+  },
+  "Signin": {}
 }

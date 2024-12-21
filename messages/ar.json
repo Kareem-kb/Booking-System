@@ -1,13 +1,24 @@
 {
-    "NavBar":{ 
-        "NavAbout":"معلومات عنا",
-        "NavLanguage":"اختر لغة",
-        "NavList":"كعكات",
-        "NavSign":"تسجيل الدخول"
-        },
-        "AboutUs":{
-            "title": "مرحبا بكم",
-            "content": "هذا هو المحتوى"
-        }
-    
-    }
+  "AboutUs": {
+    "title": "مرحبا بكم",
+    "content": "هذا هو المحتوى"
+  },
+  "NavBar": {
+    "NavAbout": "معلومات عنا",
+    "NavLanguage": "اختر لغة",
+    "NavList": "كعكات",
+    "NavSign": "تسجيل الدخول"
+  },
+  "Register": {
+    "title": "تسجيل حساب جديد",
+    "firstName": "الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "conformPassword": "كلمة مرور مطابقة",
+    "content1": "تذكرني",
+    "content2": "هل لديك حساب بالفعل؟",
+    "content3": "تسجيل",
+    "content4": "أو الاستمرار مع"
+  }
+}

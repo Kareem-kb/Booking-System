@@ -1,9 +1,13 @@
-import type { NextConfig } from "next";
-import createNextIntlPlugin from "next-intl/plugin";
+import createNextIntlPlugin from 'next-intl/plugin';
 
-const withNextIntl = createNextIntlPlugin()
-const nextConfig: NextConfig = {
-  /* config options here */
-}
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
-export default withNextIntl(nextConfig);
+/**@type {import ('next').NextConfig} */
+const NextConfig = {
+  env: {
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+  },
+  // ...existing code...
+};
+
+export default withNextIntl(NextConfig);
