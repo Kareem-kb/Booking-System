@@ -4,20 +4,7 @@ import {
   Column,
   ManyToOne,
   OneToMany,
-  ValueTransformer,
 } from 'typeorm';
-
-const transformer: Record<'date' | 'bigint', ValueTransformer> = {
-  date: {
-    from: (date: string | null) => (date ? new Date(date) : null), // MySQL datetime to JS Date
-    to: (date?: Date) =>
-      date ? date.toISOString().slice(0, 19).replace('T', ' ') : null, // JS Date to MySQL datetime
-  },
-  bigint: {
-    from: (bigInt: string | null) => (bigInt ? parseInt(bigInt, 10) : null),
-    to: (bigInt?: number) => (bigInt ? bigInt.toString() : null),
-  },
-};
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -30,10 +17,7 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
   email!: string;
 
-  @Column({
-    type: 'datetime',
-    nullable: true,
-  })
+  @Column({ type: 'timestamp with time zone', nullable: true })
   emailVerified!: string | null;
 
   @Column({ type: 'varchar', nullable: true })
@@ -47,11 +31,14 @@ export class UserEntity {
   })
   role!: 'client' | 'admin' | 'partner';
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp with time zone',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   created_at!: Date;
 
   @Column({
-    type: 'timestamp',
+    type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
@@ -75,26 +62,22 @@ export class AccountEntity {
   @Column({ type: 'uuid' })
   userId!: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   type!: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   provider!: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   providerAccountId!: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   refresh_token!: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   access_token!: string | null;
 
-  @Column({
-    nullable: true,
-    type: 'bigint',
-    transformer: transformer.bigint,
-  })
+  @Column({ type: 'bigint', nullable: true })
   expires_at!: number | null;
 
   @Column({ type: 'varchar', nullable: true })
@@ -109,10 +92,10 @@ export class AccountEntity {
   @Column({ type: 'varchar', nullable: true })
   session_state!: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   oauth_token_secret!: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'text', nullable: true })
   oauth_token!: string | null;
 
   @ManyToOne(() => UserEntity, (user) => user.accounts, {
@@ -126,13 +109,13 @@ export class SessionEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   sessionToken!: string;
 
   @Column({ type: 'uuid' })
   userId!: string;
 
-  @Column({ transformer: transformer.date })
+  @Column({ type: 'timestamp with time zone' })
   expires!: string;
 
   @ManyToOne(() => UserEntity, (user) => user.sessions)
@@ -144,12 +127,12 @@ export class VerificationTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   token!: string;
 
-  @Column()
+  @Column({ type: 'varchar' })
   identifier!: string;
 
-  @Column({ transformer: transformer.date })
+  @Column({ type: 'timestamp with time zone' })
   expires!: string;
 }
