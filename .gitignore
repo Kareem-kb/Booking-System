@@ -23,6 +23,7 @@ public/static/
 .env.development.local
 .env.test.local
 .env.production.local
+.gitconfig
 
 # Next.js cache
 .next/cache/
