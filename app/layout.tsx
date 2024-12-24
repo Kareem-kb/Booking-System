@@ -19,11 +19,6 @@ export const metadata: Metadata = {
     statusBarStyle: 'black-translucent',
     title: 'Kareem-KB PWA',
   },
-  // viewport: {
-  //   width: 'device-width',
-  //   initialScale: 1,
-  //   maximumScale: 1,
-  // },
 };
 export const viewport: Viewport = {
   themeColor: [
