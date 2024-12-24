@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import globals from 'globals';
 import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
@@ -18,7 +17,6 @@ export default [
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
 ];
-=======
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
@@ -73,4 +71,4 @@ module.exports = {
     'react/prop-types': 'off',
   },
 };
->>>>>>> fc70221 (productPage)
+fc70221(productPage);
