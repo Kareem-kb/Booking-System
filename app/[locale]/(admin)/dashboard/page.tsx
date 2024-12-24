@@ -1,11 +1,11 @@
-import AddItems from '@/app/components/admin/addItems';
-import OrderProgress from '@/app/components/admin/orderProgress';
+import AddItems from '@/app/components/partner/addItems';
+import OrderProgress from '@/app/components/partner/orderProgress';
 
 export default function admin() {
   return (
     <div>
       <AddItems />
-      <OrderProgress/>
+      <OrderProgress />
       <h1>admin page</h1>
     </div>
   );

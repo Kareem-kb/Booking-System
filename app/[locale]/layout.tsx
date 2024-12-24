@@ -3,13 +3,14 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from '../../i18n';
 import { locales } from '@/navigation';
 
-export default async function LocaleLayout({
-  children,
-  params,
-}: {
+interface LayoutProps {
   children: React.ReactNode;
-  params: { locale: string };
-}) {
+  params: {
+    locale: string;
+  };
+}
+
+export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { locale } = await params;
 
   // Validate the locale

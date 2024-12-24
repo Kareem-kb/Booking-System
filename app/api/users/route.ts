@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { AppDataSource } from '@/auth';
 import { UserEntity } from '@/app/lib/entities';
 import { Resend } from 'resend';
-import sendWelcomeEmail from '@/app/emails/VerificationEmail';
+import sendWelcomeEmail from '@/app/components/emails/VerificationEmail';
 import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
