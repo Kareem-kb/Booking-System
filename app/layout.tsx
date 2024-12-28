@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html className="h-full bg-gray-50" lang="en">
+    <html lang="en">
       {/* <Head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon192x192.png" />

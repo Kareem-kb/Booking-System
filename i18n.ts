@@ -1,3 +1,4 @@
+// i18n.ts
 import { getRequestConfig } from 'next-intl/server';
 import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -11,11 +12,14 @@ export default getRequestConfig(async ({ requestLocale }) => {
   if (!locales.includes(localeHeader as string)) {
     notFound();
   }
+
   return {
+    // NEXT-INTL NEEDS THIS
+    locale: await localeHeader,
+    // and your messages
     messages: (await import(`./messages/${localeHeader}.json`)).default,
   };
 });
-
 export async function getMessages(locale: string) {
   try {
     const messages = (await import(`./messages/${locale}.json`)).default;

@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from '../../i18n';
 import { locales } from '@/navigation';
+import NavBar from '../components/bars/NavBar';
+import Footer from '../components/bars/Footer';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -31,7 +33,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <main className="flex-grow">{children}</main>
+      <main>{children}</main>
     </NextIntlClientProvider>
   );
 }

@@ -39,7 +39,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       try {
         const userRepository = AppDataSource.getRepository('users');
         await userRepository.update({ id: user.id }, { is_active: true });
-        console.log(`User ${user.email} is now active.`);
+        // console.log(`User ${user.email} is now active.`);
         return true;
       } catch (error) {
         console.error('Error activating user:', error);
@@ -72,7 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
       // Token now includes user.id, user.email, user.role if available
-      console.log('Token during jwt:', token);
+      // console.log('Token during jwt:', token);
       return token;
     },
 
@@ -83,7 +83,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.name = token.name as string;
         session.user.email = token.email as string;
       }
-      console.log('Session during session:', session);
+      // console.log('Session during session:', session);
       return session;
     },
   },

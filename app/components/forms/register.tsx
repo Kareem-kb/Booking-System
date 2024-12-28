@@ -3,12 +3,9 @@ import { FormikProvider, useFormik } from 'formik';
 import clientSchema from '@/app/validation/client';
 import { Link, useRouter, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
-import LanguageChanger from '@/app/components/inputs/LanguageChanger';
 import { createUser } from '@/app/actions/userActions';
 
 export default function RegisterForm() {
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1] || 'en';
   const t = useTranslations('Register');
   const router = useRouter();
 
@@ -37,11 +34,9 @@ export default function RegisterForm() {
       }
     },
   });
-
   return (
     <>
       <div className="absolute right-5 top-5">
-        <LanguageChanger locale={locale} />
       </div>
       <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
         {t('title')}

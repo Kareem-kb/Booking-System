@@ -3,6 +3,9 @@
     "title": "مرحبا بكم",
     "content": "هذا هو المحتوى"
   },
+  "LanguageChanger": {
+    "language": "عربي"
+  },
   "NavBar": {
     "NavAbout": "معلومات عنا",
     "NavLanguage": "اختر لغة",

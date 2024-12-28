@@ -31,7 +31,7 @@ export async function middleware(req: NextRequest) {
 
   // Public paths: skip auth
   if (publicPaths.some((path) => normalizedPath === path)) {
-    console.log('This is a public path');
+    // console.log('This is a public path');
     return intlMiddleware(req);
   }
 
@@ -46,7 +46,7 @@ export async function middleware(req: NextRequest) {
 
   // If no token, redirect to login
   if (!token) {
-    console.log('There is no token');
+    // console.log('There is no token');
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
   }
 
@@ -55,13 +55,13 @@ export async function middleware(req: NextRequest) {
     token.role === 'client' &&
     rolePaths.client.some((path) => normalizedPath.startsWith(path))
   ) {
-    console.log('This is a client role');
+    // console.log('This is a client role');
     return intlMiddleware(req);
   } else if (
     token.role === 'partner' &&
     rolePaths.partner.some((path) => normalizedPath.startsWith(path))
   ) {
-    console.log('This is a partner role');
+    // console.log('This is a partner role');
     return intlMiddleware(req);
   }
 

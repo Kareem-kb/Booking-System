@@ -1,65 +1,60 @@
 'use client';
 
 import { useRouter, usePathname } from '@/navigation';
+import { usePathname as realpath } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import Image from 'next/image';
 
-interface LanguageChangerProps {
-  locale: string;
-}
-
-export default function LanguageChanger({ locale }: LanguageChangerProps) {
+export default function LanguageChanger() {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('LanguageChanger');
+  const localnow = realpath().split('/')[1];
+
   const [showList, setShowList] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
+
+  // console.log('here it is in langchanger ', nowlocale);
 
   const handleChange = (newLocale: string) => {
+    setIsChanged(!isChanged);
     router.push(pathname, { locale: newLocale });
   };
-
   const viewList = () => {
     setShowList((prev) => !prev);
   };
 
   return (
     <>
-      <div>
+      <div className="overflow-hidden">
         <button
           onClick={viewList}
-          className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          className=" inline-flex w-full  text-base font-semibold"
         >
-          <Image
-            src="/images/Arrow-Down-Icon.svg"
-            alt="Window icon"
-            width={10}
-            height={10}
-            style={{ width: 'auto', height: 'auto' }}
-          />
-          <Image
-            src="/images/Language-icon.svg"
-            alt="Window icon"
-            width={10}
-            height={10}
-            style={{ width: 'auto', height: 'auto' }}
-            priority
-          />
+          {t('language')}
         </button>
-        {showList && (
-          <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in">
+        <div
+          className={`absolute z-10 w-24 text-base font-semibold leading-7 text-black transition-all duration-500 ease-in-out overflow-hidden ${
+            showList ? 'max-h-24 opacity-90' : 'max-h-0 opacity-55'
+          }`}
+        >
+          <div>
             <button
               onClick={() => handleChange('en')}
-              disabled={locale === 'en'}
+              className="block w-full py-2 text-left text-black text-base font-semibold disabled:text-gray-400"
+              disabled={localnow === 'en'}
             >
               English
             </button>
             <button
               onClick={() => handleChange('ar')}
-              disabled={locale === 'ar'}
+              className="block w-full py-1 text-left text-base font-semibold text-black disabled:text-gray-400 "
+              disabled={localnow === 'ar'}
             >
-              Arabic
+              عربي
             </button>
           </div>
-        )}
+        </div>
       </div>
     </>
   );

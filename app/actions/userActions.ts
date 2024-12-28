@@ -22,12 +22,12 @@ export async function createUser(formData: createUserForm) {
 
     // Handle specific backend responses
     if (response.status === 409) {
-      console.log('User already exists');
+      // console.log('User already exists');
       return 'User already exists';
     }
 
     if (response.ok) {
-      console.log('User created successfully');
+      // console.log('User created successfully');
       return 'User created successfully';
     }
 
