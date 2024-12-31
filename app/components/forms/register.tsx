@@ -1,16 +1,18 @@
 'use client';
+
+import { useState } from 'react';
 import { FormikProvider, useFormik } from 'formik';
 import clientSchema from '@/app/validation/client';
-import { Link, useRouter, usePathname } from '@/navigation';
+import { Link } from '@/navigation';
 import { useTranslations } from 'next-intl';
-import LanguageChanger from '@/app/components/inputs/LanguageChanger';
 import { createUser } from '@/app/actions/userActions';
+import SubmitButton from '../buttons/SubmitButton';
 
 export default function RegisterForm() {
-  const pathname = usePathname();
-  const locale = pathname.split('/')[1] || 'en';
   const t = useTranslations('Register');
-  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState<
+    'notSubmitted' | 'pending' | 'done' | 'register'
+  >('notSubmitted');
 
   interface FormValues {
     role: string;
@@ -28,21 +30,21 @@ export default function RegisterForm() {
     validationSchema: clientSchema,
 
     onSubmit: async (formData, { setErrors }) => {
+      setIsSubmitting('pending');
       const result = await createUser(formData);
       if (result === 'User already exists') {
+        setIsSubmitting('register');
         setErrors({ email: 'User already exists' });
       }
       if (result === 'User created successfully') {
-        router.push('/login');
+        setIsSubmitting('done');
+        // router.push('/login');
       }
     },
   });
-
   return (
     <>
-      <div className="absolute right-5 top-5">
-        <LanguageChanger locale={locale} />
-      </div>
+      <div className="absolute right-5 top-5"></div>
       <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
         {t('title')}
       </h2>
@@ -106,12 +108,15 @@ export default function RegisterForm() {
               </Link>
             </div>
           </div>
-          <button
+          <SubmitButton
+            classname=""
             type="submit"
-            className="flex w-full justify-center rounded-md bg-primary-dark px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            {t('content3')}
-          </button>
+            isSubmitting={isSubmitting}
+            text1={t('content3')}
+            text2="Login"
+            text3="Login"
+            linkTo="/login"
+          />
         </form>
         <div className="relative mt-10">
           <div

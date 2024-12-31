@@ -10,6 +10,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      transitionDuration: {
+        '2000': '2000ms',
+        '2500': '2500ms',
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',

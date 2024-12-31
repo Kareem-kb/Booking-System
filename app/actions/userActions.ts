@@ -1,8 +1,5 @@
-// app/actions/userActions.ts
 'use server';
-
-import { AppDataSource } from '@/auth';
-import { UserEntity } from '@/app/lib/entities';
+import { userExists } from '@/app/components/functions/checkingUsers';
 import { signIn } from '@/auth';
 interface createUserForm {
   role: string;
@@ -22,12 +19,12 @@ export async function createUser(formData: createUserForm) {
 
     // Handle specific backend responses
     if (response.status === 409) {
-      console.log('User already exists');
+      // console.log('User already exists');
       return 'User already exists';
     }
 
     if (response.ok) {
-      console.log('User created successfully');
+      // console.log('User created successfully');
       return 'User created successfully';
     }
 
@@ -39,21 +36,36 @@ export async function createUser(formData: createUserForm) {
   }
 }
 
-
 export async function logInUser({
   email,
 }: {
   email: string;
-}): Promise<string> {
+}): Promise<{ success: boolean; message: string; error?: string }> {
   try {
+    const exists = await userExists(email);
+    if (!exists) {
+      return { success: false, message: 'User not found in the database.' };
+    }
+
     const result = await signIn('resend', { email, redirect: false });
-    if (result?.ok) {
-      return 'Sign-in successful. Check your email for the sign-in link.';
+    if (result) {
+      return {
+        success: true,
+        message: 'Sign-in link sent. Please check your email.',
+      };
     } else {
-      return 'Sign-in failed. Please try again.';
+      console.error('Resend error:', result?.error);
+      return {
+        success: false,
+        message: 'Failed to send sign-in link. Please try again.',
+        error: result?.error,
+      };
     }
   } catch (error) {
     console.error('Sign-in error:', error);
-    return 'Unexpected error. Please try again later.';
+    return {
+      success: false,
+      message: 'Unexpected error. Please try again later.',
+    };
   }
 }

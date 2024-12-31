@@ -9,7 +9,7 @@ export default async function clintLayout({
   return (
     <>
       <NavBar />
-      <main className="flex-grow">{children}</main>
+      <main>{children}</main>
       <Footer />
     </>
   );

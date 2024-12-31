@@ -1,14 +1,28 @@
-import { createSharedPathnamesNavigation } from 'next-intl/navigation';
+import { createNavigation } from 'next-intl/navigation';
+import { defineRouting } from 'next-intl/routing';
 
 export const locales = ['en', 'ar'];
-export const localePrefix = 'as-needed';
+
+const routing = defineRouting({
+  locales,
+  defaultLocale: 'en',
+  localePrefix: 'always',
+});
 
 export const { Link, redirect, usePathname, useRouter } =
-  createSharedPathnamesNavigation({ locales, localePrefix });
+  createNavigation(routing);
 
-// Ensure the locale is correctly derived from the URL
 export function useLocale() {
   const pathname = usePathname();
-  const locale = pathname.split('/')[1];
-  return locales.includes(locale) ? locale : 'en';
+  // e.g. '/', '/en', '/register', '/en/register'
+  const segments = pathname.split('/');
+  // e.g. [''], ['','en'], ['','register'], ['','en','register']
+
+  // If second segment is a recognized locale, return it
+  if (segments.length > 1 && locales.includes(segments[1])) {
+    return segments[1] as 'en' | 'ar';
+  }
+
+  // Otherwise, default to 'en'
+  return 'en';
 }
