@@ -4,7 +4,7 @@ import { signOut, useSession } from 'next-auth/react';
 
 export default function verificationPage() {
   const { data: session } = useSession();
-  const t = useTranslations('AboutUs');
+  console.log('sesstion is', session);
   // console.log('sesstion is', session);
   return (
     <div>

@@ -29,26 +29,26 @@ export default function LanguageChanger() {
       <div className="overflow-hidden">
         <button
           onClick={viewList}
-          className=" inline-flex w-full  text-base font-semibold"
+          className="inline-flex w-full text-base font-semibold"
         >
           {t('language')}
         </button>
         <div
-          className={`absolute z-10 w-24 text-base font-semibold leading-7 text-black transition-all duration-500 ease-in-out overflow-hidden ${
+          className={`absolute z-10 w-24 overflow-hidden text-base font-semibold leading-7 text-black transition-all duration-500 ease-in-out ${
             showList ? 'max-h-24 opacity-90' : 'max-h-0 opacity-55'
           }`}
         >
           <div>
             <button
               onClick={() => handleChange('en')}
-              className="block w-full py-2 text-left text-black text-base font-semibold disabled:text-gray-400"
+              className="block w-full py-2 text-left text-base font-semibold text-black disabled:text-gray-400"
               disabled={localnow === 'en'}
             >
               English
             </button>
             <button
               onClick={() => handleChange('ar')}
-              className="block w-full py-1 text-left text-base font-semibold text-black disabled:text-gray-400 "
+              className="block w-full py-1 text-left text-base font-semibold text-black disabled:text-gray-400"
               disabled={localnow === 'ar'}
             >
               عربي

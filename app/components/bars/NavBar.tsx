@@ -30,7 +30,7 @@ export default function NavBar() {
       {/* Top Navbar */}
       <nav
         aria-label="Global"
-        className="mx-auto fixed top-0 left-0 right-0 z-50 flex items-center justify-between  p-6 lg:px-8 lg:backdrop-blur-lg max-w-7xl"
+        className="fixed left-0 right-0 top-0 z-50 mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8 lg:backdrop-blur-lg"
       >
         <div className="flex lg:flex-1">
           <a href="#" className="-m-1.5 p-1.5">
@@ -67,13 +67,16 @@ export default function NavBar() {
           ))}
         </div>
         {/* Desktop Login Link */}
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-x-7">
+        <div className="hidden gap-x-7 lg:flex lg:flex-1 lg:justify-end">
           <div className="flex gap-x-2">
             <LanguageChanger />|
           </div>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+          <Link
+            href="/login"
+            className="text-sm font-semibold leading-6 text-gray-900 transition-all duration-300 hover:scale-125"
+          >
             Log in <span aria-hidden="true">&rarr;</span>
-          </a>
+          </Link>
         </div>
       </nav>
 
@@ -89,14 +92,9 @@ export default function NavBar() {
 
       {/* Mobile Menu (Side Panel) */}
       <div
-        className={`lg:hidden fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white px-6 py-6 transition-transform duration-300
-          ${
-            mobileMenuOpen
-              ? 'translate-x-0 ease-out'
-              : 'translate-x-full ease-in'
-          }
-          sm:ring-1 sm:ring-gray-900/10
-        `}
+        className={`fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white px-6 py-6 transition-transform duration-300 lg:hidden ${
+          mobileMenuOpen ? 'translate-x-0 ease-out' : 'translate-x-full ease-in'
+        } sm:ring-1 sm:ring-gray-900/10`}
       >
         {/* Header row inside panel */}
         <div className="flex items-center justify-between">
@@ -134,13 +132,12 @@ export default function NavBar() {
             </div>
             <div className="py-6">
               <div>
-                {' '}
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                <Link
+                  href="/login"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900"
                 >
                   Log in
-                </a>
+                </Link>
                 <LanguageChanger />
               </div>
             </div>
