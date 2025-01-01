@@ -1,5 +1,5 @@
 import { DataSourceOptions, DataSource } from 'typeorm';
-import * as entities from '@/app/lib/entities'; // Ensure the correct path
+import * as entities from '@/app/lib/entities';
 
 const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
