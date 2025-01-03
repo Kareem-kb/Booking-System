@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { AppDataSource } from '@/auth';
+// import { AppDataSource } from '@/auth';
+import prisma from '@/prisma';
 import { UserEntity } from '@/app/lib/entities';
 import { Resend } from 'resend';
 import sendWelcomeEmail from '@/app/components/emails/VerificationEmail';
@@ -22,8 +23,7 @@ interface UserUpdate {
 
 export async function GET() {
   try {
-    const userRepository = AppDataSource.getRepository(UserEntity);
-    const users = await userRepository.find();
+    const users = await prisma.user.findMany();
     return NextResponse.json(users);
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -34,13 +34,16 @@ export async function GET() {
   }
 }
 
+// POST: Create a new user
 export async function POST(req: Request) {
   try {
     const body: UserBody = await req.json();
     const { name, email, role } = body;
 
-    const userRepository = AppDataSource.getRepository(UserEntity);
-    const existingUser = await userRepository.findOneBy({ email });
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
     if (existingUser) {
       return NextResponse.json(
@@ -49,9 +52,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = userRepository.create({ email, name, role });
-    await userRepository.save(user);
+    // Create a new user
+    const user = await prisma.user.create({
+      data: { name, email, role },
+    });
 
+    // Send welcome email
     const { data, error } = await resend.emails.send({
       from: 'Kareem-kb <no-repl@kareem-kb.tech>',
       to: email,
@@ -73,10 +79,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error: any) {
-    // Handle errors gracefully
     console.error('Error during user registration:', error);
-
-    // Default to internal server error for unknown issues
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
@@ -84,59 +87,59 @@ export async function POST(req: Request) {
   }
 }
 
-export async function PUT(req: Request) {
-  const body: UserUpdate = await req.json();
-  const { id, updates } = body;
+// export async function PUT(req: Request) {
+//   const body: UserUpdate = await req.json();
+//   const { id, updates } = body;
 
-  if (!id || !updates || Object.keys(updates).length === 0) {
-    return NextResponse.json(
-      { error: 'Missing required data' },
-      { status: 400 }
-    );
-  }
+//   if (!id || !updates || Object.keys(updates).length === 0) {
+//     return NextResponse.json(
+//       { error: 'Missing required data' },
+//       { status: 400 }
+//     );
+//   }
 
-  const allowedFields = ['name', 'email', 'role'];
-  const invalidFields = Object.keys(updates).filter(
-    (field) => !allowedFields.includes(field)
-  );
+//   const allowedFields = ['name', 'email', 'role'];
+//   const invalidFields = Object.keys(updates).filter(
+//     (field) => !allowedFields.includes(field)
+//   );
 
-  if (invalidFields.length > 0) {
-    return NextResponse.json(
-      { error: `Invalid fields: ${invalidFields.join(', ')}` },
-      { status: 400 }
-    );
-  }
+//   if (invalidFields.length > 0) {
+//     return NextResponse.json(
+//       { error: `Invalid fields: ${invalidFields.join(', ')}` },
+//       { status: 400 }
+//     );
+//   }
 
-  try {
-    const userRepository = AppDataSource.getRepository(UserEntity);
-    await userRepository.update(id, updates);
-    return NextResponse.json(
-      { message: 'User updated successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error updating user:', error);
-    return NextResponse.json(
-      { error: 'Failed to update user' },
-      { status: 500 }
-    );
-  }
-}
+//   try {
+//     const userRepository = AppDataSource.getRepository(UserEntity);
+//     await userRepository.update(id, updates);
+//     return NextResponse.json(
+//       { message: 'User updated successfully' },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     console.error('Error updating user:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to update user' },
+//       { status: 500 }
+//     );
+//   }
+// }
 
-export async function DELETE(req: Request) {
-  const { id } = await req.json();
-  if (!id) {
-    return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
-  }
-  try {
-    const userRepository = AppDataSource.getRepository(UserEntity);
-    await userRepository.delete(id);
-    return NextResponse.json({ message: 'User deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete user' },
-      { status: 500 }
-    );
-  }
-}
+// export async function DELETE(req: Request) {
+//   const { id } = await req.json();
+//   if (!id) {
+//     return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+//   }
+//   try {
+//     const userRepository = AppDataSource.getRepository(UserEntity);
+//     await userRepository.delete(id);
+//     return NextResponse.json({ message: 'User deleted successfully' });
+//   } catch (error) {
+//     console.error('Error deleting user:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to delete user' },
+//       { status: 500 }
+//     );
+//   }
+// }
