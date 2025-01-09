@@ -1,40 +1,83 @@
 'use server';
 import { userExists } from '@/app/components/functions/checkingUsers';
+import { createUser } from '@/app/lib/createUser';
+import { clientSchema } from '@/app/validation/client';
 import { signIn } from '@/auth';
+import { create } from 'domain';
 interface createUserForm {
   role: string;
   name: string;
   email: string;
 }
-export async function createUser(formData: createUserForm) {
+interface createUserStates {
+  success?: string;
+  errors?: {
+    name?: string[];
+    email?: string[];
+    role?: string[];
+  };
+}
+
+export async function createUserAction(
+  prevState: createUserStates | null,
+  formData: FormData
+): Promise<createUserStates> {
   try {
-    const response = await fetch('http://localhost:3000/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
-    const data = await response.json(); // Parse the response data
+    // Extract form data
+    const role = formData.get('role') as string;
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
 
-    // Handle specific backend responses
-    if (response.status === 409) {
-      // console.log('User already exists');
-      return 'User already exists';
+    // Validate form data using Zod
+    const result = await clientSchema.safeParseAsync({ role, name, email });
+    if (!result.success) {
+      const flattenedErrors = result.error.flatten();
+      return { errors: flattenedErrors.fieldErrors };
     }
 
-    if (response.ok) {
-      // console.log('User created successfully');
-      return 'User created successfully';
+    // Check if user already exists
+    const userExist = await userExists(email);
+    if (userExist) {
+      return { errors: { email: ['User already exists'] } };
     }
 
-    // For other unexpected response statuses
-    return data.message || 'An unexpected error occurred.';
+    // Create the user
+    await createUser(name, email, role);
+    return { success: 'User created successfully' };
   } catch (error) {
-    console.error('User creation error:', error);
-    return 'Something went wrong. Please try again.';
+    return { errors: { email: ['Something went wrong. Please try again.'] } };
   }
 }
+
+// export async function createUser(formData: createUserForm) {
+//   try {
+//     const response = await fetch('http://localhost:3000/api/users', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(formData),
+//     });
+//     const data = await response.json(); // Parse the response data
+
+//     // Handle specific backend responses
+//     if (response.status === 409) {
+//       // console.log('User already exists');
+//       return 'User already exists';
+//     }
+
+//     if (response.ok) {
+//       // console.log('User created successfully');
+//       return 'User created successfully';
+//     }
+
+//     // For other unexpected response statuses
+//     return data.message || 'An unexpected error occurred.';
+//   } catch (error) {
+//     console.error('User creation error:', error);
+//     return 'Something went wrong. Please try again.';
+//   }
+// }
 
 export async function logInUser({
   email,

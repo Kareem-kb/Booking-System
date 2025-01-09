@@ -20,7 +20,7 @@ const publicPaths = [
 
 const rolePaths = {
   client: ['/aboutUs', '/cakesection', '/Process', '/report'],
-  partner: ['/dashboard', '/sales'],
+  partner: ['/dashboard', '/sales', '/add-service'],
 };
 
 export async function middleware(req: NextRequest) {

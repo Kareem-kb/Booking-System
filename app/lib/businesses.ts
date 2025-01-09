@@ -45,8 +45,6 @@ export class ServiceEntity {
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updated_at!: Date;
 
-  @Column({ type: 'boolean', default: true })
-  is_active!: boolean;
 
   @Column({ type: 'integer', nullable: true })
   max_capacity!: number;
@@ -54,15 +52,7 @@ export class ServiceEntity {
   @Column({ type: 'integer', nullable: true })
   min_booking_notice_hours!: number;
 
-  @Column({ type: 'text', nullable: true })
-  cancellation_policy!: string;
 
-  @Index('idx_service_provider')
-  @Column({ type: 'uuid' })
-  provider_id!: string;
-
-  @Column({ type: 'text', array: true, nullable: true })
-  tags!: string[];
 
   @Column({ type: 'jsonb', nullable: true })
   name_localized!: Record<string, any>;

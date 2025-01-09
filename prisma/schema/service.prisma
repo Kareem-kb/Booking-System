@@ -1,0 +1,34 @@
+model Service {
+  id            String              @id @default(cuid())
+  price         Float
+  duration      Int
+  availability  Boolean             @default(true)
+  translations  ServiceTranslation[]
+  images        ServiceImage[]      // Separate table for images
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+}
+
+model ServiceTranslation {
+  id          String   @id @default(cuid())
+  serviceId   String
+  language    String   // 'en', 'ar', etc.
+  title       String
+  description String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([serviceId, language])
+}
+
+model ServiceImage {
+  id        String   @id @default(cuid())
+  serviceId String
+  image     String   // Store base64 string
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

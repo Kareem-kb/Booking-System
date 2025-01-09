@@ -1,4 +1,3 @@
-
 import {
   BoltIcon,
   CalendarDaysIcon,
@@ -36,7 +35,7 @@ const stats = [
   { id: 4, name: 'Projects deployed', value: '12m' },
 ];
 
-export default function Example() {
+export default function HomePage() {
   return (
     <div className="bg-gray-300">
       {/* Hero section */}
@@ -92,7 +91,7 @@ export default function Example() {
               </a>
             </div>
           </div>
-          <div className=" hidden mt-16 sm:mt-24 lg:mt-0 lg:shrink-0 lg:grow sm:block">
+          <div className="mt-16 hidden sm:mt-24 sm:block lg:mt-0 lg:shrink-0 lg:grow">
             <svg
               role="img"
               viewBox="0 0 366 729"
@@ -131,7 +130,7 @@ export default function Example() {
       {/* Logo cloud */}
 
       {/* Feature section */}
-      <div className=" mx-auto mt-14 max-w-7xl px-6 lg:mt-32 lg:px-8">
+      <div className="mx-auto mt-14 max-w-7xl px-6 lg:mt-32 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base/7 font-semibold text-indigo-600">
             Deploy faster
@@ -178,7 +177,7 @@ export default function Example() {
       {/* Feature section */}
 
       {/* Stats */}
-      <div className="mx-auto mt-32 pb-32 max-w-7xl px-6 sm:mt-40 lg:px-8">
+      <div className="mx-auto mt-32 max-w-7xl px-6 pb-32 sm:mt-40 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl">
           <h2 className="text-base/8 font-semibold text-indigo-600">
             Our track record
@@ -186,7 +185,7 @@ export default function Example() {
           <p className="mt-2 text-pretty text-4xl font-semibold tracking-tight text-black sm:text-5xl">
             Trusted by thousands of creators worldwide
           </p>
-          <p className=" text-lg/8 text-gray-900">
+          <p className="text-lg/8 text-gray-900">
             Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores
             impedit perferendis suscipit eaque, iste dolor cupiditate
             blanditiis.
@@ -198,8 +197,8 @@ export default function Example() {
               key={stat.id}
               className="flex flex-col gap-y-3 border-l border-white/10 pl-6"
             >
-              <dt className="text-sm/6 ">{stat.name}</dt>
-              <dd className="order-first text-3xl font-semibold tracking-tight  text-indigo-600">
+              <dt className="text-sm/6">{stat.name}</dt>
+              <dd className="order-first text-3xl font-semibold tracking-tight text-indigo-600">
                 {stat.value}
               </dd>
             </div>

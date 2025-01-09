@@ -1,11 +1,7 @@
-import * as Yup from 'yup';
+import { z } from 'zod';
 
-const clientSchema = Yup.object().shape({
-  role: Yup.string().required('Role is required'),
-  name: Yup.string().required('Name is required'),
-  email: Yup.string()
-    .email('Invalid email format')
-    .required('Email is required'),
+export const clientSchema = z.object({
+  role: z.string().nonempty('Role is required'),
+  name: z.string().nonempty('Name is required'),
+  email: z.string().email('Invalid email format').nonempty('Email is required'),
 });
-
-export default clientSchema;
