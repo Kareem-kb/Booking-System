@@ -7,32 +7,31 @@ import { useTranslations } from 'next-intl';
 import {
   Bars3Icon,
   CalendarIcon,
-  ChartPieIcon,
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
-  UserIcon,
+  UserGroupIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
-  { name: 'Dashboard', href: 'dashbord', icon: HomeIcon, current: true },
-  { name: 'Services', href: '/add-service', icon: FolderIcon, current: false },
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
   {
-    name: 'Business ',
-    href: 'businesssettings',
+    name: 'Branches',
+    href: '/business-settings',
     icon: CalendarIcon,
     current: false,
   },
+  { name: 'Services', href: '/add-service', icon: FolderIcon, current: false },
   {
-    name: 'Account ',
-    href: 'accountsettings',
-    icon: UserIcon,
+    name: 'Staff ',
+    href: '/add-staff',
+    icon: UserGroupIcon,
     current: false,
   },
   {
     name: 'Sales',
-    href: 'sales',
+    href: '/sales',
     icon: DocumentDuplicateIcon,
     current: false,
   },

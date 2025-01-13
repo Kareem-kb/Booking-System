@@ -38,7 +38,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
 
   return (
     <html lang={locale}>
-      <body className={`bg-gray-300 ${inter.className}`}>
+      <body className={`bg-gray-200 ${inter.className}`}>
         <SessionProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             {children}

@@ -41,17 +41,7 @@ export async function createServicesAction(prevState: any, formData: FormData) {
     );
 
     // Create service
-    await createService({
-      title_en,
-      title_ar,
-      category,
-      description_en,
-      description_ar,
-      price,
-      duration,
-      image: imageBuffers, // Pass base64 strings instead of File[]
-      availability,
-    });
+
     console.log('Service created successfully!', {
       title_en,
       title_ar,

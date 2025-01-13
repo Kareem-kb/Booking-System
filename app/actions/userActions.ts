@@ -3,9 +3,10 @@ import { userExists } from '@/app/components/functions/checkingUsers';
 import { createUser } from '@/app/lib/createUser';
 import { clientSchema } from '@/app/validation/client';
 import { signIn } from '@/auth';
+import { Role } from '@prisma/client';
 import { create } from 'domain';
 interface createUserForm {
-  role: string;
+  role: Role;
   name: string;
   email: string;
 }
@@ -24,7 +25,7 @@ export async function createUserAction(
 ): Promise<createUserStates> {
   try {
     // Extract form data
-    const role = formData.get('role') as string;
+    const role = formData.get('role') as Role;
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
 

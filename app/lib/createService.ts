@@ -11,6 +11,7 @@ interface CreateServiceForm {
   duration: string;
   image: string[]; // Base64 strings
   availability: string;
+  branchId: string;
 }
 
 export async function createService(formData: CreateServiceForm) {
@@ -42,6 +43,9 @@ export async function createService(formData: CreateServiceForm) {
         price,
         duration,
         availability,
+        branch: {
+          connect: { id: formData.branchId }, // Assuming branchId is available in formData
+        },
         translations: {
           create: [
             {

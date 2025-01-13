@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 // import { AppDataSource } from '@/auth';
 import prisma from '@/prisma';
-import { UserEntity } from '@/app/lib/entities';
 import { Resend } from 'resend';
 import sendWelcomeEmail from '@/app/components/emails/VerificationEmail';
 import crypto from 'crypto';
