@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { specialClosuresSchema } from '@/app/validation/branch';
 
-const BranchSpecialClosureForm = ({ onSubmit }: any) => {
+const BranchSpecialClosureForm = ({onPrevious, onSubmit }: any) => {
   const [closures, setClosures] = useState([
     { date: '', closeReason: '' }, // Initial empty closure
   ]);
@@ -90,6 +90,11 @@ const BranchSpecialClosureForm = ({ onSubmit }: any) => {
       >
         Save Closures
       </button>
+      <button
+        type="button"
+        onClick={onPrevious}
+        className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
+        >Previous</button>
     </form>
   );
 };

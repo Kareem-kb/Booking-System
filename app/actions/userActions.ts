@@ -50,36 +50,6 @@ export async function createUserAction(
   }
 }
 
-// export async function createUser(formData: createUserForm) {
-//   try {
-//     const response = await fetch('http://localhost:3000/api/users', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(formData),
-//     });
-//     const data = await response.json(); // Parse the response data
-
-//     // Handle specific backend responses
-//     if (response.status === 409) {
-//       // console.log('User already exists');
-//       return 'User already exists';
-//     }
-
-//     if (response.ok) {
-//       // console.log('User created successfully');
-//       return 'User created successfully';
-//     }
-
-//     // For other unexpected response statuses
-//     return data.message || 'An unexpected error occurred.';
-//   } catch (error) {
-//     console.error('User creation error:', error);
-//     return 'Something went wrong. Please try again.';
-//   }
-// }
-
 export async function logInUser({
   email,
 }: {

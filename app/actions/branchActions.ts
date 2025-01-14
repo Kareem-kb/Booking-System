@@ -1,55 +1,56 @@
 'use server';
 
-import { daysOfWeek } from '../lib/lists';
-import { branchSchema } from '../validation/branch';
+import { createBranch } from '@/app/lib/createBranch';
+import { Erica_One } from 'next/font/google';
 
-export async function createBranchAction(prevState: any, formData: FormData) {
-  const fields = ['name', 'contactEmail', 'phoneNumber', 'address', 'website'];
-  const branchData = Object.fromEntries(
-    fields.map((field) => [field, formData.get(field)])
-  );
+export async function createBranchAction(formData: FormData) {
+  try {
+    const basicInfo = {
+      name: (formData.get('basicInfo[name]') as string) || '',
+      address: (formData.get('basicInfo[address]') as string) || '',
+      phoneNumber: (formData.get('basicInfo[phoneNumber]') as string) || '',
+      contactEmail: (formData.get('basicInfo[contactEmail]') as string) || '',
+      website: (formData.get('basicInfo[website]') as string) || '',
+    };
 
-  const operatingHours = daysOfWeek.map((day) => ({
-    dayOfWeek: day,
-    opensAt: formData.get(`operatingHours.${day.day.toLowerCase()}.opensAt`),
-    closesAt: formData.get(`operatingHours.${day.day.toLowerCase()}.closesAt`),
-    isClosed:
-      formData.get(`operatingHours.${day.day.toLowerCase()}.isClosed`) === 'on',
-  }));
-
-  const closuresArray = [];
-  for (let i = 0; i < 100; i++) {
-    // Assuming a maximum of 100 possible closures
-    const date = formData.get(`specialClosures[${i}].date`);
-    const reason = formData.get(`specialClosures[${i}].reason`);
-
-    if (date && reason) {
-      closuresArray.push({ date, reason });
-    } else if (date || reason) {
-      console.warn(`Incomplete closure data at index ${i}`);
-    } else {
-      break; // Stop if we find no more closure data
+    // Extract operatingHours
+    const operatingHours = [];
+    for (let i = 0; formData.get(`operatingHours[${i}][name]`); i++) {
+      operatingHours.push({
+        name: formData.get(`operatingHours[${i}][name]`) as string,
+        dayOfWeek: parseInt(
+          formData.get(`operatingHours[${i}][dayOfWeek]`) as string,
+          10
+        ),
+        openTime:
+          (formData.get(`operatingHours[${i}][openTime]`) as string) || '',
+        closeTime:
+          (formData.get(`operatingHours[${i}][closeTime]`) as string) || '',
+        isClosed: formData.get(`operatingHours[${i}][isClosed]`) === 'true',
+      });
     }
+
+    // Extract specialClosures
+    const specialClosures = [];
+    for (let i = 0; formData.get(`specialClosures[${i}][date]`); i++) {
+      specialClosures.push({
+        date:
+          new Date(formData.get(`specialClosures[${i}][date]`) as string) ||
+          null,
+        closeReason:
+          (formData.get(`specialClosures[${i}][closeReason]`) as string) || '',
+      });
+    }
+
+    await createBranch(basicInfo, operatingHours, specialClosures);
+    return {
+      success: true,
+      message: 'Branch created successfully',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: { error },
+    };
   }
-  // first posting the branchData object from the form to the database
-
-
-
-
-  // Second posting the operatingHours object from the form to the database
-  
-  
-
-
-  //  Third posting the closuresArray object from the form to the database
-  console.log('Server-side form data:', {
-    ...branchData,
-    operatingHours,
-    closuresArray,
-  });
-
-  return {
-    success: true,
-    branchData: { ...branchData, operatingHours, closuresArray },
-  };
 }

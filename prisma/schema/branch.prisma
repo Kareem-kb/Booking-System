@@ -1,9 +1,9 @@
 model Branch {
   id          String                 @id @default(cuid())
   name        String
-  contactEmail String
+  contactEmail String?
   phoneNumber String?
-  address     String?
+  address     String
   website     String?
 
   // Relationship to the normal weekly operating hours
@@ -19,14 +19,13 @@ model Branch {
   services    Service[]
 }
 
-
-
 model BranchOperatingHours {
   id        String @id @default(cuid())
   name      String // monday, tuesday, ...
   dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
   openTime  String
   closeTime String
+  isClosed  Boolean
 
   branchId    String
   branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)

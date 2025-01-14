@@ -1,6 +1,5 @@
 'use server';
 import prisma from '@/prisma';
-import { branchSchema } from '@/app/validation/branch';
 
 interface CreateBranchForm {
   name: string;
@@ -10,12 +9,64 @@ interface CreateBranchForm {
   website: string;
 }
 
-export async function createBranch(formData: CreateBranchForm) {
-  try {
-  
-    console.log('Creating business with data:', formData);
+interface operatingHours {
+  name: string;
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+}
 
-    // Create business
+interface specialClosures {
+  date: Date;
+  closeReason: string;
+}
+
+export async function createBranch(
+  formData: CreateBranchForm,
+  operatingHours: operatingHours[],
+  specialClosures: specialClosures[]
+) {
+  try {
+    console.log('Creating business with data:', formData);
+    console.log('Operating hours:', operatingHours);
+    console.log('Special closures:', specialClosures);
+
+    const branchBase = await prisma.branch.create({
+      data: {
+        name: formData.name,
+        contactEmail: formData.contactEmail,
+        phoneNumber: formData.phoneNumber,
+        address: formData.address,
+        website: formData.website,
+      },
+    });
+    const branchID = branchBase.id;
+
+    // Create branch operating hours
+    for (const hour of operatingHours) {
+      await prisma.branchOperatingHours.create({
+        data: {
+          name: hour.name,
+          dayOfWeek: hour.dayOfWeek,
+          openTime: hour.openTime,
+          closeTime: hour.closeTime,
+          isClosed: hour.isClosed,
+          branchId: branchID,
+        },
+      });
+    }
+
+    // Create branch special closures
+    for (const closure of specialClosures) {
+      await prisma.branchSpecialClosure.create({
+        data: {
+          date: closure.date,
+          closeReason: closure.closeReason,
+          branchId: branchID,
+        },
+      });
+    }
 
     return { success: 'Branch created successfully' };
   } catch (error) {
