@@ -2,16 +2,17 @@
 import prisma from '@/prisma';
 
 interface CreateServiceForm {
-  title_en: string;
-  title_ar: string;
+  branchId: string;
   category: string;
-  description_en: string;
-  description_ar: string;
   price: string;
   duration: string;
-  image: string[]; // Base64 strings
+  imageUrls: string[];
   availability: string;
-  branchId: string;
+  translations: {
+    language: string;
+    title: string;
+    description: string;
+  }[];
 }
 
 export async function createService(formData: CreateServiceForm) {
@@ -19,7 +20,7 @@ export async function createService(formData: CreateServiceForm) {
     console.log('Creating service with data:', formData);
 
     // Validate image count
-    if (formData.image.length > 3) {
+    if (formData.imageUrls.length > 3) {
       throw new Error('Maximum of 3 images allowed.');
     }
 
@@ -43,6 +44,7 @@ export async function createService(formData: CreateServiceForm) {
         price,
         duration,
         availability,
+        images: formData.imageUrls,
         branch: {
           connect: { id: formData.branchId }, // Assuming branchId is available in formData
         },
@@ -50,25 +52,20 @@ export async function createService(formData: CreateServiceForm) {
           create: [
             {
               language: 'en',
-              title: formData.title_en,
-              description: formData.description_en,
+              title: formData.translations[0].title,
+              description: formData.translations[0].description,
             },
             {
               language: 'ar',
-              title: formData.title_ar,
-              description: formData.description_ar,
+              title: formData.translations[1].title,
+              description: formData.translations[1].description,
             },
           ],
-        },
-        images: {
-          create: formData.image.map((base64) => ({
-            image: base64, // Store base64 string directly
-          })),
         },
       },
     });
 
-    console.log('Service created successfully:', service);
+    // console.log('Service created successfully:', service);
     return { service };
   } catch (error) {
     console.error('Error creating service:', error);

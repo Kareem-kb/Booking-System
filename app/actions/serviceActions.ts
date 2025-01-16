@@ -1,58 +1,58 @@
 'use server';
-import { serviceSchema } from '@/app/validation/service';
+import { serviceSchema } from '@/validation/service';
 import { createService } from '@/app/lib/createService';
 
-export async function createServicesAction(prevState: any, formData: FormData) {
+export async function createServicesAction(formData: FormData) {
   try {
     // Extract form data
-    const title_en = formData.get('title_en') as string;
-    const title_ar = formData.get('title_ar') as string;
+    const branchId = formData.get('branch') as string;
     const category = formData.get('category') as string;
-    const description_en = formData.get('description_en') as string;
-    const description_ar = formData.get('description_ar') as string;
     const price = formData.get('price') as string;
     const duration = formData.get('duration') as string;
-    const image = formData.getAll('image') as File[];
     const availability = formData.get('availability') as string;
+
+    // Extract uploaded image URLs
+    const imageField = formData.get('imageUrl') as string | null;
+    const imageUrls = imageField ? (JSON.parse(imageField) as string[]) : [];
+
+    // Extract translations
+    const translationsField = formData.get('translations') as string | null;
+    const translations = translationsField
+      ? (JSON.parse(translationsField) as Array<{
+          language: string;
+          title: string;
+          description: string;
+        }>)
+      : [];
 
     // Validate form data
     const result = await serviceSchema.safeParseAsync({
-      title_en,
-      title_ar,
       category,
-      description_en,
-      description_ar,
       price,
       duration,
-      image,
+      imageUrls,
       availability,
+      translations,
     });
 
     if (!result.success) {
+      console.log(result.error?.flatten().fieldErrors);
       return { errors: result.error.flatten().fieldErrors };
     }
 
-    // Convert images to base64
-    const imageBuffers = await Promise.all(
-      image.map(async (file) => {
-        const arrayBuffer = await file.arrayBuffer();
-        return Buffer.from(arrayBuffer).toString('base64'); // Convert to base64
-      })
-    );
-
     // Create service
-
-    console.log('Service created successfully!', {
-      title_en,
-      title_ar,
+    const createServiceForm = {
+      branchId,
       category,
-      description_en,
-      description_ar,
       price,
       duration,
-      image,
+      imageUrls,
       availability,
-    });
+      translations,
+    };
+
+    await createService(createServiceForm);
+
     return { success: 'Service created successfully!' };
   } catch (error) {
     return { error: 'Failed to create service. Please try again.' };

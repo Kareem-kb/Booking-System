@@ -1,93 +1,85 @@
 'use client';
 
-import { useActionState } from 'react';
 import DropDown from '@/app/components/inputs/dropDown';
 import InputField from '@/app/components/inputs/inputfield';
 import { createServicesAction } from '@/app/actions/serviceActions';
+import BranchSelector from '@/app/components/inputs/branchSelector';
+import { uploadImage } from '@/supabase/storage/client';
+import { ChangeEvent, useRef, useState } from 'react';
+import { convertBlobUrlToFile } from '@/app/lib/utils';
 
 const Times = [
   { id: '1', name: '1 hour' },
   { id: '2', name: '2 hours' },
   { id: '3', name: '3 hours' },
 ];
-const Languages = [
-  { id: '1', name: 'EnLanguage' },
-  { id: '2', name: 'ArLanguage' },
-];
 
 export default function AddServiceForm() {
-  const [state, formAction, isPendding] = useActionState(
-    createServicesAction,
-    null
-  );
+  // const [state, formAction, isPendding] = useActionState(createServicesAction, null);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      const newImageUrls = filesArray.map((file) => URL.createObjectURL(file));
+      setImageUrls([...imageUrls, ...newImageUrls]);
+    }
+  };
+
+  const handleFormSubmit = async (formData: FormData) => {
+    // Upload images and get URLs
+    const uploadedImageUrls = [];
+    for (const url of imageUrls) {
+      const imageFile = await convertBlobUrlToFile(url);
+      const { imageUrl, error } = await uploadImage({
+        file: imageFile,
+        bucket: 'Services-Images',
+      });
+      if (error) {
+        console.log(error);
+        return;
+      }
+      uploadedImageUrls.push(imageUrl);
+    }
+    // Attach image URLs to form data
+    formData.append('imageUrl', JSON.stringify(uploadedImageUrls));
+    // Remove the original `File` objects from the FormData
+    formData.delete('image');
+
+    // Append translations to the FormData
+    const translations = [
+      {
+        language: 'en',
+        title: formData.get('title_en') as string,
+        description: formData.get('description_en') as string,
+      },
+      {
+        language: 'ar',
+        title: formData.get('title_ar') as string,
+        description: formData.get('description_ar') as string,
+      },
+    ];
+    formData.append('translations', JSON.stringify(translations));
+    formData.delete('title_en');
+    formData.delete('title_ar');
+    formData.delete('description_en');
+    formData.delete('description_ar');
+    console.log(formData);
+    // Submit form data
+    createServicesAction(formData);
+  };
 
   return (
-    <form action={formAction}>
+    <form action={handleFormSubmit}>
       <div className="flex flex-col gap-y-6">
         <div>
-          {state && (
+          {/* {state && (
             <p className="mt-2 text-sm text-red-600">
-               {state.errors?.title_en?.[0]}
+              {state.errors?.title_en?.[0]}
             </p>
-          )}
+          )} */}
           <h2 className="text-base/7 font-semibold text-gray-900">
-            {state && (
-              <>
-                {state.errors?.title_en && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for title en {state.errors.title_en[0]}
-                  </p>
-                )}
-                {state.errors?.title_ar && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for title ar {state.errors.title_ar[0]}
-                  </p>
-                )}
-                {state.errors?.category && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for category {state.errors.category[0]}
-                  </p>
-                )}
-                {state.errors?.description_en && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for descrption en {state.errors.description_en[0]}
-                  </p>
-                )}
-                {state.errors?.description_ar && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for descrption ar {state.errors.description_ar[0]}
-                  </p>
-                )}
-                {state.errors?.price && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for price {state.errors.price[0]}
-                  </p>
-                )}
-                {state.errors?.duration && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for duration {state.errors.duration[0]}
-                  </p>
-                )}
-                {state.errors?.image && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for images {state.errors.image[0]}
-                  </p>
-                )}
-                {state.errors?.availability && (
-                  <p className="mt-2 text-sm text-red-600">
-                    for availability {state.errors.availability[0]}
-                  </p>
-                )}
-                {state.success && (
-                  <p className="mt-2 text-sm text-green-600">{state.success}</p>
-                )}
-                {state.error && (
-                  <p className="mt-2 text-sm text-green-600">
-                    {state.success} for erre genrol
-                  </p>
-                )}
-              </>
-            )}
             Add Service
           </h2>
           <p className="text-sm/6 text-gray-600">
@@ -97,6 +89,7 @@ export default function AddServiceForm() {
         </div>
 
         {/* Common Fields */}
+        <BranchSelector name="branch" />
         <div className="mt-4 flex gap-x-4">
           <InputField
             name="price"
@@ -171,6 +164,8 @@ export default function AddServiceForm() {
             name="image"
             type="file"
             multiple
+            ref={imageInputRef}
+            onChange={handleImageChange}
             className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none"
           />
           <p className="mt-1 text-sm text-gray-500">
@@ -202,7 +197,7 @@ export default function AddServiceForm() {
         {/* Submit Button */}
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
-            disabled={isPendding}
+            // disabled={isPendding}
             type="submit"
             className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >

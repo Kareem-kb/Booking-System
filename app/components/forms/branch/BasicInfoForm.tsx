@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { branchSchema } from '@/app/validation/branch';
+import { branchSchema } from '@/validation/branch';
 import InputField from '@/app/components/inputs/inputfield';
 
 export default function BasicInfoForm({ onNext, initialData }: any) {

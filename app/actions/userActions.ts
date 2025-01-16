@@ -1,7 +1,7 @@
 'use server';
 import { userExists } from '@/app/components/functions/checkingUsers';
 import { createUser } from '@/app/lib/createUser';
-import { clientSchema } from '@/app/validation/client';
+import { clientSchema } from '@/validation/client';
 import { signIn } from '@/auth';
 import { Role } from '@prisma/client';
 import { create } from 'domain';

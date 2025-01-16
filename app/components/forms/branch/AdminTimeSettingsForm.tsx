@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { initialDays } from '@/app/lib/lists';
-import { operatingHoursSchema } from '@/app/validation/branch';
+import { operatingHoursSchema } from '@/validation/branch';
 
 const AdminTimeSettingsForm = ({ onNext, onPrevious }: any) => {
   const [days, setDays] = useState(initialDays);
