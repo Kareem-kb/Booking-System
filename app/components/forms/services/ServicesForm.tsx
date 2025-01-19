@@ -74,11 +74,6 @@ export default function AddServiceForm() {
     <form action={handleFormSubmit}>
       <div className="flex flex-col gap-y-6">
         <div>
-          {/* {state && (
-            <p className="mt-2 text-sm text-red-600">
-              {state.errors?.title_en?.[0]}
-            </p>
-          )} */}
           <h2 className="text-base/7 font-semibold text-gray-900">
             Add Service
           </h2>

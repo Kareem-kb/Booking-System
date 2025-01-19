@@ -72,3 +72,44 @@ export async function createService(formData: CreateServiceForm) {
     throw error; // Rethrow the error for the caller to handle
   }
 }
+
+export const getServicesByBranchID = async (
+  locale: string,
+  branchID: string
+) => {
+  try {
+    const services = await prisma.service.findMany({
+      where: { branchId: branchID },
+      include: {
+        translations: true, // Include translations for each service
+      },
+    });
+
+    // Map services to include only the relevant translation based on the locale
+    const servicesWithLocale = services.map((service) => {
+      const translation =
+        service.translations.find(
+          (translation) => translation.language === locale
+        ) ||
+        service.translations.find(
+          (translation) => translation.language === 'en'
+        );
+      return {
+        id: service.id,
+        title: translation ? translation.title : 'No translation available',
+        description: translation
+          ? translation.description
+          : 'No translation available',
+        price: service.price,
+        duration: service.duration,
+        availability: service.availability,
+        images: service.images,
+      };
+    });
+
+    return servicesWithLocale;
+  } catch (error) {
+    console.error('Error fetching services:', error); // Log any errors
+    throw new Error('Failed to fetch services.');
+  }
+};

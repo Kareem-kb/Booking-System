@@ -1,4 +1,4 @@
-import AddServiceForm from '@/app/components/forms/ServicesForm';
+import AddServiceForm from '@/app/components/forms/services/ServicesForm';
 
 export default function addService() {
   return (
