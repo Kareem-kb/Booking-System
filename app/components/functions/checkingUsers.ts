@@ -1,12 +1,7 @@
-import { AppDataSource } from '@/app/lib/db';
+import prisma from '@/prisma';
 
 export async function userExists(email: string): Promise<boolean> {
-  if (!AppDataSource.isInitialized) {
-    await AppDataSource.initialize();
-  }
-  const rows = await AppDataSource.query(
-    'SELECT * FROM users WHERE email = $1',
-    [email]
-  );
-  return rows.length > 0;
+  const user = await prisma.user.findFirst({ where: { email: email } });
+
+  return user !== null;
 }

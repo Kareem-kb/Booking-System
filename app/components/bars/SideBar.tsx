@@ -1,189 +1,168 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  TransitionChild,
-} from '@headlessui/react';
+import LanguageChanger from '@/app/components/inputs/LanguageChanger';
+import { Link, usePathname } from '@/navigation';
+import { useTranslations } from 'next-intl';
 import {
   Bars3Icon,
   CalendarIcon,
-  ChartPieIcon,
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
-  UserIcon,
+  UserGroupIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
-  { name: 'Dashboard', href: 'dashbord', icon: HomeIcon, current: true },
-  { name: 'Products', href: 'products', icon: FolderIcon, current: false },
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
   {
-    name: 'Business ',
-    href: 'businesssettings',
+    name: 'Branches',
+    href: '/business-settings',
     icon: CalendarIcon,
     current: false,
   },
+  { name: 'Services', href: '/add-service', icon: FolderIcon, current: false },
   {
-    name: 'Account ',
-    href: 'accountsettings',
-    icon: UserIcon,
+    name: 'Staff ',
+    href: '/add-staff',
+    icon: UserGroupIcon,
     current: false,
   },
   {
     name: 'Sales',
-    href: 'sales',
+    href: '/sales',
     icon: DocumentDuplicateIcon,
     current: false,
   },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
 ];
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function Example() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const pathname = usePathname();
+export default function sideBar() {
+  const t = useTranslations('NavBar');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Close menu when clicking on the overlay:
+  const handleOverlayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Ensure the click is on the overlay, not on the menu itself
+    if (e.target && (e.target as HTMLElement).id === 'overlay') {
+      setMobileMenuOpen(false);
+    }
+  };
   return (
     <>
-      <div>
-        <Dialog
-          open={sidebarOpen}
-          onClose={setSidebarOpen}
-          className="relative z-50 lg:hidden"
-        >
-          <DialogBackdrop
-            transition
-            className="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-[closed]:opacity-0"
-          />
-
-          <div className="fixed inset-0 flex">
-            <DialogPanel
-              transition
-              className="relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-[closed]:-translate-x-full"
-            >
-              <TransitionChild>
-                <div className="absolute left-full top-0 flex w-16 justify-center pt-5 duration-300 ease-in-out data-[closed]:opacity-0">
-                  <button
-                    type="button"
-                    onClick={() => setSidebarOpen(false)}
-                    className="-m-2.5 p-2.5"
+      {/* Static sidebar for desktop */}
+      <div className="hidden md:flex md:w-full">
+        <aside className="flex grow flex-col gap-y-5 overflow-y-auto px-6 md:h-screen">
+          <div className="flex h-16 shrink-0 items-center">
+            <img
+              alt="Your Company"
+              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+              className="h-8 w-auto"
+            />
+          </div>
+          <div className="flex flex-1 flex-col">
+            <ul role="list" className="-mx-2 space-y-1">
+              {navigation.map((item) => (
+                <li key={item.name}>
+                  <a
+                    href={item.href}
+                    className={classNames(
+                      item.current
+                        ? 'bg-gray-500 text-white'
+                        : 'text-gray-700 hover:bg-gray-500 hover:text-white',
+                      'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold'
+                    )}
                   >
-                    <span className="sr-only">Close sidebar</span>
-                    <XMarkIcon
+                    <item.icon
                       aria-hidden="true"
-                      className="size-6 text-white"
+                      className={classNames(
+                        item.current
+                          ? 'text-white'
+                          : 'text-black group-hover:text-white',
+                        'size-6 shrink-0'
+                      )}
                     />
-                  </button>
-                </div>
-              </TransitionChild>
-              {/* Sidebar component, swap this element with another sidebar if you like */}
-              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
-                <div className="flex h-16 shrink-0 items-center">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-                    className="h-8 w-auto"
-                  />
-                </div>
-                <nav className="flex flex-1 flex-col">
-                  <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                    <li>
-                      <ul role="list" className="-mx-2 space-y-1">
-                        {navigation.map((item) => (
-                          <li key={item.name}>
-                            <a
-                              href={item.href}
-                              className={classNames(
-                                item.current
-                                  ? 'bg-gray-50 text-indigo-600'
-                                  : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-                                'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold'
-                              )}
-                            >
-                              <item.icon
-                                aria-hidden="true"
-                                className={classNames(
-                                  item.current
-                                    ? 'text-indigo-600'
-                                    : 'text-gray-400 group-hover:text-indigo-600',
-                                  'size-6 shrink-0'
-                                )}
-                              />
-                              {item.name}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </DialogPanel>
-          </div>
-        </Dialog>
-        {/* Static sidebar for desktop */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-            <div className="flex h-16 shrink-0 items-center">
-              <img
-                alt="Your Company"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-                className="h-8 w-auto"
-              />
-            </div>
-            <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                <li>
-                  <ul role="list" className="-mx-2 space-y-1">
-                    {navigation.map((item) => (
-                      <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? 'bg-gray-50 text-indigo-600'
-                              : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
-                            'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold'
-                          )}
-                        >
-                          <item.icon
-                            aria-hidden="true"
-                            className={classNames(
-                              item.current
-                                ? 'text-indigo-600'
-                                : 'text-gray-400 group-hover:text-indigo-600',
-                              'size-6 shrink-0'
-                            )}
-                          />
-                          {item.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
+                    {item.name}
+                  </a>
                 </li>
-              </ul>
-            </nav>
+              ))}
+            </ul>
           </div>
-        </div>
-        <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm sm:px-6 lg:hidden">
+        </aside>
+      </div>
+      {/* here mobile  */}
+      <div className="fixed left-0 right-0 top-0 z-50 mx-auto flex max-w-7xl justify-between px-4 py-1 md:hidden">
+        <a href="#" className="-m-1.5 p-1.5">
+          <span className="sr-only">Your Company</span>
+          <img
+            alt=""
+            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+            className="h-8 w-auto"
+          />
+        </a>
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen(true)}
+          className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+        >
+          <span className="sr-only">Open main menu</span>
+          <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+        </button>
+      </div>
+      <button
+        id="overlay"
+        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-300 ${
+          mobileMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={handleOverlayClick}
+      />
+
+      {/* Mobile Menu (Side Panel) */}
+      <div
+        className={`fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white px-6 py-6 transition-transform duration-300 lg:hidden ${
+          mobileMenuOpen ? 'translate-x-0 ease-out' : 'translate-x-full ease-in'
+        } sm:ring-1 sm:ring-gray-900/10`}
+      >
+        {/* Header row inside panel */}
+        <div className="flex flex-row-reverse items-center justify-between">
           <button
             type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+            className="-m-2.5 rounded-md p-2.5 text-gray-700"
           >
-            <span className="sr-only">Open sidebar</span>
-            <Bars3Icon aria-hidden="true" className="size-6" />
+            <span className="sr-only">Close menu</span>
+            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
           </button>
-          <div className="flex-1 text-sm/6 font-semibold text-gray-900">
-            Dashboard
+        </div>
+
+        {/* Nav Links in the mobile panel */}
+        <div className="mt-6 flow-root">
+          <div className="-my-6 divide-y divide-gray-500/10">
+            <div className="space-y-2 py-6">
+              {navigation.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                >
+                  {item.name}
+                </a>
+              ))}
+            </div>
+            <div className="py-6">
+              <div>
+                <Link
+                  href="/login"
+                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900"
+                >
+                  Log in
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -10,8 +10,7 @@ B) PWA
  --quality 100
 }
 
-C) Partner
-1- create the navBar.
-2- create the product page adding.
-2- create the data schema for it.
-3- creat the product details page.
+C) to update prisma schema
+1- npx prisma migrate dev --name init
+2- npx prisma migrate dev
+

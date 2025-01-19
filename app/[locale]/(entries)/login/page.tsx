@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Logo from '@/public/images/Facebook icon.svg';
 import { logInUser } from '@/app/actions/userActions';
-import LogInForm from '@/app/components/forms/login';
+import LogInForm from '@/app/components/forms/entry/loginForm';
 
 export default function logInPage() {
   return (

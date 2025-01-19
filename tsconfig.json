@@ -43,5 +43,5 @@
     ".next/types/**/*.ts",
     "i18nConfig.ts",
     "next.config.ts"
-  ]
+, "app/lib/db.ts"  ]
 }
