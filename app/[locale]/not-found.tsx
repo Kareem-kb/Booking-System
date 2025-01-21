@@ -1,45 +1,56 @@
-export default function NotFound() {
+// app/[locale]/not-found.tsx
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Link } from '@/navigation';
+
+export default function LocalizedNotFound() {
+  const t = useTranslations('Not-Found');
+
   return (
-    <>
-      <div className="relative isolate min-h-full">
+    <div className="relative isolate min-h-full">
+      <div className="absolute inset-0 -z-10">
         <svg
           aria-hidden="true"
-          className="absolute inset-0 -z-10 size-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)] "
+          className="size-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
         >
           <defs>
             <pattern
-              x="0"
-              y={-1}
-              id="0787a7c5-978c-4f66-83c7-11c213f99cb7"
+              id="not-found-pattern"
               width={200}
               height={200}
+              x="0"
+              y={-1}
               patternUnits="userSpaceOnUse"
             >
               <path d="M.5 200V.5H200" fill="none" stroke="gray" />
             </pattern>
           </defs>
           <rect
-            fill="url(#0787a7c5-978c-4f66-83c7-11c213f99cb7)"
             width="100%"
             height="100%"
             strokeWidth={0}
+            fill="url(#not-found-pattern)"
           />
         </svg>
-        <div className="mx-auto max-w-7xl px-6 py-32 text-center sm:py-40 lg:px-8">
-          <p className="text-base/8 font-semibold text-gray-400">404</p>
-          <h1 className="mt-4 text-balance text-5xl font-semibold tracking-tight text-black sm:text-7xl">
-            Page not found
+      </div>
+      <div className="flex min-h-screen items-center justify-center px-6">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-gray-600">{t('header')}</p>
+          <h1 className="mt-4 text-3xl font-semibold text-primary sm:text-5xl md:text-7xl">
+            {t('title')}
           </h1>
-          <p className="mt-6 text-pretty text-lg font-medium text-gray-400/70 sm:text-xl/8">
-            Sorry, we couldn’t find the page you’re looking for.
+          <p className="mt-6 text-base text-gray-600/70 sm:text-lg md:text-xl">
+            {t('description')}
           </p>
-          <div className="mt-10 flex justify-center">
-            <a href="#" className="text-sm/7 font-semibold text-black">
-              <span aria-hidden="true">&larr;</span> Back to home
-            </a>
-          </div>
+          <Link
+            href="/"
+            className="mt-8 inline-block font-semibold text-black/60 transition-all duration-300 hover:scale-105 hover:text-primary"
+          >
+            ← {t('button')}
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }

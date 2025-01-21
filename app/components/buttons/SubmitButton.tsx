@@ -1,48 +1,35 @@
-import { Link } from '@/navigation';
-
 interface ButtonProps {
-  type: 'submit' | 'button';
-  isSubmitting: 'notSubmitted' | 'pending' | 'done' | 'register';
-  text1: string;
-  text2: string;
-  text3: string;
-  linkTo: string;
-  classname: string;
+  text: string;
+  classname?: string;
+  isPending: boolean;
 }
 
 export default function SubmitButton({
-  type,
-  isSubmitting,
-  text1,
-  text2,
-  text3,
-  linkTo,
+  text,
   classname,
+  isPending,
 }: ButtonProps) {
   return (
     <button
-      type={type}
-      className={`${classname} flex h-10 w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-1 py-2 text-sm font-medium text-white shadow-sm transition-all duration-500 ease-in`}
+      type="submit"
+      disabled={isPending}
+      className={`btn-primary w-full ${classname}`}
+      aria-label={isPending ? 'Registring' : text}
     >
-      <span className="relative flex h-full w-full items-center justify-center transition-all duration-300 hover:scale-125">
+      <div className="relative h-6 w-full">
         <span
-          className={`absolute inline-block transition-all duration-500 ${
-            isSubmitting === 'notSubmitted'
-              ? 'translate-y-0 opacity-100'
-              : '-translate-y-full opacity-0'
+          className={`absolute left-1/2 -translate-x-1/2 transition-all duration-500 ${
+            isPending ? '-translate-y-8 opacity-0' : 'translate-y-0 opacity-100'
           }`}
         >
-          {text1}
+          {text}
         </span>
         <span
-          className={`absolute inline-block transition-all duration-500 ${
-            isSubmitting === 'pending'
-              ? 'translate-y-0 opacity-100'
-              : 'translate-y-full opacity-0'
+          className={`absolute left-1/2 -translate-x-1/2 transition-all duration-500 ${
+            isPending ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 100 100"
             preserveAspectRatio="xMidYMid"
             width="25"
@@ -51,11 +38,13 @@ export default function SubmitButton({
               shapeRendering: 'auto',
               display: 'block',
             }}
-            xmlnsXlink="http://www.w3.org/1999/xlink"
           >
             <g>
               <path
-                style={{ transform: 'scale(1)', transformOrigin: '50px 50px' }}
+                style={{
+                  transform: 'scale(1)',
+                  transformOrigin: '50px 50px',
+                }}
                 strokeLinecap="round"
                 d="M24.3 30C11.4 30 5 43.3 5 50s6.4 20 19.3 20c19.3 0 32.1-40 51.4-40 C88.6 30 95 43.3 95 50s-6.4 20-19.3 20C56.4 70 43.6 30 24.3 30z"
                 strokeDasharray="25.658892822265624 25.658892822265624"
@@ -74,26 +63,7 @@ export default function SubmitButton({
             </g>
           </svg>
         </span>
-        <span
-          className={`absolute inline-block transition-all duration-500 ${
-            isSubmitting === 'done'
-              ? 'translate-y-0 opacity-100'
-              : 'translate-y-full opacity-0'
-          }`}
-        >
-          {text2}
-        </span>
-        <Link
-          href={linkTo}
-          className={`absolute inline-block transition-all duration-500 ${
-            isSubmitting === 'register'
-              ? 'translate-y-0 opacity-100'
-              : 'translate-y-full opacity-0'
-          }`}
-        >
-          {text3}
-        </Link>
-      </span>
+      </div>
     </button>
   );
 }

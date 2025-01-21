@@ -63,15 +63,43 @@
     "NavList": "Cakes",
     "NavSign": "Sign in"
   },
+  "Not-Found": {
+    "header": "404",
+    "title": "Page not found",
+    "description": "Sorry, we couldn't find the page you're looking for.",
+    "button": "Go back to home"
+  },
   "Register": {
     "title": "Register a new account",
-    "firstName": "First name",
-    "lastName": "Last name",
+    "name": "Name",
     "email": "Email",
-    "password": "password",
-    "content2": "Already have an account?",
-    "content3": "Register",
-    "content4": "Or continue with"
+    "link": "Have an account ?",
+    "button": "Register",
+    "content1": "Or continue with",
+    "name_error": "Name is required"
   },
-  "Signin": {}
+  "Signin": {
+    "title": "Sign in to your account",
+    "email": "Email",
+    "link": "Don't have an account?",
+    "button": "Login",
+    "roleError": {
+      "required": "Role is required",
+      "invalid": "Invalid role type"
+    },
+    "nameError": {
+      "required": "Name is required",
+      "invalid": "Name must be a string",
+      "tooShort": "Name must be at least 2 characters",
+      "tooLong": "Name cannot exceed 50 characters",
+      "format": "Name can only contain letters and spaces"
+    },
+    "emailErorr": {
+      "required": "Email is required",
+      "invalid": "Invalid email format",
+      "format": "Please enter a valid email address",
+      "tooShort": "Email is too short",
+      "tooLong": "Email cannot exceed 255 characters"
+    }
+  }
 }

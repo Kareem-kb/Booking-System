@@ -1,85 +1,168 @@
+// actions/userActions.ts
 'use server';
+
 import { userExists } from '@/app/components/functions/checkingUsers';
 import { createUser } from '@/app/lib/createUser';
-import { clientSchema } from '@/validation/client';
+import { clientSchema, loginFormSchema } from '@/validation/client';
 import { signIn } from '@/auth';
 import { Role } from '@prisma/client';
-import { create } from 'domain';
-interface createUserForm {
-  role: Role;
-  name: string;
-  email: string;
-}
-interface createUserStates {
+
+interface CreateUserStates {
   success?: string;
+  generalError?: string;
   errors?: {
-    name?: string[];
-    email?: string[];
-    role?: string[];
+    name?: string;
+    email?: string;
+  };
+}
+
+export interface LoginUserStates {
+  success?: boolean;
+  message?: string;
+  generalError?: string;
+  errors?: {
+    email?: string;
   };
 }
 
 export async function createUserAction(
-  prevState: createUserStates | null,
+  prevState: CreateUserStates | null,
   formData: FormData
-): Promise<createUserStates> {
+): Promise<CreateUserStates> {
   try {
-    // Extract form data
-    const role = formData.get('role') as Role;
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
+    const data = {
+      role: formData.get('role') as Role,
+      name: formData.get('name') as string,
+      email: formData.get('email') as string,
+    };
+    data;
+    console.log('data', data);
+    const validationResult = await clientSchema.safeParseAsync(data);
 
-    // Validate form data using Zod
-    const result = await clientSchema.safeParseAsync({ role, name, email });
-    if (!result.success) {
-      const flattenedErrors = result.error.flatten();
-      return { errors: flattenedErrors.fieldErrors };
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.flatten().fieldErrors;
+      return {
+        errors: {
+          name: fieldErrors.name?.[0],
+          email: fieldErrors.email?.[0],
+        },
+      };
+    }
+    const existingUser = await userExists(data.email);
+    if (existingUser) {
+      return {
+        generalError: 'This email is already registered',
+      };
     }
 
-    // Check if user already exists
-    const userExist = await userExists(email);
-    if (userExist) {
-      return { errors: { email: ['User already exists'] } };
+    const createUserResult = await createUser(data.name, data.email, data.role);
+
+    if (createUserResult.error) {
+      return {
+        generalError: createUserResult.error.message,
+      };
     }
 
-    // Create the user
-    await createUser(name, email, role);
-    return { success: 'User created successfully' };
+    if (createUserResult.success && createUserResult.email) {
+      // Send login email
+      // Create a new FormData instance
+      const formData = new FormData();
+      formData.append('email', createUserResult.email);
+      const loginResult = await logInUserAction(null, formData);
+
+      if (loginResult.success) {
+        return {
+          success:
+            'Account created successfully. Please check your email for login instructions.',
+        };
+      } else {
+        return {
+          generalError:
+            'Account created but failed to send login email. Please try logging in.',
+        };
+      }
+    }
+
+    return {
+      generalError: 'Failed to create account. Please try again.',
+    };
   } catch (error) {
-    return { errors: { email: ['Something went wrong. Please try again.'] } };
+    console.error('Registration error:', error);
+    return {
+      generalError: 'Unable to create account. Please try again later.',
+    };
   }
 }
 
-export async function logInUser({
-  email,
-}: {
-  email: string;
-}): Promise<{ success: boolean; message: string; error?: string }> {
+export async function logInUserAction(
+  prevState: LoginUserStates | null,
+  formData: FormData
+): Promise<LoginUserStates> {
   try {
+    console.log('email', formData);
+    const email = formData.get('email') as string;
+    const validationResult = await loginFormSchema.safeParseAsync({ email });
+
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.flatten().fieldErrors;
+      return {
+        errors: {
+          email: fieldErrors.email?.[0],
+        },
+      };
+    }
+    // Check if user exists
     const exists = await userExists(email);
     if (!exists) {
-      return { success: false, message: 'User not found in the database.' };
-    }
-
-    const result = await signIn('resend', { email, redirect: false });
-    if (result) {
-      return {
-        success: true,
-        message: 'Sign-in link sent. Please check your email.',
-      };
-    } else {
-      console.error('Resend error:', result?.error);
       return {
         success: false,
-        message: 'Failed to send sign-in link. Please try again.',
-        error: result?.error,
+        generalError: 'No account found with this email',
       };
     }
+
+    // Attempt to send login email
+    const signInResult = await signIn('resend', {
+      email: email.toLowerCase().trim(),
+      redirect: false,
+    });
+
+    if (!signInResult?.error) {
+      return {
+        success: true,
+        message: 'Check your email for the login link',
+      };
+    }
+
+    // Handle specific sign-in errors
+    switch (signInResult.error) {
+      case 'EmailSendError':
+        return {
+          success: false,
+          generalError: 'Failed to send login email. Please try again.',
+        };
+      case 'RateLimitError':
+        return {
+          success: false,
+          generalError: 'Too many attempts. Please try again later.',
+        };
+      default:
+        throw new Error(signInResult.error);
+    }
   } catch (error) {
-    console.error('Sign-in error:', error);
+    // Log the error for debugging
+    console.error('Login error:', error);
+
+    // Return user-friendly error message
+    if (error instanceof Error) {
+      return {
+        success: false,
+        generalError: 'Authentication failed. Please try again.',
+      };
+    }
+
     return {
       success: false,
-      message: 'Unexpected error. Please try again later.',
+      generalError: 'An unexpected error occurred. Please try again later.',
     };
   }
 }

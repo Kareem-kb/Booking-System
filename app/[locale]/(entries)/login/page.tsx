@@ -1,6 +1,3 @@
-import Image from 'next/image';
-import Logo from '@/public/images/Facebook icon.svg';
-import { logInUser } from '@/app/actions/userActions';
 import LogInForm from '@/app/components/forms/entry/loginForm';
 
 export default function logInPage() {
@@ -30,19 +27,13 @@ export default function logInPage() {
             strokeWidth={0}
           />
         </svg>
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <Image
-            alt="Your Company"
-            src={Logo}
-            className="mx-auto h-10 w-auto"
-            width={35}
-            height={35}
-            priority
-          />
-        </div>
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="relative bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <LogInForm />
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="w-full max-w-[480px] p-6">
+            <div className="relative bg-black/5 px-6 py-12 backdrop-blur-lg sm:rounded-lg sm:px-12">
+              <div className="relative z-10">
+                <LogInForm />
+              </div>
+            </div>{' '}
           </div>
         </div>
       </div>
