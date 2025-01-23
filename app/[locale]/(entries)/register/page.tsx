@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import Logo from '@/public/images/Facebook icon.svg';
 import RegisterForm from '@/app/components/forms/entry/registerForm';
 import GoogleButton from '@/app/components/buttons/GoogleButton';
 import { auth } from '@/auth';

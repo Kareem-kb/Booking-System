@@ -31,7 +31,6 @@ export async function createStaffAction(formData: FormData) {
     });
 
     if (!result.success) {
-      console.log(result.error?.flatten().fieldErrors);
       return { errors: result.error.flatten().fieldErrors };
     }
 

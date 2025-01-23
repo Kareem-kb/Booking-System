@@ -1,16 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createBranchAction } from '@/app/actions/branchActions';
 import BasicInfoForm from './BasicInfoForm';
 import AdminTimeSettingsForm from './AdminTimeSettingsForm';
 import SpecialDaysForm from './SpecialDaysForm';
+import { toast } from 'sonner';
+import { useRouter } from '@/navigation';
+import { usePathname as realpath } from 'next/navigation';
+
+interface CreateBranchForm {
+  name: string;
+  contactEmail?: string;
+  phoneNumber?: string;
+  address: string;
+  website?: string;
+}
+
+interface OperatingHour {
+  name: string;
+  dayOfWeek: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+}
+
+interface SpecialClosure {
+  date: Date;
+  closeReason?: string | null;
+}
 
 export default function MultiStepForm() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    basicInfo: Partial<CreateBranchForm>;
+    operatingHours: OperatingHour[];
+    specialClosures: SpecialClosure[];
+  }>({
     basicInfo: {},
-    operatingHours: {},
+    operatingHours: [],
     specialClosures: [],
   });
 
@@ -18,43 +47,21 @@ export default function MultiStepForm() {
     setFormData((prev) => ({ ...prev, ...data }));
     setStep((prev) => prev + 1);
   };
-  useEffect(() => {
-    // console.log('Form Data basicInfo:', formData.basicInfo);
-    // console.log('Form Data operationHours:', formData.operatingHours);
-    // console.log('Form Data specialClosures:', formData.specialClosures);
-  }, [formData]);
 
   const handlePrevious = () => {
     setStep((prev) => prev - 1);
   };
 
-  const handleSubmit = (finalData: any) => {
+  const handleSubmit = async (finalData: any) => {
     const allData = { ...formData, ...finalData };
-
-    // Convert allData to FormData
-    const formDataObj = new FormData();
-    for (const key in allData) {
-      if (Array.isArray(allData[key])) {
-        // Handle arrays (e.g., operatingHours, specialClosures)
-        allData[key].forEach((item, index) => {
-          for (const subKey in item) {
-            formDataObj.append(`${key}[${index}][${subKey}]`, item[subKey]);
-          }
-        });
-      } else if (typeof allData[key] === 'object') {
-        // Handle nested objects (e.g., basicInfo)
-        for (const subKey in allData[key]) {
-          formDataObj.append(`${key}[${subKey}]`, allData[key][subKey]);
-        }
-      } else {
-        // Handle primitive values
-        formDataObj.append(key, allData[key]);
-      }
-    }
-
     // Pass FormData to createBranchAction
-    createBranchAction(formDataObj);
-    console.log('All Data:', allData);
+    const result = await createBranchAction(allData);
+    if (result.success) {
+      toast.success(result.success);
+      router.push('/dashboard');
+    } else if (result.error) {
+      toast.error(result.error.message);
+    }
   };
 
   return (

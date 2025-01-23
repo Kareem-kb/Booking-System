@@ -36,7 +36,6 @@ export async function createUserAction(
       email: formData.get('email') as string,
     };
     data;
-    console.log('data', data);
     const validationResult = await clientSchema.safeParseAsync(data);
 
     if (!validationResult.success) {

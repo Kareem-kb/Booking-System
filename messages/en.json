@@ -1,59 +1,4 @@
 {
-  "HomePage": {
-    "hero": {
-      "title": "A better way to ship your projects",
-      "description": "Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat fugiat aliqua. Anim aute id magna aliqua ad ad non deserunt sunt.",
-      "buttons": {
-        "getStarted": "Get started",
-        "learnMore": "Learn more"
-      }
-    },
-    "features": {
-      "sectionTitle": "Deploy faster",
-      "title": "Everything you need to deploy your app",
-      "description": "Quis tellus eget adipiscing convallis sit sit eget aliquet quis.... Suspendisse eget egestas a elementum pulvinar et feugiat blandit at. In mi viverra elit nunc.",
-      "items": [
-        {
-          "name": "Server monitoring",
-          "description": "Non quo aperiam repellendus quas est est. Eos aut dolore aut ut sit nesciunt. Ex tempora quia. Sit nobis consequatur dolores incidunt.",
-          "learnMore": "Learn more"
-        },
-        {
-          "name": "Collaborate",
-          "description": "Vero eum voluptatem aliquid nostrum voluptatem. Vitae esse natus. Earum nihil deserunt eos quasi cupiditate. A inventore et molestiae natus.",
-          "learnMore": "Learn more"
-        },
-        {
-          "name": "Task scheduling",
-          "description": "Et quod quaerat dolorem quaerat architecto aliquam accusantium. Ex adipisci et doloremque autem quia quam. Quis eos molestiae at iure impedit.",
-          "learnMore": "Learn more"
-        }
-      ]
-    },
-    "stats": {
-      "sectionTitle": "Our track record",
-      "title": "Trusted by thousands of creators worldwide",
-      "description": "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque, iste dolor cupiditate blanditiis.",
-      "items": [
-        {
-          "name": "Developers on the platform",
-          "value": "8,000+"
-        },
-        {
-          "name": "Daily requests",
-          "value": "900m+"
-        },
-        {
-          "name": "Uptime guarantee",
-          "value": "99.9%"
-        },
-        {
-          "name": "Projects deployed",
-          "value": "12m"
-        }
-      ]
-    }
-  },
   "LanguageChanger": {
     "language": "en"
   },
@@ -68,6 +13,49 @@
     "title": "Page not found",
     "description": "Sorry, we couldn't find the page you're looking for.",
     "button": "Go back to home"
+  },
+  "Partner": {
+    "branchInfo": {
+      "title": "Branch information",
+      "branchNameEn": "Branch Name (English)",
+      "branchNameAr": "Branch Name (Arabic)",
+      "branchAddressEn": "Branch Address (English)",
+      "branchAddressAr": "Branch Address (Arabic)",
+      "branchPhone": "Phone number",
+      "branchEmail": "Email address",
+      "branchWebsite": "Website",
+      "button1": "Next"
+    },
+    "operatingHours": {
+      "title": "Operating hours",
+      "content1": "Closed",
+      "content2": "Opening Time",
+      "content3": "Closing Time",
+      "button1": "Next",
+      "button2": "Previous",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "specialDays": {
+      "title": "Special closures",
+      "content1": "Closure Date",
+      "content2": "Reason for Closure",
+      "button1": "Add closure",
+      "button2": "Previous",
+      "button3": "Create branch"
+    }
+  },
+  "PartnerBar": {
+    "content1": "Dashboard",
+    "content2": "Branches",
+    "content3": "Services",
+    "content4": "Staff",
+    "content5": "Sales"
   },
   "Register": {
     "title": "Register a new account",
@@ -94,7 +82,7 @@
       "tooLong": "Name cannot exceed 50 characters",
       "format": "Name can only contain letters and spaces"
     },
-    "emailErorr": {
+    "emailError": {
       "required": "Email is required",
       "invalid": "Invalid email format",
       "format": "Please enter a valid email address",

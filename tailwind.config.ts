@@ -60,9 +60,9 @@ const config: Config = {
           fontSize: '1.875rem',
           fontWeight: '700',
           lineHeight: '2.25rem',
-          color: '#D1D0D0',
+          color: '#000000',
           '@screen sm': {
-            fontSize: '2.25rem',
+            fontSize: '1.8rem',
             lineHeight: '2.5rem',
           },
         },
@@ -111,6 +111,7 @@ const config: Config = {
           borderColor: '#988686',
           borderRadius: '0.375rem',
           padding: '0.2rem',
+          borderWidth: '1px',
           fontSize: '0.875rem',
           color: '#000000',
           transition: 'all 0.2s ease-in-out',
@@ -160,7 +161,7 @@ const config: Config = {
         '.btn-secondary': {
           width: '100%',
           backgroundColor: '#D1D0D0',
-          color: '#000000',
+          color: '#5C4E4E',
           padding: '0.75rem 1rem',
           borderRadius: '0.375rem',
           fontWeight: '500',

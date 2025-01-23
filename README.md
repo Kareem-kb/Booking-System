@@ -11,7 +11,7 @@ B) PWA
 }
 
 C) to update prisma schema
-1- npx prisma migrate dev --name init
+1- npx prisma migrate dev --name "here the name"
 2- npx prisma migrate dev
 
 

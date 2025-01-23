@@ -1,11 +1,12 @@
 'use client';
 
+import { useState, useRef, ChangeEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import DropDown from '@/app/components/inputs/dropDown';
 import InputField from '@/app/components/inputs/inputfield';
-import { createServicesAction } from '@/app/actions/serviceActions';
 import BranchSelector from '@/app/components/inputs/branchSelector';
+import { createServicesAction } from '@/app/actions/serviceActions';
 import { uploadImage } from '@/supabase/storage/client';
-import { ChangeEvent, useRef, useState } from 'react';
 import { convertBlobUrlToFile } from '@/app/lib/utils';
 
 const Times = [
@@ -15,7 +16,8 @@ const Times = [
 ];
 
 export default function AddServiceForm() {
-  // const [state, formAction, isPendding] = useActionState(createServicesAction, null);
+  const t = useTranslations('Partner.addService');
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -28,177 +30,218 @@ export default function AddServiceForm() {
   };
 
   const handleFormSubmit = async (formData: FormData) => {
-    // Upload images and get URLs
-    const uploadedImageUrls = [];
-    for (const url of imageUrls) {
-      const imageFile = await convertBlobUrlToFile(url);
-      const { imageUrl, error } = await uploadImage({
-        file: imageFile,
-        bucket: 'Services-Images',
-      });
-      if (error) {
-        console.log(error);
-        return;
+    try {
+      // Upload images and get URLs
+      const uploadedImageUrls = [];
+      for (const url of imageUrls) {
+        const imageFile = await convertBlobUrlToFile(url);
+        const { imageUrl, error } = await uploadImage({
+          file: imageFile,
+          bucket: 'Services-Images',
+        });
+        if (error) throw error;
+        uploadedImageUrls.push(imageUrl);
       }
-      uploadedImageUrls.push(imageUrl);
-    }
-    // Attach image URLs to form data
-    formData.append('imageUrl', JSON.stringify(uploadedImageUrls));
-    // Remove the original `File` objects from the FormData
-    formData.delete('image');
 
-    // Append translations to the FormData
-    const translations = [
-      {
-        language: 'en',
-        title: formData.get('title_en') as string,
-        description: formData.get('description_en') as string,
-      },
-      {
-        language: 'ar',
-        title: formData.get('title_ar') as string,
-        description: formData.get('description_ar') as string,
-      },
-    ];
-    formData.append('translations', JSON.stringify(translations));
-    formData.delete('title_en');
-    formData.delete('title_ar');
-    formData.delete('description_en');
-    formData.delete('description_ar');
-    console.log(formData);
-    // Submit form data
-    createServicesAction(formData);
+      // Prepare form data
+      formData.append('imageUrl', JSON.stringify(uploadedImageUrls));
+      formData.delete('image');
+
+      const translations = [
+        {
+          language: 'en',
+          title: formData.get('title_en') as string,
+          description: formData.get('description_en') as string,
+        },
+        {
+          language: 'ar',
+          title: formData.get('title_ar') as string,
+          description: formData.get('description_ar') as string,
+        },
+      ];
+
+      formData.append('translations', JSON.stringify(translations));
+
+      // Clean up form data
+      ['title_en', 'title_ar', 'description_en', 'description_ar'].forEach(
+        (field) => formData.delete(field)
+      );
+
+      const result = await createServicesAction(formData);
+      if (result.error) {
+        setErrors(result.error ? { form: [result.error] } : {});
+      } else {
+        setErrors({});
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setErrors({ form: ['Failed to submit form'] });
+    }
   };
 
   return (
-    <form action={handleFormSubmit}>
-      <div className="flex flex-col gap-y-6">
+    <form action={handleFormSubmit} className="space-y-6">
+      <h1 className="h1">{t('title')}</h1>
+
+      {/* Branch and Basic Info */}
+      <div className="space-y-4">
         <div>
-          <h2 className="text-base/7 font-semibold text-gray-900">
-            Add Service
-          </h2>
-          <p className="text-sm/6 text-gray-600">
-            This information will be displayed publicly, so be careful what you
-            share.
-          </p>
+          <label className="block text-sm font-medium text-gray-900">
+            {t('selectBranch')}
+          </label>
+          <BranchSelector name="branch" />
         </div>
 
-        {/* Common Fields */}
-        <BranchSelector name="branch" />
-        <div className="mt-4 flex gap-x-4">
+        <div className="grid grid-cols-2 gap-4">
           <InputField
             name="price"
-            placeholder="Price"
             type="text"
-            label="Service Price"
+            label={t('price')}
+            placeholder=""
           />
-          <DropDown list={Times} label="Duration" name="duration" />
+          <DropDown list={Times} label={t('duration')} name="duration" />
         </div>
+      </div>
 
-        {/* Language-Specific Fields */}
-        <div>
-          <h3 className="mt-6 text-lg font-semibold">English (EN) Details</h3>
-          <div className="mt-4 flex gap-x-4">
-            <InputField
-              name="title_en"
-              placeholder="Title in English"
-              type="text"
-              label="Title (English)"
-            />
-          </div>
+      {/* English Content */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          {t('englishDetails')}
+        </h2>
+        <div className="space-y-4">
+          <InputField
+            name="title_en"
+            type="text"
+            label={t('titleEn')}
+            placeholder=""
+          />
           <div>
-            <label
-              htmlFor="description_en"
-              className="block text-sm/6 font-medium text-gray-900"
-            >
-              Description (English)
+            <label className="block text-sm font-medium text-gray-900">
+              {t('descriptionEn')}
             </label>
             <textarea
-              id="description_en"
               name="description_en"
-              rows={3}
-              className="w-full rounded-md border-2 border-gray-400 bg-inherit px-3 py-1.5 text-base text-gray-900 outline-none placeholder:text-gray-400 focus:border-dashed sm:text-sm/6"
+              rows={4}
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder={t('descriptionPlaceholder')}
             />
           </div>
         </div>
+      </div>
 
-        <div>
-          <h3 className="mt-6 text-lg font-semibold">Arabic (AR) Details</h3>
-          <div className="mt-4 flex gap-x-4">
-            <InputField
-              name="title_ar"
-              placeholder="Title in Arabic"
-              type="text"
-              label="Title (Arabic)"
-            />
-          </div>
+      {/* Arabic Content */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">
+          {t('arabicDetails')}
+        </h2>
+        <div className="space-y-4">
+          <InputField
+            placeholder=""
+            name="title_ar"
+            type="text"
+            label={t('titleAr')}
+          />
           <div>
-            <label
-              htmlFor="description_ar"
-              className="block text-sm/6 font-medium text-gray-900"
-            >
-              Description (Arabic)
+            <label className="block text-sm font-medium text-gray-900">
+              {t('descriptionAr')}
             </label>
             <textarea
-              id="description_ar"
               name="description_ar"
-              rows={3}
-              className="w-full rounded-md border-2 border-gray-400 bg-inherit px-3 py-1.5 text-base text-gray-900 outline-none placeholder:text-gray-400 focus:border-dashed sm:text-sm/6"
+              rows={4}
+              dir="rtl"
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              placeholder={t('descriptionPlaceholder')}
             />
           </div>
         </div>
-        {/* File Upload */}
-        <div>
-          <label
-            htmlFor="image"
-            className="mb-2 block text-sm font-medium text-gray-900"
-          >
-            Upload file
-          </label>
-          <input
-            name="image"
-            type="file"
-            multiple
-            ref={imageInputRef}
-            onChange={handleImageChange}
-            className="block w-full cursor-pointer rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none"
-          />
-          <p className="mt-1 text-sm text-gray-500">
-            SVG, PNG, JPG, or GIF (MAX. 800x400px).
-          </p>
-        </div>
-        <InputField
-          name="category"
-          placeholder="category"
-          type="text"
-          label="Service Category"
-        />
-        {/* Availability Toggle */}
-        <div>
-          <label className="inline-flex cursor-pointer items-center">
-            <input
-              type="checkbox"
-              name="availability"
-              className="peer sr-only"
-              defaultChecked={false}
-            />
-            <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
-            <span className="ms-3 text-sm font-medium text-gray-900">
-              Availability
-            </span>
-          </label>
-        </div>
+      </div>
 
-        {/* Submit Button */}
-        <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            // disabled={isPendding}
-            type="submit"
-            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Save
-          </button>
+      {/* Images and Category */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-900">
+              {t('images')}
+            </label>
+            <div className="mt-1 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+              <div className="text-center">
+                <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                  <label
+                    htmlFor="file-upload"
+                    className="relative cursor-pointer rounded-md bg-white font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary-dark"
+                  >
+                    <span>{t('uploadImages')}</span>
+                    <input
+                      id="file-upload"
+                      name="image"
+                      type="file"
+                      multiple
+                      className="sr-only"
+                      ref={imageInputRef}
+                      onChange={handleImageChange}
+                    />
+                  </label>
+                  <p className="pl-1">{t('orDragAndDrop')}</p>
+                </div>
+                <p className="text-xs leading-5 text-gray-600">
+                  {t('imageHint')}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              name="category"
+              type="text"
+              label={t('category')}
+              placeholder=""
+            />
+            <div className="flex items-end">
+              <label className="relative inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  name="availability"
+                  className="peer sr-only"
+                />
+                <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full" />
+                <span className="ml-3 text-sm font-medium text-gray-900">
+                  {t('availability')}
+                </span>
+              </label>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Error Display */}
+      {Object.keys(errors).length > 0 && (
+        <div className="rounded-md bg-red-50 p-4">
+          <div className="flex">
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-red-800">
+                {t('formErrors')}
+              </h3>
+              <div className="mt-2 text-sm text-red-700">
+                <ul className="list-disc space-y-1 pl-5">
+                  {Object.entries(errors).map(([field, messages]) => (
+                    <li key={field}>{messages[0]}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Submit Button */}
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          {t('submit')}
+        </button>
       </div>
     </form>
   );

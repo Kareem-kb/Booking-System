@@ -1,14 +1,12 @@
 model Branch {
   id          String                 @id @default(cuid())
-  name        String
   contactEmail String?
   phoneNumber String?
-  address     String
   website     String?
 
   // Relationship to the normal weekly operating hours
   operatingHours BranchOperatingHours[]
-  
+  translations  BranchTranslation[] // Translations for different languages
   // Relationship to special closures or holidays
   specialClosures BranchSpecialClosure[]
 
@@ -17,6 +15,19 @@ model Branch {
 
   staff       Staff[]
   services    Service[]
+}
+model BranchTranslation {
+  id          String   @id @default(cuid())
+  branchid   String
+  language    String   // 'en', 'ar', etc.
+  name       String
+  address    String
+  branch     Branch  @relation(fields: [branchid], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([branchid, language])
 }
 
 model BranchOperatingHours {
@@ -39,7 +50,7 @@ model BranchOperatingHours {
 model BranchSpecialClosure {
   id          String   @id @default(cuid())
   branchId    String
-  date        DateTime
+  date        DateTime?
   closeReason String?
 
   branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
@@ -49,6 +60,7 @@ model BranchSpecialClosure {
   
   @@unique([branchId, date])  // Ensures no duplicate closure date for the same branch
 }
+
 model Staff {
   id            String            @id @default(cuid())
   userId        String            @unique

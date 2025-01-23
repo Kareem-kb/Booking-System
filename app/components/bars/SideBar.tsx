@@ -6,163 +6,131 @@ import { Link, usePathname } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import {
   Bars3Icon,
+  XMarkIcon,
   CalendarIcon,
   DocumentDuplicateIcon,
   FolderIcon,
   HomeIcon,
   UserGroupIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon, current: true },
-  {
-    name: 'Branches',
-    href: '/business-settings',
-    icon: CalendarIcon,
-    current: false,
-  },
-  { name: 'Services', href: '/add-service', icon: FolderIcon, current: false },
-  {
-    name: 'Staff ',
-    href: '/add-staff',
-    icon: UserGroupIcon,
-    current: false,
-  },
-  {
-    name: 'Sales',
-    href: '/sales',
-    icon: DocumentDuplicateIcon,
-    current: false,
-  },
-];
-
-function classNames(...classes: any) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-export default function sideBar() {
-  const t = useTranslations('NavBar');
+export default function Sidebar() {
+  const pathname = usePathname();
+  const t = useTranslations('PartnerBar');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Close menu when clicking on the overlay:
-  const handleOverlayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Ensure the click is on the overlay, not on the menu itself
-    if (e.target && (e.target as HTMLElement).id === 'overlay') {
+  const navigation = [
+    { name: t('content1'), href: '/dashboard', icon: HomeIcon },
+    { name: t('content2'), href: '/business-settings', icon: CalendarIcon },
+    { name: t('content3'), href: '/add-service', icon: FolderIcon },
+    { name: t('content4'), href: '/add-staff', icon: UserGroupIcon },
+    { name: t('content5'), href: '/sales', icon: DocumentDuplicateIcon },
+  ];
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
       setMobileMenuOpen(false);
     }
   };
+
+  const NavLinks = ({ mobile = false }) => (
+    <ul role="list" className={mobile ? 'space-y-2' : '-mx-1'}>
+      {navigation.map((item) => (
+        <li key={item.name}>
+          <Link
+            href={item.href}
+            onClick={() => mobile && setMobileMenuOpen(false)}
+            className={classNames(
+              pathname === item.href
+                ? 'bg-primary-light text-primary-dark'
+                : 'font-normal text-gray-700 hover:bg-primary hover:text-black',
+              'group flex gap-x-2 rounded-md p-2 text-sm/6 font-semibold transition-all duration-200 ease-in-out',
+              mobile ? 'py-3 text-base' : ''
+            )}
+          >
+            <item.icon
+              aria-hidden="true"
+              className={classNames(
+                pathname === item.href
+                  ? 'stroke-2 text-primary-dark'
+                  : 'text-black hover:text-black',
+                'size-6 shrink-0 transition-colors duration-300'
+              )}
+            />
+            {item.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <>
-      {/* Static sidebar for desktop */}
+      {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-full">
         <aside className="flex grow flex-col gap-y-5 overflow-y-auto px-6 md:h-screen">
           <div className="flex h-16 shrink-0 items-center">
-            <img
-              alt="Your Company"
-              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-              className="h-8 w-auto"
-            />
+            <h1 className="mt-8 text-3xl font-bold text-primary">LOGO</h1>
           </div>
           <div className="flex flex-1 flex-col">
-            <ul role="list" className="-mx-2 space-y-1">
-              {navigation.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    className={classNames(
-                      item.current
-                        ? 'bg-gray-500 text-white'
-                        : 'text-gray-700 hover:bg-gray-500 hover:text-white',
-                      'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold'
-                    )}
-                  >
-                    <item.icon
-                      aria-hidden="true"
-                      className={classNames(
-                        item.current
-                          ? 'text-white'
-                          : 'text-black group-hover:text-white',
-                        'size-6 shrink-0'
-                      )}
-                    />
-                    {item.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <NavLinks />
+            <div className="mt-14 border-t border-solid border-gray-300 pl-2">
+              <LanguageChanger />
+            </div>
           </div>
         </aside>
       </div>
-      {/* here mobile  */}
-      <div className="fixed left-0 right-0 top-0 z-50 mx-auto flex max-w-7xl justify-between px-4 py-1 md:hidden">
-        <a href="#" className="-m-1.5 p-1.5">
-          <span className="sr-only">Your Company</span>
-          <img
-            alt=""
-            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-            className="h-8 w-auto"
-          />
-        </a>
+
+      {/* Mobile Header */}
+      <div className="fixed left-0 right-0 top-0 z-50 mx-auto flex max-w-7xl justify-between bg-white px-4 py-4 md:hidden">
+        <Link href="/" className="flex items-center">
+          <h1 className="text-xl font-bold text-primary">LOGO</h1>
+        </Link>
         <button
           type="button"
           onClick={() => setMobileMenuOpen(true)}
-          className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+          className="rounded-md p-2 text-gray-700 hover:bg-gray-100"
         >
-          <span className="sr-only">Open main menu</span>
+          <span className="sr-only">Open menu</span>
           <Bars3Icon className="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      <button
-        id="overlay"
-        className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-300 ${
-          mobileMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
-        }`}
-        onClick={handleOverlayClick}
-      />
 
-      {/* Mobile Menu (Side Panel) */}
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/30 transition-opacity md:hidden"
+          onClick={handleOverlayClick}
+        />
+      )}
+
+      {/* Mobile Menu Panel */}
       <div
-        className={`fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white px-6 py-6 transition-transform duration-300 lg:hidden ${
-          mobileMenuOpen ? 'translate-x-0 ease-out' : 'translate-x-full ease-in'
-        } sm:ring-1 sm:ring-gray-900/10`}
+        className={classNames(
+          'fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white px-6 py-6 transition-transform duration-300 md:hidden',
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        )}
       >
-        {/* Header row inside panel */}
-        <div className="flex flex-row-reverse items-center justify-between">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold text-primary">LOGO</h1>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(false)}
-            className="-m-2.5 rounded-md p-2.5 text-gray-700"
+            className="rounded-md p-2 text-gray-700 hover:bg-gray-100"
           >
             <span className="sr-only">Close menu</span>
             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
-        {/* Nav Links in the mobile panel */}
-        <div className="mt-6 flow-root">
-          <div className="-my-6 divide-y divide-gray-500/10">
-            <div className="space-y-2 py-6">
-              {navigation.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  {item.name}
-                </a>
-              ))}
-            </div>
-            <div className="py-6">
-              <div>
-                <Link
-                  href="/login"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900"
-                >
-                  Log in
-                </Link>
-              </div>
-            </div>
+        <div className="mt-6 flex flex-1 flex-col">
+          <NavLinks mobile />
+          <div className="mt-auto border-t border-gray-200 pt-4">
+            <LanguageChanger />
           </div>
         </div>
       </div>
