@@ -2,7 +2,7 @@
 import prisma from '@/prisma';
 
 interface CreateServiceForm {
-  branchId: string;
+  branchID: string;
   category: string;
   price: string;
   duration: string;
@@ -46,7 +46,7 @@ export async function createService(formData: CreateServiceForm) {
         availability,
         images: formData.imageUrls,
         branch: {
-          connect: { id: formData.branchId }, // Assuming branchId is available in formData
+          connect: { id: formData.branchID }, // Assuming branchId is available in formData
         },
         translations: {
           create: [

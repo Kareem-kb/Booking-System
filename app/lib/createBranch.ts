@@ -125,16 +125,15 @@ export async function createBranch(
   }
 }
 
-// export const getAllBranches = async () => {
-//   try {
-//     const branches = await prisma.branch.findMany({
-//       select: {
-//         id: true,
-//         name: true,
-//       },
-//     });
-//     return branches;
-//   } catch (error) {
-//     throw new Error('Failed to fetch branches.');
-//   }
-// };
+export const getAllBranches = async () => {
+  try {
+    const branches = await prisma.branch.findMany({
+      select: {
+        id: true,
+      },
+    });
+    return branches;
+  } catch (error) {
+    throw new Error('Failed to fetch branches.');
+  }
+};

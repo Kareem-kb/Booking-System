@@ -7,7 +7,6 @@ import AdminTimeSettingsForm from './AdminTimeSettingsForm';
 import SpecialDaysForm from './SpecialDaysForm';
 import { toast } from 'sonner';
 import { useRouter } from '@/navigation';
-import { usePathname as realpath } from 'next/navigation';
 
 interface CreateBranchForm {
   name: string;

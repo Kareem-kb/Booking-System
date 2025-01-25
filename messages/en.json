@@ -48,6 +48,28 @@
       "button1": "Add closure",
       "button2": "Previous",
       "button3": "Create branch"
+    },
+    "services": {
+      "title": "Add a Service",
+      "content1": "Service Name (English)",
+      "content2": "Service Name (Arabic)",
+      "content3": "Service Description (English)",
+      "content4": "Service Description (Arabic)",
+      "content5": "Availability",
+      "price": "Price",
+      "images": "Images of service",
+      "uploadImages": "Upload images",
+      "DragAndDrop": "or drag and drop",
+      "imageHint": "Images must be in jpg, jpeg or png format",
+      "englishDetails": "Service in English",
+      "arabicDetails": "Service in Arabic",
+      "branchSelector": "Select a branch",
+      "duration": "Duration of service",
+      "content6": "Service Price",
+      "content7": "Category",
+      "button1": "Add service",
+      "button2": "Next",
+      "button3": "Previous"
     }
   },
   "PartnerBar": {

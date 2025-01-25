@@ -3,6 +3,7 @@ interface InputFieldProps {
   placeholder: string;
   name: string;
   type: string;
+  dir?: string;
   classname?: string;
   defaultValue?: string;
 }
@@ -11,6 +12,7 @@ export default function InputField({
   placeholder,
   name,
   type,
+  dir,
   classname,
   defaultValue,
 }: InputFieldProps) {
@@ -28,6 +30,7 @@ export default function InputField({
         defaultValue={defaultValue}
         placeholder={placeholder}
         className={`${classname} `}
+        dir={dir}
       />
     </div>
   );

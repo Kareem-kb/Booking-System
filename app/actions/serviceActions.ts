@@ -1,59 +1,61 @@
 'use server';
+
 import { serviceSchema } from '@/validation/service';
 import { createService } from '@/app/lib/createService';
 
-export async function createServicesAction(formData: FormData) {
+interface ServiceResponse {
+  success?: string;
+  error?: string;
+  errors?: Record<string, string[]>;
+}
+
+export async function createServicesAction(
+  formData: FormData
+): Promise<ServiceResponse> {
   try {
-    // Extract form data
-    const branchId = formData.get('branch') as string;
-    const category = formData.get('category') as string;
-    const price = formData.get('price') as string;
-    const duration = formData.get('duration') as string;
-    const availability = formData.get('availability') as string;
-
-    // Extract uploaded image URLs
-    const imageField = formData.get('imageUrl') as string | null;
-    const imageUrls = imageField ? (JSON.parse(imageField) as string[]) : [];
-
-    // Extract translations
-    const translationsField = formData.get('translations') as string | null;
-    const translations = translationsField
-      ? (JSON.parse(translationsField) as Array<{
-          language: string;
-          title: string;
-          description: string;
-        }>)
-      : [];
-
-    // Validate form data
-    const result = await serviceSchema.safeParseAsync({
-      category,
-      price,
-      duration,
-      imageUrls,
-      availability,
-      translations,
-    });
-
-    if (!result.success) {
-      return { errors: result.error.flatten().fieldErrors };
-    }
-
-    // Create service
-    const createServiceForm = {
-      branchId,
-      category,
-      price,
-      duration,
-      imageUrls,
-      availability,
-      translations,
+    // Extract and transform data to match CreateServiceForm interface
+    const serviceData = {
+      branchID: formData.get('branch') as string,
+      category: formData.get('category') as string,
+      price: formData.get('price') as string,
+      duration: formData.get('duration') as string,
+      availability:
+        formData.get('availability') === 'on' ? 'active' : 'inactive',
+      imageUrls: JSON.parse((formData.get('imageUrl') as string) || '[]'),
+      translations: JSON.parse(
+        (formData.get('translations') as string) || '[]'
+      ),
     };
 
-    await createService(createServiceForm);
+    // Validate the data
+    const validationResult = serviceSchema.safeParse(serviceData);
 
-    return { success: 'Service created successfully!' };
+    if (!validationResult.success) {
+      return {
+        errors: validationResult.error.flatten().fieldErrors,
+        error: 'Please check the form for errors',
+      };
+    }
+
+    // Create service with validated and transformed data
+    try {
+      await createService({
+        branchID: serviceData.branchID,
+        category: serviceData.category,
+        price: serviceData.price,
+        duration: serviceData.duration,
+        imageUrls: serviceData.imageUrls,
+        availability: serviceData.availability,
+        translations: serviceData.translations,
+      });
+
+      return { success: 'Service created successfully!' };
+    } catch (error) {
+      console.error('Database error:', error);
+      return { error: 'Failed to create service in database' };
+    }
   } catch (error) {
-    return { error: 'Failed to create service. Please try again.' };
+    console.error('Service creation error:', error);
+    return { error: 'Failed to process service data' };
   }
 }

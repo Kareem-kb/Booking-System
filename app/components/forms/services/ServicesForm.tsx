@@ -8,6 +8,10 @@ import BranchSelector from '@/app/components/inputs/branchSelector';
 import { createServicesAction } from '@/app/actions/serviceActions';
 import { uploadImage } from '@/supabase/storage/client';
 import { convertBlobUrlToFile } from '@/app/lib/utils';
+import SubmitButton from '../../buttons/SubmitButton';
+import { serviceFormSchema } from '@/validation/service';
+import { toast } from 'sonner';
+import { useRouter } from '@/navigation';
 
 const Times = [
   { id: '1', name: '1 hour' },
@@ -16,9 +20,11 @@ const Times = [
 ];
 
 export default function AddServiceForm() {
-  const t = useTranslations('Partner.addService');
+  const router = useRouter();
+  const t = useTranslations('Partner.services');
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [Pending, setPending] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,220 +35,293 @@ export default function AddServiceForm() {
     }
   };
 
-  const handleFormSubmit = async (formData: FormData) => {
+  const handleFormSubmit = async (formData: FormData, e: React.FormEvent) => {
+    e.preventDefault();
+    setPending(true);
+    setErrors({});
     try {
-      // Upload images and get URLs
-      const uploadedImageUrls = [];
-      for (const url of imageUrls) {
-        const imageFile = await convertBlobUrlToFile(url);
-        const { imageUrl, error } = await uploadImage({
-          file: imageFile,
-          bucket: 'Services-Images',
-        });
-        if (error) throw error;
-        uploadedImageUrls.push(imageUrl);
+      // 1. Validate form data first
+      const formValues = {
+        branch: formData.get('branch') as string,
+        price: formData.get('price') as string,
+        duration: formData.get('duration') as string,
+        title_en: formData.get('title_en') as string,
+        description_en: formData.get('description_en') as string,
+        title_ar: formData.get('title_ar') as string,
+        description_ar: formData.get('description_ar') as string,
+        category: formData.get('category') as string,
+        availability: formData.get('availability') as string,
+        image: Array.from(formData.getAll('image') as File[]),
+      };
+
+      const serviceForm = serviceFormSchema.safeParse(formValues);
+      if (!serviceForm.success) {
+        setErrors(serviceForm.error.flatten().fieldErrors);
+        return;
       }
 
-      // Prepare form data
-      formData.append('imageUrl', JSON.stringify(uploadedImageUrls));
-      formData.delete('image');
+      // 2. Upload images
+      const uploadedImageUrls = await Promise.all(
+        imageUrls.map(async (url) => {
+          const imageFile = await convertBlobUrlToFile(url);
+          const { imageUrl, error } = await uploadImage({
+            file: imageFile,
+            bucket: 'Services-Images',
+          });
+          if (error) throw new Error(`Failed to upload image: ${error}`);
+          return imageUrl;
+        })
+      );
 
+      // 3. Prepare final form data
+      const serviceData = new FormData();
+      serviceData.append('branch', formValues.branch);
+      serviceData.append('price', formValues.price);
+      serviceData.append('duration', formValues.duration);
+      serviceData.append('category', formValues.category);
+      serviceData.append('availability', formValues.availability);
+      serviceData.append('imageUrl', JSON.stringify(uploadedImageUrls));
+
+      // 4. Add translations
       const translations = [
         {
           language: 'en',
-          title: formData.get('title_en') as string,
-          description: formData.get('description_en') as string,
+          title: formValues.title_en,
+          description: formValues.description_en,
         },
         {
           language: 'ar',
-          title: formData.get('title_ar') as string,
-          description: formData.get('description_ar') as string,
+          title: formValues.title_ar,
+          description: formValues.description_ar,
         },
       ];
+      serviceData.append('translations', JSON.stringify(translations));
 
-      formData.append('translations', JSON.stringify(translations));
-
-      // Clean up form data
-      ['title_en', 'title_ar', 'description_en', 'description_ar'].forEach(
-        (field) => formData.delete(field)
-      );
-
-      const result = await createServicesAction(formData);
-      if (result.error) {
-        setErrors(result.error ? { form: [result.error] } : {});
-      } else {
-        setErrors({});
+      // 5. Submit to server
+      const result = await createServicesAction(serviceData);
+      if (result.success) {
+        toast.success(result.success);
+        router.push('/dashboard');
+        // Optional: Reset form or redirect
+      } else if (result.errors) {
+        setErrors(result.errors);
+      } else if (result.error) {
+        setErrors({ form: [result.error] });
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      setErrors({ form: ['Failed to submit form'] });
+      setErrors({ form: ['Failed to process form submission'] });
+    } finally {
+      setPending(false);
     }
   };
 
   return (
-    <form action={handleFormSubmit} className="space-y-6">
+    <form
+      onSubmit={(e) => handleFormSubmit(new FormData(e.currentTarget), e)}
+      className="space-y-8"
+    >
       <h1 className="h1">{t('title')}</h1>
 
       {/* Branch and Basic Info */}
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-900">
-            {t('selectBranch')}
-          </label>
-          <BranchSelector name="branch" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <InputField
-            name="price"
-            type="text"
-            label={t('price')}
-            placeholder=""
-          />
-          <DropDown list={Times} label={t('duration')} name="duration" />
+      <div>
+        <div className="space-y-4">
+          {' '}
+          <div>
+            {' '}
+            <BranchSelector name="branch" label={t('branchSelector')} />
+            {errors.branch && (
+              <p className="error-message">{errors.branch[0]}</p>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              {' '}
+              <InputField
+                name="price"
+                type="text"
+                label={t('price')}
+                placeholder=""
+              />{' '}
+              {errors.price && (
+                <p className="error-message">{errors.price[0]}</p>
+              )}
+            </div>
+            <div>
+              {' '}
+              <DropDown list={Times} label={t('duration')} name="duration" />
+              {errors.duration && (
+                <p className="error-message">{errors.duration[0]}</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* English Content */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div>
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           {t('englishDetails')}
         </h2>
         <div className="space-y-4">
-          <InputField
-            name="title_en"
-            type="text"
-            label={t('titleEn')}
-            placeholder=""
-          />
+          <div>
+            {' '}
+            <InputField
+              name="title_en"
+              type="text"
+              label={t('content1')}
+              placeholder=""
+            />
+            {errors.title_en && (
+              <p className="error-message">{errors.title_en[0]}</p>
+            )}
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-900">
-              {t('descriptionEn')}
+              {t('content3')}
             </label>
-            <textarea
-              name="description_en"
-              rows={4}
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder={t('descriptionPlaceholder')}
-            />
+            <textarea name="description_en" rows={4} />
+            {errors.description_en && (
+              <p className="error-message">{errors.description_en[0]}</p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Arabic Content */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <div>
         <h2 className="mb-4 text-lg font-semibold text-gray-900">
           {t('arabicDetails')}
         </h2>
         <div className="space-y-4">
-          <InputField
-            placeholder=""
-            name="title_ar"
-            type="text"
-            label={t('titleAr')}
-          />
           <div>
-            <label className="block text-sm font-medium text-gray-900">
-              {t('descriptionAr')}
-            </label>
-            <textarea
-              name="description_ar"
-              rows={4}
-              dir="rtl"
-              className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder={t('descriptionPlaceholder')}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Images and Category */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-900">
-              {t('images')}
-            </label>
-            <div className="mt-1 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-              <div className="text-center">
-                <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                  <label
-                    htmlFor="file-upload"
-                    className="relative cursor-pointer rounded-md bg-white font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary-dark"
-                  >
-                    <span>{t('uploadImages')}</span>
-                    <input
-                      id="file-upload"
-                      name="image"
-                      type="file"
-                      multiple
-                      className="sr-only"
-                      ref={imageInputRef}
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                  <p className="pl-1">{t('orDragAndDrop')}</p>
-                </div>
-                <p className="text-xs leading-5 text-gray-600">
-                  {t('imageHint')}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <InputField
-              name="category"
+              name="title_ar"
               type="text"
-              label={t('category')}
+              label={t('content2')}
               placeholder=""
+              dir="rtl"
             />
-            <div className="flex items-end">
-              <label className="relative inline-flex cursor-pointer items-center">
-                <input
-                  type="checkbox"
-                  name="availability"
-                  className="peer sr-only"
-                />
-                <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full" />
-                <span className="ml-3 text-sm font-medium text-gray-900">
-                  {t('availability')}
-                </span>
-              </label>
+            {errors.title_ar && (
+              <p className="error-message">{errors.title_ar[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-900">
+              {t('content4')}
+            </label>
+            <div>
+              <textarea name="description_ar" rows={4} dir="rtl" />
+              {errors.description_ar && (
+                <p className="error-message">{errors.description_ar[0]}</p>
+              )}
             </div>
           </div>
         </div>
       </div>
-
-      {/* Error Display */}
-      {Object.keys(errors).length > 0 && (
-        <div className="rounded-md bg-red-50 p-4">
-          <div className="flex">
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">
-                {t('formErrors')}
-              </h3>
-              <div className="mt-2 text-sm text-red-700">
-                <ul className="list-disc space-y-1 pl-5">
-                  {Object.entries(errors).map(([field, messages]) => (
-                    <li key={field}>{messages[0]}</li>
-                  ))}
-                </ul>
+      <div>
+        <div>
+          {/* Images and Additional Info */}
+          <div>
+            {/* Category and Availability */}
+            <div className="grid grid-cols-2 gap-4 space-y-6">
+              <div>
+                <InputField
+                  name="category"
+                  type="text"
+                  label={t('content7')}
+                  placeholder=""
+                />{' '}
+                {errors.category && (
+                  <p className="error-message">{errors.category[0]}</p>
+                )}
+              </div>
+              <div className="m-auto flex items-center">
+                <label className="inline-flex cursor-pointer items-center">
+                  <input
+                    type="checkbox"
+                    name="availability"
+                    className="peer sr-only"
+                    defaultChecked={true}
+                  />
+                  <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-dark peer-checked:after:translate-x-full peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+                  <span className="ms-3 text-sm font-medium text-gray-900">
+                    Availability
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div className="mt-4">
+              {/* Image Upload */}
+              <div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-900">
+                    {t('images')}
+                  </label>
+                  <div className="mt-1 flex flex-col gap-4">
+                    <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 bg-primary-light">
+                      <div className="text-center">
+                        <div className="mt-4 text-sm text-gray-600">
+                          <label className="relative cursor-pointer rounded-md font-semibold text-primary hover:text-primary-dark">
+                            <span>{t('uploadImages')}</span>
+                            <input
+                              name="image"
+                              type="file"
+                              multiple
+                              className="sr-only"
+                              ref={imageInputRef}
+                              onChange={handleImageChange}
+                            />
+                          </label>
+                          <p className="pl-1 text-sm">{t('DragAndDrop')}</p>
+                        </div>
+                        <p className="text-xs leading-5 text-gray-600">
+                          {t('imageHint')}
+                        </p>
+                      </div>
+                    </div>
+                    {errors.image && (
+                      <p className="error-message">{errors.image[0]}</p>
+                    )}
+                  </div>
+                  {/* Image Previews */}
+                  <div className="mt-2 flex flex-wrap gap-4">
+                    {imageUrls.map((url, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={url}
+                          alt={`Preview ${index + 1}`}
+                          className="h-20 w-20 rounded-lg object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setImageUrls((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            );
+                          }}
+                          className="absolute -right-2 -top-2 rounded-full bg-gray-500 p-1 text-white shadow-sm hover:bg-red-600"
+                        >
+                          <svg
+                            className="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      )}
-
-      {/* Submit Button */}
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-        >
-          {t('submit')}
-        </button>
       </div>
+      <SubmitButton text={t('button1')} isPending={Pending} />
     </form>
   );
 }

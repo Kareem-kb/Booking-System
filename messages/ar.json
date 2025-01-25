@@ -48,6 +48,28 @@
       "button1": "إضافة إغلاق",
       "button2": "السابق",
       "button3": "إنشاء فرع"
+    },
+    "services": {
+      "title": "إضافة خدمة",
+      "content1": "اسم الخدمة (بالإنجليزية)",
+      "content2": "اسم الخدمة (بالعربية)",
+      "content3": "وصف الخدمة (بالإنجليزية)",
+      "content4": "وصف الخدمة (بالعربية)",
+      "content5": "التوفر",
+      "price": "السعر",
+      "images": "صور الخدمة",
+      "uploadImages": "تحميل الصور",
+      "DragAndDrop": "أو اسحب وأفلت",
+      "imageHint": "يجب أن تكون الصور بتنسيق jpg أو jpeg أو png",
+      "englishDetails": "الخدمة باللغة الإنجليزية",
+      "arabicDetails": "الخدمة باللغة العربية",
+      "branchSelector": "اختر فرعًا",
+      "duration": "مدة الخدمة",
+      "content6": "سعر الخدمة",
+      "content7": "الفئة",
+      "button1": "إضافة خدمة",
+      "button2": "التالي",
+      "button3": "السابق"
     }
   },
   "PartnerBar": {
