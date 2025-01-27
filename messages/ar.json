@@ -70,6 +70,21 @@
       "button1": "إضافة خدمة",
       "button2": "التالي",
       "button3": "السابق"
+    },
+    "staff": {
+      "title": "إنشاء موظف",
+      "englishDetails": "التفاصيل باللغة الإنجليزية",
+      "nameEn": "الاسم (بالإنجليزية)",
+      "aboutMeEn": "نبذة عني (بالإنجليزية)",
+      "arabicDetails": "التفاصيل باللغة العربية",
+      "nameAr": "الاسم (بالعربية)",
+      "aboutMeAr": "نبذة عني (بالعربية)",
+      "email": "البريد الإلكتروني",
+      "profileImage": "صورة الملف الشخصي",
+      "uploadImage": "رفع ملف",
+      "DragAndDrop": "أو اسحب وأفلت",
+      "imageHint": "PNG، JPG، GIF حتى 10 ميجابايت",
+      "submit": "إرسال"
     }
   },
   "PartnerBar": {

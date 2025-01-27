@@ -1,22 +1,29 @@
 import prisma from '@/prisma';
-import { Role } from '@prisma/client';
+import { Role, Prisma } from '@prisma/client';
 
 interface CreateStaffForm {
   role: string;
   email: string;
   branchId: string;
-  image: string;
-  servicesId: string[]; // fix in the back sevices need to be an array
+  image: string | null;
+  servicesId: string[];
   translations: {
     language: string;
     name: string;
     aboutMe: string;
   }[];
 }
-export async function createStaff(formData: CreateStaffForm) {
+
+interface StaffResponse {
+  success?: string;
+  error?: string;
+}
+
+export async function createStaff(
+  formData: CreateStaffForm
+): Promise<StaffResponse> {
   try {
     await prisma.$transaction(async (prisma) => {
-      // Create User
       const staffUser = await prisma.user.create({
         data: {
           email: formData.email,
@@ -57,6 +64,17 @@ export async function createStaff(formData: CreateStaffForm) {
     return {
       success: 'Staff created successfully',
     };
-  } catch (error) {}
-  console.log('Creating staff with data:', formData);
+  } catch (error) {
+    console.error('Error creating staff:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return {
+          error: 'A staff member with this email already exists.',
+        };
+      }
+    }
+    return {
+      error: 'Failed to create staff. Please try again.',
+    };
+  }
 }

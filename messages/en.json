@@ -70,7 +70,20 @@
       "button1": "Add service",
       "button2": "Next",
       "button3": "Previous"
-    }
+    },
+    "staff": { "title": "Create Staff",
+    "englishDetails": "English Details",
+    "nameEn": "Name (English)",
+    "aboutMeEn": "About Me (English)",
+    "arabicDetails": "Arabic Details",
+    "nameAr": "Name (Arabic)",
+    "aboutMeAr": "About Me (Arabic)",
+    "email": "Email",
+    "profileImage": "Profile Image",
+    "uploadImage": "Upload a file",
+    "DragAndDrop": "or drag and drop",
+    "imageHint": "PNG, JPG, GIF up to 10MB",
+    "submit": "Submit"}
   },
   "PartnerBar": {
     "content1": "Dashboard",

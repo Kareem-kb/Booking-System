@@ -1,51 +1,60 @@
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 // Frontend Schema (Form Validation)
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const serviceFormSchema = z.object({
-  branch: z.string()
-    .nonempty('Please select a branch'),
+  branch: z.string().nonempty('Please select a branch'),
 
-  price: z.string()
+  price: z
+    .string()
     .nonempty('Price is required')
     .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid price (e.g., 99.99)'),
 
-  duration: z.string()
+  duration: z
+    .string()
     .nonempty('Duration is required')
-    .refine(val => ['1', '2', '3'].includes(val), 'Please select a valid duration'),
+    .refine(
+      (val) => ['1', '2', '3'].includes(val),
+      'Please select a valid duration'
+    ),
 
-  title_en: z.string()
+  title_en: z
+    .string()
     .min(3, 'English title must be at least 3 characters')
     .max(100, 'English title cannot exceed 100 characters'),
 
-  description_en: z.string()
+  description_en: z
+    .string()
     .min(10, 'English description must be at least 10 characters')
     .max(1000, 'English description cannot exceed 1000 characters'),
 
-  title_ar: z.string()
+  title_ar: z
+    .string()
     .min(3, 'Arabic title must be at least 3 characters')
     .max(100, 'Arabic title cannot exceed 100 characters'),
 
-  description_ar: z.string()
+  description_ar: z
+    .string()
     .min(10, 'Arabic description must be at least 10 characters')
     .max(1000, 'Arabic description cannot exceed 1000 characters'),
 
-  category: z.string()
+  category: z
+    .string()
     .min(2, 'Category must be at least 2 characters')
     .max(50, 'Category cannot exceed 50 characters'),
 
   availability: z.enum(['on', 'off']),
 
-  image: z.array(z.instanceof(File))
+  image: z
+    .array(z.instanceof(File))
     .min(1, 'Please upload at least one image')
     .max(3, 'Maximum 3 images allowed')
     .refine(
-      files => files.every(file => file.size <= MAX_FILE_SIZE),
+      (files) => files.every((file) => file.size <= MAX_FILE_SIZE),
       'Each image must be less than 5MB'
-    )
+    ),
 });
-
 
 // Backend Schema (API Validation)
 export const serviceSchema = z.object({
