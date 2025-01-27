@@ -1,4 +1,4 @@
 import BusinessForm from '@/app/components/forms/branch/branchForm';
-export function BusinessSettings() {
+export default function BusinessSettings() {
   return <BusinessForm />;
 }

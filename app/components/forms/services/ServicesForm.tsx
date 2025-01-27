@@ -12,6 +12,7 @@ import SubmitButton from '../../buttons/SubmitButton';
 import { serviceFormSchema } from '@/validation/service';
 import { toast } from 'sonner';
 import { useRouter } from '@/navigation';
+import Image from 'next/image';
 
 const Times = [
   { id: '1', name: '1 hour' },
@@ -291,10 +292,12 @@ export default function AddServiceForm() {
                   <div className="mt-2 flex flex-wrap gap-4">
                     {imageUrls.map((url, index) => (
                       <div key={index} className="relative">
-                        <img
+                        <Image
                           src={url}
                           alt={`Preview ${index + 1}`}
-                          className="h-20 w-20 rounded-lg object-cover"
+                          className="rounded-lg object-cover"
+                          width={80}
+                          height={80}
                         />
                         <button
                           type="button"

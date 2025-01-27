@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
-import { getAllBranches } from "@/app/lib/createBranch";
-import { getServicesByBranchID } from "@/app/lib/createService";
+import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import { getAllBranches } from '@/app/lib/createBranch';
+import { getServicesByBranchID } from '@/app/lib/createService';
 
 interface BranchAndServiceProps {
-  nameBranch: string;    // name attribute for the branch
-  nameServices: string;  // name attribute for the selected services
+  nameBranch: string; // name attribute for the branch
+  nameServices: string; // name attribute for the selected services
 }
 
 export default function BranchAndService({
   nameBranch,
   nameServices,
 }: BranchAndServiceProps) {
-  const locale = usePathname().split("/")[1];
+  const locale = usePathname().split('/')[1];
 
   const [branches, setBranches] = useState<{ id: string }[]>([]);
   const [services, setServices] = useState<{ id: string; title: string }[]>([]);
@@ -104,10 +104,7 @@ export default function BranchAndService({
   // Close dropdowns if user clicks outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (
-        branchRef.current &&
-        !branchRef.current.contains(e.target as Node)
-      ) {
+      if (branchRef.current && !branchRef.current.contains(e.target as Node)) {
         setBranchDropdownOpen(false);
       }
       if (
@@ -117,73 +114,75 @@ export default function BranchAndService({
         setServiceDropdownOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   // Arrow rotation helpers
-  const branchArrowClass = branchDropdownOpen ? "rotate-180" : "";
-  const serviceArrowClass = serviceDropdownOpen ? "rotate-180" : "";
+  const branchArrowClass = branchDropdownOpen ? 'rotate-180' : '';
+  const serviceArrowClass = serviceDropdownOpen ? 'rotate-180' : '';
 
   return (
-    <div className="flex w-full flex-col sm:flex-row items-start gap-4">
+    <div className="flex w-full flex-col items-start gap-4 sm:flex-row">
       {/* Branch Section */}
       <div className="relative flex-1" ref={branchRef}>
         <label className="mb-1 block text-sm font-medium text-gray-700">
           Select Branch
-        </label>
-        <button
-          type="button"
-          onClick={handleBranchToggle}
-          className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-        >
-          {isBranchesLoading ? (
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-4 w-4 animate-spin text-gray-500"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.37258 0 0 5.37258 0 12h4zm2 5.29102A7.96358 7.96358 0 014 12H0c0 3.04222 1.13403 5.82435 3 7.93762l3-2.6466z"
-                />
-              </svg>
-              Loading...
-            </div>
-          ) : selectedBranch ? (
-            // Show the branch's name or ID
-            branches.find((b) => b.id === selectedBranch)?.id ?? "Choose Branch"
-          ) : (
-            "Choose Branch"
-          )}
-          <svg
-            className={`ml-2 h-4 w-4 transition-transform duration-200 text-gray-400 ${branchArrowClass}`}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 20"
+          <button
+            type="button"
+            onClick={handleBranchToggle}
+            className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 transition hover:bg-gray-50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 8l4 4 4-4"
-            />
-          </svg>
-        </button>
-        <input type="hidden" name={nameBranch} value={selectedBranch ?? ""} />
+            {isBranchesLoading ? (
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-4 w-4 animate-spin text-gray-500"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.37258 0 0 5.37258 0 12h4zm2 5.29102A7.96358 7.96358 0 014 12H0c0 3.04222 1.13403 5.82435 3 7.93762l3-2.6466z"
+                  />
+                </svg>
+                Loading...
+              </div>
+            ) : selectedBranch ? (
+              // Show the branch's name or ID
+              (branches.find((b) => b.id === selectedBranch)?.id ??
+              'Choose Branch')
+            ) : (
+              'Choose Branch'
+            )}
+            <svg
+              className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${branchArrowClass}`}
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 8l4 4 4-4"
+              />
+            </svg>
+          </button>
+        </label>
+
+        <input type="hidden" name={nameBranch} value={selectedBranch ?? ''} />
 
         {/* Branch Dropdown */}
         {branchDropdownOpen && !isBranchesLoading && (
@@ -209,58 +208,62 @@ export default function BranchAndService({
       <div className="relative flex-1" ref={serviceRef}>
         <label className="mb-1 block text-sm font-medium text-gray-700">
           Select Services
-        </label>
-        <button
-          type="button"
-          onClick={handleServiceToggle}
-          disabled={!selectedBranch}
-          className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 transition enabled:hover:bg-gray-50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isServicesLoading ? (
-            <div className="flex items-center gap-2">
-              <svg
-                className="h-4 w-4 animate-spin text-gray-500"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  fill="none"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.37258 0 0 5.37258 0 12h4zm2 5.29102A7.96358 7.96358 0 014 12H0c0 3.04222 1.13403 5.82435 3 7.93762l3-2.6466z"
-                />
-              </svg>
-              Loading...
-            </div>
-          ) : selectedServices.length > 0 ? (
-            `${selectedServices.length} service(s) selected`
-          ) : (
-            "Choose Services"
-          )}
-          <svg
-            className={`ml-2 h-4 w-4 transition-transform duration-200 text-gray-400 ${serviceArrowClass}`}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 20 20"
+          <button
+            type="button"
+            onClick={handleServiceToggle}
+            disabled={!selectedBranch}
+            className="flex w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 transition focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary enabled:hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 8l4 4 4-4"
-            />
-          </svg>
-        </button>
+            {isServicesLoading ? (
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-4 w-4 animate-spin text-gray-500"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.37258 0 0 5.37258 0 12h4zm2 5.29102A7.96358 7.96358 0 014 12H0c0 3.04222 1.13403 5.82435 3 7.93762l3-2.6466z"
+                  />
+                </svg>
+                Loading...
+              </div>
+            ) : selectedServices.length > 0 ? (
+              `${selectedServices.length} service(s) selected`
+            ) : (
+              'Choose Services'
+            )}
+            <svg
+              className={`ml-2 h-4 w-4 text-gray-400 transition-transform duration-200 ${serviceArrowClass}`}
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 8l4 4 4-4"
+              />
+            </svg>
+          </button>
+        </label>
 
-        <input type="hidden" name={nameServices} value={selectedServices.join(",")} />
+        <input
+          type="hidden"
+          name={nameServices}
+          value={selectedServices.join(',')}
+        />
 
         {/* Services Dropdown */}
         {serviceDropdownOpen && !isServicesLoading && (

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, ChangeEvent } from 'react';
+import { useState, useRef, ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { convertBlobUrlToFile } from '@/app/lib/utils';
 import { uploadImage } from '@/supabase/storage/client';
@@ -11,6 +11,7 @@ import SubmitButton from '../../buttons/SubmitButton';
 import { StaffFormSchema } from '@/validation/staff';
 import { toast } from 'sonner';
 import { useRouter } from '@/navigation';
+import Image from 'next/image';
 
 export default function StaffForm() {
   const t = useTranslations('Partner.staff');
@@ -231,10 +232,12 @@ export default function StaffForm() {
             {imageUrl && (
               <div className="mt-2">
                 <div className="relative inline-block">
-                  <img
+                  <Image
                     src={imageUrl}
                     alt="Preview"
-                    className="h-20 w-20 rounded-lg object-cover"
+                    className="rounded-lg object-cover"
+                    width={80}
+                    height={80}
                   />
                   <button
                     type="button"
