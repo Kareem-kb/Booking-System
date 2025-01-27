@@ -128,7 +128,7 @@ export default function BranchAndService({
   const serviceArrowClass = serviceDropdownOpen ? "rotate-180" : "";
 
   return (
-    <div className="flex w-full flex-row items-start gap-4">
+    <div className="flex w-full flex-col sm:flex-row items-start gap-4">
       {/* Branch Section */}
       <div className="relative flex-1" ref={branchRef}>
         <label className="mb-1 block text-sm font-medium text-gray-700">

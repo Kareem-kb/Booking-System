@@ -11,12 +11,12 @@ interface Props {
 }
 
 export default function BasicInfoForm({ onNext, initialData }: Props) {
-  const t = useTranslations('Partner.branchInfo');
+  const translations = useTranslations('Partner.branchInfo');
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData);
 
     const result = branchFormSchema.safeParse(data);
@@ -31,15 +31,16 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-9">
-      <h1 className="h1">{t('title')}</h1>
-      <div className="grid grid-cols-2 gap-4">
+    // skipcq: JS-0417
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <h1 className="h1">{translations('title')}</h1>
+      <div className="grid sm:grid-cols-2 sm:gap-4">
         {/* English Branch Name */}
         <div>
           <InputField
             type="text"
             name="nameEn"
-            label={t('branchNameEn')}
+            label={translations('branchNameEn')}
             defaultValue={initialData.nameEn}
             placeholder=""
           />
@@ -55,9 +56,10 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
           <InputField
             type="text"
             name="nameAr"
-            label={t('branchNameAr')}
+            label={translations('branchNameAr')}
             defaultValue={initialData.nameAr}
             placeholder=""
+            dir="rtl"
           />
           <div className="h-5">
             {errors.nameAr && (
@@ -70,7 +72,7 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
           <InputField
             name="phoneNumber"
             placeholder=""
-            label={t('branchPhone')}
+            label={translations('branchPhone')}
             defaultValue={initialData.phoneNumber}
             type="text"
           />
@@ -84,7 +86,7 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         <div>
           <InputField
             name="contactEmail"
-            label={t('branchEmail')}
+            label={translations('branchEmail')}
             type="text"
             defaultValue={initialData.contactEmail}
             placeholder=""
@@ -102,7 +104,7 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
             placeholder=""
             type="text"
             name="addressEn"
-            label={t('branchAddressEn')}
+            label={translations('branchAddressEn')}
             defaultValue={initialData.addressEn}
           />
           <div className="h-5">
@@ -118,7 +120,8 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
             placeholder=""
             type="text"
             name="addressAr"
-            label={t('branchAddressAr')}
+            dir="rtl"
+            label={translations('branchAddressAr')}
             defaultValue={initialData.addressAr}
           />
           <div className="h-5">
@@ -132,7 +135,7 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
           <InputField
             placeholder=""
             name="website"
-            label={t('branchWebsite')}
+            label={translations('branchWebsite')}
             type="text"
             defaultValue={initialData.website}
           />
@@ -144,8 +147,11 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         </div>
       </div>
       <div className="flex justify-end">
-        <button type="submit" className="btn-primary w-full sm:w-auto">
-          {t('button1')}
+        <button
+          type="submit"
+          className="btn-primary mb-6 w-full sm:w-auto md:mb-0"
+        >
+          {translations('button1')}
         </button>
       </div>
     </form>

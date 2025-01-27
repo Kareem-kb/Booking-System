@@ -57,7 +57,7 @@ const config: Config = {
     plugin(function ({ addComponents }) {
       addComponents({
         '.h1': {
-          fontSize: '1.875rem',
+          fontSize: '1.5rem',
           fontWeight: '700',
           lineHeight: '2.25rem',
           color: '#000000',
@@ -110,7 +110,7 @@ const config: Config = {
           backgroundColor: '#D1D0D0',
           borderColor: '#988686',
           borderRadius: '0.375rem',
-          padding: '0.2rem',
+          padding: '0.3rem',
           borderWidth: '1px',
           fontSize: '0.875rem',
           color: '#000000',

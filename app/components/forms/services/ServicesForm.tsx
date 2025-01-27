@@ -21,6 +21,7 @@ const Times = [
 
 export default function AddServiceForm() {
   const router = useRouter();
+  // skipcq: JS-C1002
   const t = useTranslations('Partner.services');
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -134,7 +135,7 @@ export default function AddServiceForm() {
               <p className="error-message">{errors.branch[0]}</p>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 sm:gap-4">
             <div>
               {' '}
               <InputField
@@ -238,18 +239,18 @@ export default function AddServiceForm() {
                   <p className="error-message">{errors.category[0]}</p>
                 )}
               </div>
-              <div className="m-auto flex items-center">
-                <label className="inline-flex cursor-pointer items-center">
+              <div className="mx-auto items-baseline">
+                <label className="flex cursor-pointer items-center gap-2">
+                  <span className="ms-3 text-sm font-medium text-gray-900">
+                    Availability
+                  </span>
                   <input
                     type="checkbox"
                     name="availability"
                     className="peer sr-only"
                     defaultChecked={true}
                   />
-                  <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-dark peer-checked:after:translate-x-full peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
-                  <span className="ms-3 text-sm font-medium text-gray-900">
-                    Availability
-                  </span>
+                  <div className="peer relative h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary-dark peer-checked:after:translate-x-full peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
                 </label>
               </div>
             </div>

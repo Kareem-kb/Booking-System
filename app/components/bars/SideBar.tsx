@@ -20,12 +20,13 @@ function classNames(...classes: string[]) {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  // skipcq: JS-C1002
   const t = useTranslations('PartnerBar');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
     { name: t('content1'), href: '/dashboard', icon: HomeIcon },
-    { name: t('content2'), href: '/business-settings', icon: CalendarIcon },
+    { name: t('content2'), href: '/add-branch', icon: CalendarIcon },
     { name: t('content3'), href: '/add-service', icon: FolderIcon },
     { name: t('content4'), href: '/add-staff', icon: UserGroupIcon },
     { name: t('content5'), href: '/sales', icon: DocumentDuplicateIcon },
@@ -72,7 +73,7 @@ export default function Sidebar() {
     <>
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-full">
-        <aside className="flex grow flex-col gap-y-5 overflow-y-auto px-6 md:h-screen">
+        <aside className="flex grow flex-col gap-y-4 overflow-y-auto px-6 md:h-screen">
           <div className="flex h-16 shrink-0 items-center">
             <h1 className="mt-8 text-3xl font-bold text-primary">LOGO</h1>
           </div>
@@ -118,7 +119,6 @@ export default function Sidebar() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-primary">LOGO</h1>
           <button
-            type="button"
             onClick={() => setMobileMenuOpen(false)}
             className="rounded-md p-2 text-gray-700 hover:bg-gray-100"
           >

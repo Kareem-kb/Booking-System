@@ -6,6 +6,7 @@ import { ClockIcon } from '@heroicons/react/24/outline';
 import { useTranslations } from 'next-intl';
 
 const AdminTimeSettingsForm = ({ onNext, onPrevious }: any) => {
+  // skipcq: JS-C1002
   const t = useTranslations('Partner.operatingHours');
   const InitialDays = [
     {
@@ -84,9 +85,9 @@ const AdminTimeSettingsForm = ({ onNext, onPrevious }: any) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="mb-6 space-y-6">
       <h1 className="h1">{t('title')}</h1>
-      <div className="space-y-2">
+      <div>
         {days.map((day, index) => (
           <div key={day.dayOfWeek} className="p-2 transition-all duration-200">
             <div className="flex items-center justify-between">

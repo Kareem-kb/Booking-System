@@ -20,7 +20,7 @@ export default function LogInForm() {
 
   return (
     <>
-      <div className="absolute right-5 top-5"></div>
+      <div className="absolute right-5 top-5" />
       <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold text-gray-900">
         {t('title')}
       </h2>

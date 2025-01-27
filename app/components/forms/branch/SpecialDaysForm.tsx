@@ -60,9 +60,9 @@ const BranchSpecialClosureForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 sm:px-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-900">{t('title')}</h2>
+        <h1 className="h1">{t('title')}</h1>
         <button
           type="button"
           onClick={addClosure}
@@ -76,7 +76,7 @@ const BranchSpecialClosureForm = ({
         {closures.map((closure, index) => (
           <div
             key={index}
-            className="relative rounded-lg px-3 py-4 transition-all duration-200"
+            className="relative rounded-lg py-4 transition-all duration-200"
           >
             {closures.length > 1 && (
               <button
@@ -88,7 +88,7 @@ const BranchSpecialClosureForm = ({
               </button>
             )}
 
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="grid sm:grid-cols-2 sm:gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   {t('content1')}
@@ -104,15 +104,8 @@ const BranchSpecialClosureForm = ({
                     className="block w-full rounded-md border-gray-300 focus:border-primary focus:ring-primary sm:text-sm"
                   />
                 </div>
-                <div className="h-5">
-                  {errors[`${index}.date`] && (
-                    <p className="error-message">
-                      {errors[`${index}.date`][0]}
-                    </p>
-                  )}
-                </div>
               </div>
-              <div>
+              <div className="mt-6 sm:mt-0">
                 <label className="block text-sm font-medium text-gray-700">
                   {t('content2')}
                 </label>
@@ -127,19 +120,11 @@ const BranchSpecialClosureForm = ({
                     className="block w-full rounded-md border-gray-300 focus:border-primary focus:ring-primary sm:text-sm"
                   />
                 </div>
-                <div className="h-5">
-                  {errors[`${index}.closeReason`] && (
-                    <p className="error-message">
-                      {errors[`${index}.closeReason`][0]}
-                    </p>
-                  )}
-                </div>
               </div>
             </div>
-
             <div className="h-5">
               {errors[`${index}`] && (
-                <p className="error-message">{errors[`${index}`][0]}</p>
+                <p className="error-message mt-2">{errors[`${index}`][0]}</p>
               )}
             </div>
           </div>
@@ -149,11 +134,7 @@ const BranchSpecialClosureForm = ({
       <div
         className={`flex justify-between space-x-4 ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
       >
-        <button
-          type="button"
-          onClick={onPrevious}
-          className="btn-secondary w-full sm:w-auto"
-        >
+        <button onClick={onPrevious} className="bg-gray-200 hover:bg-gray-300 rounded-md px-4 py-2 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 sm:btn-secondary">
           {t('button2')}
         </button>
         <SubmitButton text={t('button3')} isPending={isPending} />

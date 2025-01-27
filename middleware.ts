@@ -12,7 +12,7 @@ const routesConfig = {
     '/dashboard',
     '/sales',
     '/add-service',
-    '/business-settings',
+    '/add-branch',
     '/add-staff',
   ],
 } as const;

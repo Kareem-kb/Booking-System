@@ -15,7 +15,6 @@ interface CreateBranchForm {
   address: string;
   website?: string;
 }
-
 interface OperatingHour {
   name: string;
   dayOfWeek: number;
@@ -23,7 +22,6 @@ interface OperatingHour {
   closeTime: string;
   isClosed: boolean;
 }
-
 interface SpecialClosure {
   date: Date;
   closeReason?: string | null;
@@ -64,7 +62,7 @@ export default function MultiStepForm() {
   };
 
   return (
-    <div className="mx-auto p-5">
+    <div className="">
       {step === 1 && (
         <BasicInfoForm onNext={handleNext} initialData={formData.basicInfo} />
       )}

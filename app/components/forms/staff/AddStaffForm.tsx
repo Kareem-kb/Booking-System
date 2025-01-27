@@ -116,7 +116,7 @@ export default function StaffForm() {
   return (
     <form
       onSubmit={(e) => handleFormSubmit(new FormData(e.currentTarget), e)}
-      className="space-y-8"
+      className="mb-8 space-y-8"
     >
       <h1 className="h1">{t('title')}</h1>
 
