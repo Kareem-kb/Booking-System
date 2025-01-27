@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 export default function RegisterForm() {
   const [state, formAction, isPending] = useActionState(createUserAction, null);
+  // skipcq: JS-C1002
   const t = useTranslations('Register');
   const router = useRouter();
 

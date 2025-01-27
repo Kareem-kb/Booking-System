@@ -17,8 +17,6 @@ interface CreateServiceForm {
 
 export async function createService(formData: CreateServiceForm) {
   try {
-    console.log('Creating service with data:', formData);
-
     // Validate image count
     if (formData.imageUrls.length > 3) {
       throw new Error('Maximum of 3 images allowed.');

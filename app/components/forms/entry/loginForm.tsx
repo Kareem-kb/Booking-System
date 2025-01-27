@@ -8,13 +8,13 @@ import SubmitButton from '../../buttons/SubmitButton';
 import { toast } from 'sonner';
 
 export default function LogInForm() {
+  // skipcq: JS-C1002
   const t = useTranslations('Signin');
   const [state, formAction, isPending] = useActionState(logInUserAction, null);
 
   useEffect(() => {
     if (state?.generalError) {
       toast.error(state.generalError);
-      return;
     }
   }, [state?.generalError]);
 

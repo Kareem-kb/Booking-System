@@ -11,7 +11,6 @@ interface OpenDayHoursProps {
   defaultIsClosed?: boolean;
 }
 
-
 export default function OpenDayHours({
   day,
   label,
@@ -63,13 +62,15 @@ export default function OpenDayHours({
             />
           </div>
           <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={isClosed}
-              onChange={(e) => handleChange('isClosed', e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <label className="ml-2 text-sm text-gray-600">Closed</label>
+            <label className="ml-2 text-sm text-gray-600">
+              <input
+                type="checkbox"
+                checked={isClosed}
+                onChange={(e) => handleChange('isClosed', e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              Closed
+            </label>
           </div>
         </div>
       </div>

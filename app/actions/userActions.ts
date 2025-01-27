@@ -35,7 +35,6 @@ export async function createUserAction(
       name: formData.get('name') as string,
       email: formData.get('email') as string,
     };
-    data;
     const validationResult = await clientSchema.safeParseAsync(data);
 
     if (!validationResult.success) {
@@ -98,7 +97,6 @@ export async function logInUserAction(
   formData: FormData
 ): Promise<LoginUserStates> {
   try {
-    console.log('email', formData);
     const email = formData.get('email') as string;
     const validationResult = await loginFormSchema.safeParseAsync({ email });
 
