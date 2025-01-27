@@ -1,27 +1,130 @@
 {
-  "AboutUs": {
-    "title": "مرحبا بكم",
-    "content": "هذا هو المحتوى"
-  },
   "LanguageChanger": {
-    "language": "عربي"
+    "language": "ar"
   },
   "NavBar": {
     "NavAbout": "معلومات عنا",
     "NavLanguage": "اختر لغة",
-    "NavList": "كعكات",
+    "NavList": "الكعك",
     "NavSign": "تسجيل الدخول"
+  },
+  "Not-Found": {
+    "header": "404",
+    "title": "الصفحة غير موجودة",
+    "description": "عذرًا، لم نتمكن من العثور على الصفحة التي تبحث عنها.",
+    "button": "العودة إلى الصفحة الرئيسية"
+  },
+  "Partner": {
+    "branchInfo": {
+      "title": "معلومات الفرع",
+      "branchNameEn": "اسم الفرع (إنجليزي)",
+      "branchNameAr": "اسم الفرع (عربي)",
+      "branchAddressEn": "عنوان الفرع (إنجليزي)",
+      "branchAddressAr": "عنوان الفرع (عربي)",
+      "branchPhone": "هاتف الفرع",
+      "branchEmail": "البريد الإلكتروني للفرع",
+      "branchWebsite": "موقع الفرع",
+      "button1": "التالي"
+    },
+    "operatingHours": {
+      "title": "ساعات العمل",
+      "content1": "مغلق",
+      "content2": "وقت الفتح",
+      "content3": "وقت الإغلاق",
+      "button1": "التالي",
+      "button2": "السابق",
+      "sunday": "الأحد",
+      "monday": "الاثنين",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء",
+      "thursday": "الخميس",
+      "friday": "الجمعة",
+      "saturday": "السبت"
+    },
+    "specialDays": {
+      "title": "الإغلاقات الخاصة",
+      "content1": "تاريخ الإغلاق",
+      "content2": "سبب الإغلاق",
+      "button1": " إضافة فرع",
+      "button2": "السابق",
+      "button3": "إنشاء فرع"
+    },
+    "services": {
+      "title": "إضافة خدمة",
+      "content1": "اسم الخدمة (بالإنجليزية)",
+      "content2": "اسم الخدمة (بالعربية)",
+      "content3": "وصف الخدمة (بالإنجليزية)",
+      "content4": "وصف الخدمة (بالعربية)",
+      "content5": "التوفر",
+      "price": "السعر",
+      "images": "صور الخدمة",
+      "uploadImages": "تحميل الصور",
+      "DragAndDrop": "أو اسحب وأفلت",
+      "imageHint": "يجب أن تكون الصور بتنسيق jpg أو jpeg أو png",
+      "englishDetails": "الخدمة باللغة الإنجليزية",
+      "arabicDetails": "الخدمة باللغة العربية",
+      "branchSelector": "اختر فرعًا",
+      "duration": "مدة الخدمة",
+      "content6": "سعر الخدمة",
+      "content7": "الفئة",
+      "button1": "إضافة خدمة",
+      "button2": "التالي",
+      "button3": "السابق"
+    },
+    "staff": {
+      "title": "إنشاء موظف",
+      "englishDetails": "التفاصيل باللغة الإنجليزية",
+      "nameEn": "الاسم (بالإنجليزية)",
+      "aboutMeEn": "نبذة عني (بالإنجليزية)",
+      "arabicDetails": "التفاصيل باللغة العربية",
+      "nameAr": "الاسم (بالعربية)",
+      "aboutMeAr": "نبذة عني (بالعربية)",
+      "email": "البريد الإلكتروني",
+      "profileImage": "صورة الملف الشخصي",
+      "uploadImage": "رفع ملف",
+      "DragAndDrop": "أو اسحب وأفلت",
+      "imageHint": "PNG، JPG، GIF حتى 10 ميجابايت",
+      "submit": "إرسال"
+    }
+  },
+  "PartnerBar": {
+    "content1": "لوحة التحكم",
+    "content2": "الفروع",
+    "content3": "الخدمات",
+    "content4": "الموظفون",
+    "content5": "المبيعات"
   },
   "Register": {
     "title": "تسجيل حساب جديد",
-    "firstName": "الاسم الأول",
-    "lastName": "الاسم الأخير",
+    "name": "الاسم",
     "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "conformPassword": "كلمة مرور مطابقة",
-    "content1": "تذكرني",
-    "content2": "هل لديك حساب بالفعل؟",
-    "content3": "تسجيل",
-    "content4": "أو الاستمرار مع"
+    "link": "هل لديك حساب؟",
+    "button": "تسجيل",
+    "content1": "أو تابع باستخدام",
+    "name_error": "الاسم مطلوب"
+  },
+  "Signin": {
+    "title": "تسجيل الدخول إلى حسابك",
+    "email": "البريد الإلكتروني",
+    "link": "ليس لديك حساب؟",
+    "button": "تسجيل الدخول",
+    "roleError": {
+      "required": "الدور مطلوب",
+      "invalid": "نوع الدور غير صالح"
+    },
+    "nameError": {
+      "required": "الاسم مطلوب",
+      "invalid": "يجب أن يكون الاسم نصًا",
+      "tooShort": "يجب أن يكون الاسم على الأقل حرفين",
+      "tooLong": "لا يمكن أن يتجاوز الاسم 50 حرفًا",
+      "format": "يمكن أن يحتوي الاسم على أحرف ومسافات فقط"
+    },
+    "emailError": {
+      "required": "البريد الإلكتروني مطلوب",
+      "invalid": "صيغة البريد الإلكتروني غير صالحة",
+      "format": "الرجاء إدخال عنوان بريد إلكتروني صالح",
+      "tooShort": "البريد الإلكتروني قصير جدًا",
+      "tooLong": "لا يمكن أن يتجاوز البريد الإلكتروني 255 حرفًا"
+    }
   }
 }

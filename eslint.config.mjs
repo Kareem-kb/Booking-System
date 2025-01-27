@@ -71,4 +71,3 @@ module.exports = {
     'react/prop-types': 'off',
   },
 };
-fc70221(productPage);

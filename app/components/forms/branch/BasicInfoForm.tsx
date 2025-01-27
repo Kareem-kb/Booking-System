@@ -1,80 +1,159 @@
 'use client';
 
 import { useState } from 'react';
-import { branchSchema } from '@/validation/branch';
+import { branchFormSchema, type BranchFormSchema } from '@/validation/branch';
 import InputField from '@/app/components/inputs/inputfield';
+import { useTranslations } from 'next-intl';
 
-export default function BasicInfoForm({ onNext, initialData }: any) {
-  const [errors, setErrors] = useState({});
+interface Props {
+  onNext: (data: { basicInfo: BranchFormSchema }) => void;
+  initialData: Partial<BranchFormSchema>;
+}
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
+export default function BasicInfoForm({ onNext, initialData }: Props) {
+  const translations = useTranslations('Partner.branchInfo');
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     const data = Object.fromEntries(formData);
 
-    const result = branchSchema.safeParse(data);
+    const result = branchFormSchema.safeParse(data);
+
     if (!result.success) {
       setErrors(result.error.flatten().fieldErrors);
-    } else {
-      setErrors({});
-      onNext({ basicInfo: result.data });
+      return;
     }
+
+    setErrors({});
+    onNext({ basicInfo: result.data });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h1 className="text-2xl font-bold text-gray-900">
-        Basic Branch Information
-      </h1>
-      <div className="grid grid-cols-2 gap-4">
-        <InputField
-          type="text"
-          name="name"
-          label="Branch Name"
-          defaultValue={initialData.name}
-          placeholder=""
-        />
-        <InputField
-          name="contactEmail"
-          label="Branch Email"
-          type="email"
-          defaultValue={initialData.contactEmail}
-          placeholder=""
-        />
-        <InputField
-          name="phoneNumber"
-          placeholder=""
-          label="Branch Phone Number"
-          defaultValue={initialData.phoneNumber}
-          type="number"
-        />
-        <InputField
-          placeholder=""
-          name="website"
-          label="Branch Website"
-          type="url"
-          defaultValue={initialData.website}
-        />
-        <InputField
-          placeholder=""
-          type="text"
-          name="address"
-          label="Address"
-          defaultValue={initialData.address}
-          classname="col-span-2"
-        />
+    // skipcq: JS-0417
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <h1 className="h1">{translations('title')}</h1>
+      <div className="grid sm:grid-cols-2 sm:gap-4">
+        {/* English Branch Name */}
+        <div>
+          <InputField
+            type="text"
+            name="nameEn"
+            label={translations('branchNameEn')}
+            defaultValue={initialData.nameEn}
+            placeholder=""
+          />
+          <div className="h-5">
+            {errors.nameEn && (
+              <p className="error-message">{errors.nameEn[0]}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Arabic Branch Name */}
+        <div>
+          <InputField
+            type="text"
+            name="nameAr"
+            label={translations('branchNameAr')}
+            defaultValue={initialData.nameAr}
+            placeholder=""
+            dir="rtl"
+          />
+          <div className="h-5">
+            {errors.nameAr && (
+              <p className="error-message">{errors.nameAr[0]}</p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <InputField
+            name="phoneNumber"
+            placeholder=""
+            label={translations('branchPhone')}
+            defaultValue={initialData.phoneNumber}
+            type="text"
+          />
+          <div className="h-5">
+            {errors.phoneNumber && (
+              <p className="error-message">{errors.phoneNumber[0]}</p>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <InputField
+            name="contactEmail"
+            label={translations('branchEmail')}
+            type="text"
+            defaultValue={initialData.contactEmail}
+            placeholder=""
+          />
+          <div className="h-5">
+            {errors.contactEmail && (
+              <p className="error-message">{errors.contactEmail[0]}</p>
+            )}
+          </div>
+        </div>
+
+        {/* English Address */}
+        <div>
+          <InputField
+            placeholder=""
+            type="text"
+            name="addressEn"
+            label={translations('branchAddressEn')}
+            defaultValue={initialData.addressEn}
+          />
+          <div className="h-5">
+            {errors.addressEn && (
+              <p className="error-message">{errors.addressEn[0]}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Arabic Address */}
+        <div>
+          <InputField
+            placeholder=""
+            type="text"
+            name="addressAr"
+            dir="rtl"
+            label={translations('branchAddressAr')}
+            defaultValue={initialData.addressAr}
+          />
+          <div className="h-5">
+            {errors.addressAr && (
+              <p className="error-message">{errors.addressAr[0]}</p>
+            )}
+          </div>
+        </div>
+        {/* website */}
+        <div>
+          <InputField
+            placeholder=""
+            name="website"
+            label={translations('branchWebsite')}
+            type="text"
+            defaultValue={initialData.website}
+          />
+          <div className="h-5">
+            {errors.website && (
+              <p className="error-message">{errors.website[0]}</p>
+            )}
+          </div>
+        </div>
       </div>
-      {Object.entries(errors).map(([field, message]) => (
-        <p key={field} className="text-sm text-red-600">
-          {message as string}
-        </p>
-      ))}
-      <button
-        type="submit"
-        className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-      >
-        Next
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="btn-primary mb-6 w-full sm:w-auto md:mb-0"
+        >
+          {translations('button1')}
+        </button>
+      </div>
     </form>
   );
 }

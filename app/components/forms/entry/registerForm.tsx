@@ -1,86 +1,94 @@
 'use client';
 
-import { useActionState } from 'react';
-import { Link } from '@/navigation';
+import { useActionState, useEffect } from 'react';
+import { Link, useRouter } from '@/navigation';
 import { useTranslations } from 'next-intl';
 import { createUserAction } from '@/app/actions/userActions';
+import SubmitButton from '../../buttons/SubmitButton';
+import { toast } from 'sonner';
 
 export default function RegisterForm() {
-  const [state, formAction, isPendding] = useActionState(
-    createUserAction,
-    null
-  );
+  const [state, formAction, isPending] = useActionState(createUserAction, null);
+  // skipcq: JS-C1002
   const t = useTranslations('Register');
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleStateChange = async () => {
+      if (state?.generalError) {
+        toast.error(state.generalError);
+        return;
+      }
+      if (state?.success) {
+        toast.success(state.success);
+        await new Promise((resolve) => setTimeout(resolve, 900));
+        router.push('/verification');
+      }
+    };
+    handleStateChange();
+  }, [state?.generalError, state?.success, router]);
 
   return (
     <>
-      <div className="absolute right-5 top-5"></div>
-      <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+      <div className="absolute right-5 top-5" />
+      <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold text-gray-900">
         {t('title')}
       </h2>
-      <form action={formAction} className="space-y-6">
+      <form action={formAction} className="space-y-5">
+        <input type="hidden" name="role" value="client" />
+        {/* Name Field */}
         <div>
           <label
             htmlFor="name"
-            className="block text-sm/6 font-medium text-gray-900"
+            className="mb-1 block text-sm font-medium text-gray-900"
           >
-            {t('firstName')}
+            {t('name')}
           </label>
-          <div className="mt-2">
-            <input
-              id="name"
-              name="name"
-              type="text"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-            />
+          <input name="name" type="text" className="input" />
+          <div className="h-5">
+            {state?.errors?.name && (
+              <p className="error-message">{state.errors.name}</p>
+            )}
           </div>
         </div>
-        {/* Display name-related error */}
-        {state?.errors?.name && (
-          <p className="mt-2 text-sm text-red-600">{state.errors.name}</p>
-        )}
+
+        {/* Email Field */}
         <div>
           <label
             htmlFor="email"
-            className="block text-sm/6 font-medium text-gray-900"
+            className="mb-1 block text-sm font-medium text-gray-900"
           >
             {t('email')}
           </label>
-          <div className="mt-2">
-            <input
-              id="email"
-              name="email"
-              type="email"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-            />
+          <input name="email" type="text" className="" />
+          <div className="h-5">
+            {state?.errors?.email && (
+              <p className="error-message">{state.errors.email}</p>
+            )}
           </div>
-          {/* Display email-related error */}
-          {state?.errors?.email && (
-            <p className="mt-2 text-sm text-red-600">{state.errors.email}</p>
-          )}
         </div>
-        <input type="hidden" name="role" value="client" />
 
+        {/* Login Link */}
         <div className="flex items-center justify-between">
-          <div className="text-sm/6">
+          <div className="text-sm">
             <Link
               href="/login"
-              className="font-semibold text-indigo-600 hover:text-indigo-500"
+              className="font-semibold text-black/60 hover:text-primary"
             >
-              {t('content2')}
+              {t('link')}
             </Link>
           </div>
         </div>
-
-        <button type="submit">{isPendding ? 'Adding...' : 'Add Task'}</button>
-        {/* Display general error or success message */}
+        {/* Submit Button */}
+        <SubmitButton text={t('button')} isPending={isPending} />
       </form>
+      {/* Divider */}
       <div className="relative mt-10">
         <div aria-hidden="true" className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200" />
         </div>
-        <div className="relative flex justify-center text-sm/6 font-medium">
-          <span className="bg-white px-6 text-gray-900">{t('content4')}</span>
+        <div className="relative flex justify-center text-sm font-semibold text-black/70">
+          <span className="backdrop-blur-lg">{t('content1')} </span>
         </div>
       </div>
     </>

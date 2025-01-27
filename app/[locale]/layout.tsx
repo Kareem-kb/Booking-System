@@ -1,9 +1,11 @@
+// app/[locale]/layout.tsx
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from '../../i18n';
+import { getMessages } from '@/i18n';
 import { locales } from '@/navigation';
 import { SessionProvider } from 'next-auth/react';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,10 +39,15 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
   }
 
   return (
-    <html lang={locale}>
-      <body className={`bg-gray-200 ${inter.className}`}>
+    <html lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
+      <body className={inter.className}>
         <SessionProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
+            <Toaster
+              position="top-right"
+              richColors
+              dir={locale === 'ar' ? 'rtl' : 'ltr'}
+            />
             {children}
           </NextIntlClientProvider>
         </SessionProvider>

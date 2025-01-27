@@ -1,53 +1,63 @@
 'use server';
-import { StaffFormSchema } from '@/validation/staff';
+
+import { userExists } from '@/app/components/functions/checkingUsers';
+import { StaffSchema } from '@/validation/staff';
 import { createStaff } from '@/app/lib/createStaff';
 
-export async function createStaffAction(formData: FormData) {
-  try {
-    // Extract form data
-    const email = formData.get('email') as string;
-    const role = formData.get('role') as string;
-    const branchId = formData.get('branchId') as string;
-    const servicesId = formData.getAll('serviceId') as string[];
-    const image = formData.get('imageUrl') as string;
-
-    // Extract translations
-    const translationsField = formData.get('translations') as string | null;
-    const translations = translationsField
-      ? (JSON.parse(translationsField) as Array<{
-          language: string;
-          name: string;
-          aboutMe: string;
-        }>)
-      : [];
-
-    const result = await StaffFormSchema.safeParseAsync({
-      role,
-      email,
-      branchId,
-      servicesId,
-      image,
-      translations,
-    });
-
-    if (!result.success) {
-      console.log(result.error?.flatten().fieldErrors);
-      return { errors: result.error.flatten().fieldErrors };
-    }
-
-    const staffData = {
-      role,
-      email,
-      branchId,
-      servicesId,
-      image,
-      translations,
-    };
-
-    await createStaff(staffData);
-    return { success: 'Staff created successfully!' };
-  } catch (Error) {}
-  console.log('these is an error :', Error);
+interface StaffResponse {
+  success?: string;
+  error?: string;
+  errors?: Record<string, string[]>;
 }
 
-// next to is the validation schema for the staff form and passing the dataform correctly
+export async function createStaffAction(
+  formData: FormData
+): Promise<StaffResponse> {
+  try {
+    const staffData = {
+      role: formData.get('role') as string,
+      email: formData.get('email') as string,
+      branchId: formData.get('branchId') as string,
+      servicesId: formData.getAll('serviceId') as string[],
+      image: formData.get('imageUrl') as string | null,
+      translations: JSON.parse(
+        (formData.get('translations') as string) || '[]'
+      ) as Array<{
+        language: string;
+        name: string;
+        aboutMe: string;
+      }>,
+    };
+
+    // Check for existing email
+    const existingEmail = await userExists(staffData.email);
+    if (existingEmail) {
+      return {
+        error: 'This email is already in the database.',
+      };
+    }
+
+    // Validate form data
+    const validationResult = await StaffSchema.safeParseAsync(staffData);
+    if (!validationResult.success) {
+      return {
+        errors: validationResult.error.flatten().fieldErrors,
+      };
+    }
+
+    // Create staff record
+    const result = await createStaff(staffData);
+    if (result.success) {
+      return { success: result.success };
+    }
+
+    return {
+      error: result.error || 'Failed to create staff. Please try again.',
+    };
+  } catch (error) {
+    console.error('Unexpected error in createStaffAction:', error);
+    return {
+      error: 'An unexpected error occurred. Please try again later.',
+    };
+  }
+}

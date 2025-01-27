@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+'use client';
+
+import { useState } from 'react';
 import { specialClosuresSchema } from '@/validation/branch';
+import { useTranslations } from 'next-intl';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { usePathname as realpath } from 'next/navigation';
+import SubmitButton from '@/app/components/buttons/SubmitButton';
 
-const BranchSpecialClosureForm = ({ onPrevious, onSubmit }: any) => {
-  const [closures, setClosures] = useState([
-    { date: '', closeReason: '' }, // Initial empty closure
-  ]);
+const BranchSpecialClosureForm = ({
+  onPrevious,
+  onSubmit,
+  initialData,
+}: any) => {
+  const locale = realpath().split('/')[1];
+  const t = useTranslations('Partner.specialDays');
+  const [closures, setClosures] = useState([{ date: '', closeReason: '' }]);
   const [errors, setErrors] = useState<Record<string, any>>({});
+  const [isPending, setIsPending] = useState(false);
 
-  // Add a new closure row
   const addClosure = () => {
     setClosures([...closures, { date: '', closeReason: '' }]);
   };
 
-  // Handle changes to date or reason
+  const removeClosure = (index: number) => {
+    setClosures(closures.filter((_, i) => i !== index));
+  };
+
   const handleClosureChange = (
     index: number,
     field: 'date' | 'closeReason',
@@ -23,80 +36,109 @@ const BranchSpecialClosureForm = ({ onPrevious, onSubmit }: any) => {
     setClosures(updatedClosures);
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const result = specialClosuresSchema.safeParse(closures);
-
-    if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors;
-      setErrors(fieldErrors);
+    setIsPending(true);
+    // Filter out empty closures before validation
+    const validClosures = closures.filter(
+      (closure) => closure.date || closure.closeReason
+    );
+    // If no valid closures, submit empty array
+    if (validClosures.length === 0) {
+      onSubmit({ specialClosures: [] });
+      return;
+    }
+    // Validate closures
+    const result = specialClosuresSchema.safeParse(validClosures);
+    if (result.error) {
+      setIsPending(false);
+      setErrors(result.error.flatten().fieldErrors);
     } else {
       setErrors({});
-      onSubmit({ specialClosures: result.data }); // Pass validated data to the next step
+      onSubmit({ specialClosures: result.data });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {closures.map((closure, index) => (
-        <div key={index} className="rounded border p-4">
-          <h3 className="text-lg font-semibold">Closure {index + 1}</h3>
-          <div className="space-y-2">
-            <label className="block">
-              Date:
-              <input
-                type="date"
-                value={closure.date}
-                onChange={(e) =>
-                  handleClosureChange(index, 'date', e.target.value)
-                }
-                className="ml-2 rounded border p-1"
-              />
-              {errors[index]?.date && (
-                <p className="text-sm text-red-600">{errors[index].date}</p>
+    <form onSubmit={handleSubmit} className="space-y-6 sm:px-3">
+      <div className="flex items-center justify-between">
+        <h1 className="h1">{t('title')}</h1>
+        <button
+          type="button"
+          onClick={addClosure}
+          className="inline-flex items-center gap-x-2 rounded-md px-3 py-2 text-sm font-semibold text-primary hover:border-solid hover:text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          <PlusIcon className="h-5 w-5" />
+          {t('button1')}
+        </button>
+      </div>
+      <div>
+        {closures.map((closure, index) => (
+          <div
+            key={index}
+            className="relative rounded-lg py-4 transition-all duration-200"
+          >
+            {closures.length > 1 && (
+              <button
+                type="button"
+                onClick={() => removeClosure(index)}
+                className={`absolute ${locale === 'ar' ? 'left-4' : 'right-4'} top-1 rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500`}
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            )}
+
+            <div className="grid sm:grid-cols-2 sm:gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('content1')}
+                </label>
+                <div className="relative mt-1">
+                  <input
+                    type="date"
+                    defaultValue={initialData.date}
+                    value={closure.date}
+                    onChange={(e) =>
+                      handleClosureChange(index, 'date', e.target.value)
+                    }
+                    className="block w-full rounded-md border-gray-300 focus:border-primary focus:ring-primary sm:text-sm"
+                  />
+                </div>
+              </div>
+              <div className="mt-6 sm:mt-0">
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('content2')}
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    defaultValue={initialData.closeReason}
+                    value={closure.closeReason}
+                    onChange={(e) =>
+                      handleClosureChange(index, 'closeReason', e.target.value)
+                    }
+                    className="block w-full rounded-md border-gray-300 focus:border-primary focus:ring-primary sm:text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="h-5">
+              {errors[`${index}`] && (
+                <p className="error-message mt-2">{errors[`${index}`][0]}</p>
               )}
-            </label>
-            <label className="block">
-              Reason for Closure:
-              <input
-                type="text"
-                value={closure.closeReason}
-                onChange={(e) =>
-                  handleClosureChange(index, 'closeReason', e.target.value)
-                }
-                className="ml-2 rounded border p-1"
-              />
-              {errors[index]?.closeReason && (
-                <p className="text-sm text-red-600">
-                  {errors[index].closeReason}
-                </p>
-              )}
-            </label>
+            </div>
           </div>
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={addClosure}
-        className="rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
+        ))}
+      </div>
+
+      <div
+        className={`flex justify-between space-x-4 ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
       >
-        Add Another Closure
-      </button>
-      <button
-        type="submit"
-        className="ml-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-      >
-        Save Closures
-      </button>
-      <button
-        type="button"
-        onClick={onPrevious}
-        className="rounded bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
-      >
-        Previous
-      </button>
+        <button onClick={onPrevious} className="bg-gray-200 hover:bg-gray-300 rounded-md px-4 py-2 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 sm:btn-secondary">
+          {t('button2')}
+        </button>
+        <SubmitButton text={t('button3')} isPending={isPending} />
+      </div>
     </form>
   );
 };

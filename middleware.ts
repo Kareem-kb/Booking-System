@@ -1,72 +1,76 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+// middleware.ts
+import { NextRequest } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
-import verificationPage from './app/[locale]/(entries)/verification/page';
+import { locales } from '@/navigation';
+import { getToken } from 'next-auth/jwt';
 
+// Define routes configuration
+const routesConfig = {
+  public: ['/', '/register', '/login', '/verification', '/not-found'],
+  client: ['/aboutUs', '/cakesection', '/Process', '/report'],
+  partner: [
+    '/dashboard',
+    '/sales',
+    '/add-service',
+    '/add-branch',
+    '/add-staff',
+  ],
+} as const;
+
+// Create internationalization middleware
 const intlMiddleware = createMiddleware({
-  locales: ['en', 'ar'],
+  locales,
   defaultLocale: 'en',
+  localePrefix: 'always',
 });
 
-const publicPaths = [
-  '/',
-  '/register',
-  '/login',
-  '/verification',
-  '/not-found',
-  '/en',
-  '/ar',
-];
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
 
-const rolePaths = {
-  client: ['/aboutUs', '/cakesection', '/Process', '/report'],
-  partner: ['/dashboard', '/sales', '/add-service', '/business-settings', '/add-staff'],
-};
+  // Handle paths without locale prefix
+  if (!pathnameHasLocale) {
+    return intlMiddleware(request);
+  }
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  const localeMatch = pathname.match(/^\/(en|ar)/);
-  const locale = localeMatch ? localeMatch[1] : 'en';
+  // Extract locale and normalized path
+  const locale = pathname.split('/')[1];
   const normalizedPath = pathname.replace(/^\/(en|ar)/, '') || '/';
 
-  // Public paths: skip auth
-  if (publicPaths.some((path) => normalizedPath === path)) {
-    // console.log('This is a public path');
-    return intlMiddleware(req);
+  // Check if path is public
+  if (
+    routesConfig.public.includes(
+      normalizedPath as (typeof routesConfig.public)[number]
+    )
+  ) {
+    return intlMiddleware(request);
   }
 
-  // Try decoding JWT
+  // Verify authentication
   const token = await getToken({
-    req,
-    // Must match the same secret from your NextAuth config
+    req: request,
     secret: process.env.AUTH_SECRET,
-    // Omit cookieName to let getToken auto-detect (recommended)
-    // cookieName: 'next-auth.session-token',
   });
 
-  // If no token, redirect to login
   if (!token) {
-    // console.log('There is no token');
-    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+    const loginUrl = new URL(`/${locale}/login`, request.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return Response.redirect(loginUrl);
   }
 
-  // Role-based routing
-  if (
-    token.role === 'client' &&
-    rolePaths.client.some((path) => normalizedPath.startsWith(path))
-  ) {
-    // console.log('This is a client role');
-    return intlMiddleware(req);
-  } else if (
-    token.role === 'partner' &&
-    rolePaths.partner.some((path) => normalizedPath.startsWith(path))
-  ) {
-    // console.log('This is a partner role');
-    return intlMiddleware(req);
+  // Role-based access control
+  const userRole = token.role as keyof typeof routesConfig;
+  const isAuthorized = routesConfig[userRole]?.some((path) =>
+    normalizedPath.startsWith(path)
+  );
+
+  if (!isAuthorized) {
+    return Response.redirect(new URL(`/${locale}/not-found`, request.url));
   }
 
-  // If none of the above, redirect to not-found
-  return NextResponse.redirect(new URL(`/${locale}/not-found`, req.url));
+  return intlMiddleware(request);
 }
 
 export const config = {

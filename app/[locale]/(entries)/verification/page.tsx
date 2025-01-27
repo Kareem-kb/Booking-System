@@ -5,7 +5,6 @@ import { signOut, useSession } from 'next-auth/react';
 export default function verificationPage() {
   const { data: session } = useSession();
   console.log('sesstion is', session);
-  // console.log('sesstion is', session);
   return (
     <div>
       <label

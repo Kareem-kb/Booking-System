@@ -2,7 +2,7 @@
 import prisma from '@/prisma';
 
 interface CreateServiceForm {
-  branchId: string;
+  branchID: string;
   category: string;
   price: string;
   duration: string;
@@ -17,8 +17,6 @@ interface CreateServiceForm {
 
 export async function createService(formData: CreateServiceForm) {
   try {
-    console.log('Creating service with data:', formData);
-
     // Validate image count
     if (formData.imageUrls.length > 3) {
       throw new Error('Maximum of 3 images allowed.');
@@ -46,7 +44,7 @@ export async function createService(formData: CreateServiceForm) {
         availability,
         images: formData.imageUrls,
         branch: {
-          connect: { id: formData.branchId }, // Assuming branchId is available in formData
+          connect: { id: formData.branchID }, // Assuming branchId is available in formData
         },
         translations: {
           create: [
