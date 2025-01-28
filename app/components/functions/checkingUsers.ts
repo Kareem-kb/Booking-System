@@ -1,7 +1,8 @@
 import prisma from '@/prisma';
 
-export async function userExists(email: string): Promise<boolean> {
+export async function userExists(
+  email: string
+): Promise<{ id: string } | null> {
   const user = await prisma.user.findFirst({ where: { email } });
-
-  return user !== null;
+  return user ? { id: user.id } : null;
 }

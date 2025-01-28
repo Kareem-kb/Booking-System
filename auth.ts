@@ -1,73 +1,129 @@
 import NextAuth from 'next-auth';
-import Resend from 'next-auth/providers/resend';
+import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from '@/prisma';
-
+// Define types for better type safety
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // IMPORTANT: Make sure this secret matches what you pass to getToken()
   secret: process.env.AUTH_SECRET,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-    Resend({
-      apiKey: process.env.RESEND_API_KEY,
-      from: process.env.RESEND_FROM_EMAIL,
+    Credentials({
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        code: { label: 'Code', type: 'text' },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.code) {
+          return null;
+        }
+
+        try {
+          const user = await prisma.user.findUnique({
+            where: {
+              email: credentials.email as string,
+            },
+            include: {
+              verificationCodes: {
+                where: {
+                  code: credentials.code,
+                  expires: { gt: new Date(Date.now()) },
+                },
+              },
+            },
+          });
+
+          if (!user || user.verificationCodes.length === 0) {
+            return null;
+          }
+
+          // Delete the used code
+          await prisma.verificationCode.deleteMany({
+            where: {
+              userId: user.id,
+              code: credentials.code,
+            },
+          });
+
+          return user;
+        } catch (error) {
+          console.error('Authorization error:', error);
+          return null;
+        }
+      },
     }),
   ],
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
+    maxAge: 3 * 24 * 60 * 60, // 3 days
   },
   callbacks: {
-    async signIn({ user }) {
+    signIn({ user }) {
+      if (!user?.email) {
+        return false;
+      }
+
       try {
         console.log(`User ${user.email} is now active.`);
         return true;
       } catch (error) {
-        console.error('Error activating user:', error);
+        console.error('Error in signIn callback:', error);
         return false;
       }
     },
-    async jwt({ token, user }) {
-      if (user) {
-        try {
-          // Fetch the user from the database
-          const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-          });
 
-          if (dbUser) {
-            // Add user details to the token
-            token.id = dbUser.id;
-            token.name = dbUser.name;
-            token.role = dbUser.role;
-          } else {
-            // Fallback if the user is not found in the database
-            token.id = user.id;
-            token.name = user.name;
-            token.role = user.role;
-          }
-        } catch (error) {
-          console.error('Error fetching user in jwt callback:', error);
-          // Fallback to the partial user data if something goes wrong
-          token.id = user.id;
-          token.name = user.name;
-          token.role = user.role;
-        }
+    async jwt({ token, user }) {
+      if (!user) {
+        return token;
       }
-      return token;
+
+      try {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            id: true,
+            name: true,
+            role: true,
+            email: true, // So we can store it on token if needed
+          },
+        });
+
+        if (dbUser) {
+          return {
+            ...token,
+            id: dbUser.id,
+            name: dbUser.name,
+            role: dbUser.role,
+          };
+        }
+      } catch (error) {
+        console.error('Error in jwt callback:', error);
+      }
+
+      // Fallback to user data if database query fails
+      return {
+        ...token,
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+      };
     },
-    async session({ session, token }) {
+
+    session({ session, token }) {
       if (token) {
-        // Add user details to the session
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
+        session.user = {
+          ...session.user, // Preserve existing properties
+          id: token.id as string, // Assert type if necessary
+          name: token.name ?? '', // Handle null/undefined
+          role: token.role as string,
+          email: token.email as string, // Assert type if necessary
+        };
       }
       return session;
     },

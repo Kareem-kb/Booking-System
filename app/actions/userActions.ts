@@ -4,8 +4,9 @@
 import { userExists } from '@/app/components/functions/checkingUsers';
 import { createUser } from '@/app/lib/createUser';
 import { clientSchema, loginFormSchema } from '@/validation/client';
-import { signIn } from '@/auth';
 import { Role } from '@prisma/client';
+import { generate6DigitCode, sendEmail } from '@/utils/authHelpers';
+import prisma from '@/prisma';
 
 interface CreateUserStates {
   success?: string;
@@ -108,6 +109,7 @@ export async function logInUserAction(
         },
       };
     }
+
     // Check if user exists
     const exists = await userExists(email);
     if (!exists) {
@@ -117,34 +119,25 @@ export async function logInUserAction(
       };
     }
 
-    // Attempt to send login email
-    const signInResult = await signIn('resend', {
-      email: email.toLowerCase().trim(),
-      redirect: false,
+    // Generate verification code and save to database
+    const code = generate6DigitCode();
+    await prisma.verificationCode.create({
+      data: {
+        userId: exists.id,
+        code,
+        expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+      },
     });
 
-    if (!signInResult?.error) {
+    const codemail = await sendEmail(email, code);
+    // // Handle specific sign-in errors
+    if (codemail.error) {
       return {
-        success: true,
-        message: 'Check your email for the login link',
+        success: false,
+        generalError: 'Failed to send login code. Please try again.',
       };
     }
-
-    // Handle specific sign-in errors
-    switch (signInResult.error) {
-      case 'EmailSendError':
-        return {
-          success: false,
-          generalError: 'Failed to send login email. Please try again.',
-        };
-      case 'RateLimitError':
-        return {
-          success: false,
-          generalError: 'Too many attempts. Please try again later.',
-        };
-      default:
-        throw new Error(signInResult.error);
-    }
+    return { success: true, message: 'Check your email for the login code.' };
   } catch (error) {
     // Log the error for debugging
     console.error('Login error:', error);
