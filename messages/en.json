@@ -126,5 +126,11 @@
       "tooShort": "Email is too short",
       "tooLong": "Email cannot exceed 255 characters"
     }
+  },
+  "Verify": {
+    "title": "Verify your email",
+    "codeLabel": "Enter the code sent to your email",
+    "codeSent": "Code sent to",
+    "verifyButton": "Verify"
   }
 }

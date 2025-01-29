@@ -1,9 +1,9 @@
+// Branch files
 export interface BranchTranslation {
   language: 'en' | 'ar';
   name: string;
   address: string;
 }
-
 export interface BranchFormData {
   nameEn: string;
   nameAr: string;
@@ -13,7 +13,6 @@ export interface BranchFormData {
   phoneNumber: string;
   website?: string;
 }
-
 export interface BranchBasicInfo {
   translations: BranchTranslation[];
   contactEmail?: string | null;
@@ -26,4 +25,20 @@ export interface OperatingHour {
   openTime: string;
   closeTime: string;
   isClosed: boolean;
+}
+
+// Auth.ts
+export interface Token {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+}
+export interface Session {
+  user: {
+    id: string;
+    name: string;
+    role: string;
+    email: string;
+  };
 }

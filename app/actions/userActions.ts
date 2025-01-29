@@ -3,9 +3,15 @@
 
 import { userExists } from '@/app/components/functions/checkingUsers';
 import { createUser } from '@/app/lib/createUser';
-import { clientSchema, loginFormSchema } from '@/validation/client';
-import { signIn } from '@/auth';
+import {
+  clientSchema,
+  loginFormSchema,
+  verificationSchema,
+} from '@/validation/client';
 import { Role } from '@prisma/client';
+import { signIn } from '@/auth';
+import { generate6DigitCode, sendEmail } from '@/utils/authHelpers';
+import prisma from '@/prisma';
 
 interface CreateUserStates {
   success?: string;
@@ -22,6 +28,7 @@ export interface LoginUserStates {
   generalError?: string;
   errors?: {
     email?: string;
+    code?: string;
   };
 }
 
@@ -64,6 +71,9 @@ export async function createUserAction(
     if (createUserResult.success && createUserResult.email) {
       // Send login email
       // Create a new FormData instance
+
+
+      // login User 
       const formData = new FormData();
       formData.append('email', createUserResult.email);
       const loginResult = await logInUserAction(null, formData);
@@ -108,6 +118,7 @@ export async function logInUserAction(
         },
       };
     }
+
     // Check if user exists
     const exists = await userExists(email);
     if (!exists) {
@@ -117,34 +128,25 @@ export async function logInUserAction(
       };
     }
 
-    // Attempt to send login email
-    const signInResult = await signIn('resend', {
-      email: email.toLowerCase().trim(),
-      redirect: false,
+    // Generate verification code and save to database
+    const code = generate6DigitCode();
+    await prisma.verificationCode.create({
+      data: {
+        userId: exists.id,
+        code,
+        expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+      },
     });
 
-    if (!signInResult?.error) {
+    const codemail = await sendEmail(email, code);
+    // // Handle specific sign-in errors
+    if (codemail.error) {
       return {
-        success: true,
-        message: 'Check your email for the login link',
+        success: false,
+        generalError: 'Failed to send login code. Please try again.',
       };
     }
-
-    // Handle specific sign-in errors
-    switch (signInResult.error) {
-      case 'EmailSendError':
-        return {
-          success: false,
-          generalError: 'Failed to send login email. Please try again.',
-        };
-      case 'RateLimitError':
-        return {
-          success: false,
-          generalError: 'Too many attempts. Please try again later.',
-        };
-      default:
-        throw new Error(signInResult.error);
-    }
+    return { success: true, message: 'Check your email for the login code.' };
   } catch (error) {
     // Log the error for debugging
     console.error('Login error:', error);
@@ -160,6 +162,67 @@ export async function logInUserAction(
     return {
       success: false,
       generalError: 'An unexpected error occurred. Please try again later.',
+    };
+  }
+}
+
+export async function verifyCodeAction(
+  prevState: LoginUserStates | null,
+  formData: FormData
+): Promise<LoginUserStates> {
+  try {
+    const email = formData.get('email') as string | null;
+    const code = formData.get('code') as string | null; // Change to string
+
+    console.log(email, code);
+    // Validation
+    const validationResult = await verificationSchema.safeParseAsync({
+      email,
+      code,
+    });
+
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.flatten().fieldErrors;
+      return {
+        errors: {
+          code: fieldErrors.code?.[0], // Change to string
+          email: fieldErrors.email?.[0], // Add email error
+        },
+      };
+    }
+    console.log(email, code);
+    // Verify the code
+    const result = await signIn('credentials', {
+      email,
+      code,
+      redirect: false,
+    });
+
+    // Handle sign-in result
+    if (result?.error) {
+      console.error('Verification error:', result.error);
+      return {
+        errors: {
+          code: 'Invalid code', // Specific error for code
+        },
+        generalError: 'Verification failed. Please try again.',
+      };
+    }
+
+    // Success
+    return {
+      success: true,
+      message: 'Code verified. Logging in...',
+    };
+  } catch (error) {
+    console.error('Verification error:', error);
+
+    // Return user-friendly error message
+    return {
+      errors: {
+        code: 'An unexpected error occurred',
+      },
+      generalError: 'Verification failed. Please try again.',
     };
   }
 }
