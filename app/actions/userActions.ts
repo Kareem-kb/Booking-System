@@ -3,8 +3,13 @@
 
 import { userExists } from '@/app/components/functions/checkingUsers';
 import { createUser } from '@/app/lib/createUser';
-import { clientSchema, loginFormSchema } from '@/validation/client';
+import {
+  clientSchema,
+  loginFormSchema,
+  verificationSchema,
+} from '@/validation/client';
 import { Role } from '@prisma/client';
+import { signIn } from '@/auth';
 import { generate6DigitCode, sendEmail } from '@/utils/authHelpers';
 import prisma from '@/prisma';
 
@@ -23,6 +28,7 @@ export interface LoginUserStates {
   generalError?: string;
   errors?: {
     email?: string;
+    code?: string;
   };
 }
 
@@ -65,6 +71,9 @@ export async function createUserAction(
     if (createUserResult.success && createUserResult.email) {
       // Send login email
       // Create a new FormData instance
+
+
+      // login User 
       const formData = new FormData();
       formData.append('email', createUserResult.email);
       const loginResult = await logInUserAction(null, formData);
@@ -153,6 +162,67 @@ export async function logInUserAction(
     return {
       success: false,
       generalError: 'An unexpected error occurred. Please try again later.',
+    };
+  }
+}
+
+export async function verifyCodeAction(
+  prevState: LoginUserStates | null,
+  formData: FormData
+): Promise<LoginUserStates> {
+  try {
+    const email = formData.get('email') as string | null;
+    const code = formData.get('code') as string | null; // Change to string
+
+    console.log(email, code);
+    // Validation
+    const validationResult = await verificationSchema.safeParseAsync({
+      email,
+      code,
+    });
+
+    if (!validationResult.success) {
+      const fieldErrors = validationResult.error.flatten().fieldErrors;
+      return {
+        errors: {
+          code: fieldErrors.code?.[0], // Change to string
+          email: fieldErrors.email?.[0], // Add email error
+        },
+      };
+    }
+    console.log(email, code);
+    // Verify the code
+    const result = await signIn('credentials', {
+      email,
+      code,
+      redirect: false,
+    });
+
+    // Handle sign-in result
+    if (result?.error) {
+      console.error('Verification error:', result.error);
+      return {
+        errors: {
+          code: 'Invalid code', // Specific error for code
+        },
+        generalError: 'Verification failed. Please try again.',
+      };
+    }
+
+    // Success
+    return {
+      success: true,
+      message: 'Code verified. Logging in...',
+    };
+  } catch (error) {
+    console.error('Verification error:', error);
+
+    // Return user-friendly error message
+    return {
+      errors: {
+        code: 'An unexpected error occurred',
+      },
+      generalError: 'Verification failed. Please try again.',
     };
   }
 }

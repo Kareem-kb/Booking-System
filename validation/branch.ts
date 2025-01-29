@@ -138,16 +138,13 @@ export const specialClosureSchema = z
       .nullable(),
   })
   .refine(
-    (data) => {
-      if (data.date && !data.closeReason) return false;
-      if (data.closeReason && !data.date) return false;
-      return true;
-    },
+    (data) => !(Boolean(data.date) !== Boolean(data.closeReason)), // XOR to check if one is true and the other is false
     {
       message: 'Both date and reason must be provided together',
       path: ['closeReason'],
     }
   )
+
   .refine(
     (data) => {
       if (!data.date) return true;

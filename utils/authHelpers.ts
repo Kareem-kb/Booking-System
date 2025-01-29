@@ -2,8 +2,6 @@
 
 import { Resend } from 'resend';
 import { SignJWT } from 'jose';
-import getServerSession from 'next-auth';
-// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -37,8 +35,3 @@ export async function getSessionTokenFor(email: string): Promise<string> {
     .sign(secret);
   return token;
 }
-
-// export async function getCurrentUser() {
-//   const session = await getServerSession(authOptions);
-//   return session?.user;
-// }

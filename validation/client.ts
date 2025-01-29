@@ -36,12 +36,25 @@ export const loginFormSchema = z.object({
       invalid_type_error: 'Invalid email format',
     })
     .email('Please enter a valid email address')
-    .min(5, {
-      message: 'Email is too short',
-    })
-    .max(255, 'Email cannot exceed 255 characters')
     .trim()
     .toLowerCase(),
 });
 
+export const verificationSchema = z.object({
+  code: z
+    .string({
+      required_error: 'Code is required',
+      invalid_type_error: 'Code must be a number',
+    })
+    .length(6, 'Code must be 6 digits')
+    .regex(/^\d{6}$/, 'Code must be 6 digits'),
+
+  email: z.string({
+    required_error: 'Email is required',
+    invalid_type_error: 'Invalid email format',
+  }),
+});
+
 export type ClientSchema = z.infer<typeof clientSchema>;
+export type loginFormSchema = z.infer<typeof loginFormSchema>;
+export type verificationSchema = z.infer<typeof verificationSchema>;

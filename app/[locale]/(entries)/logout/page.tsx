@@ -1,5 +1,4 @@
 'use client';
-import { useTranslations } from 'next-intl';
 import { signOut, useSession } from 'next-auth/react';
 
 export default function verificationPage() {
@@ -14,6 +13,7 @@ export default function verificationPage() {
         Email
       </label>
       <div className="mt-2">
+        {/* skipcq: JS-0417 */}
         <button onClick={() => signOut()}>click here</button>
       </div>
     </div>

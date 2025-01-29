@@ -39,7 +39,7 @@ export default function Sidebar() {
   };
 
   const NavLinks = ({ mobile = false }) => (
-    <ul role="list" className={mobile ? 'space-y-2' : '-mx-1'}>
+    <ul className={mobile ? 'space-y-2' : '-mx-1'}>
       {navigation.map((item) => (
         <li key={item.name}>
           <Link
