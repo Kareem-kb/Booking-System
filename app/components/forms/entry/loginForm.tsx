@@ -1,12 +1,11 @@
 'use client';
 
 import { useActionState, useEffect, useState, useCallback } from 'react';
-import { Link } from '@/navigation';
+import { Link, useRouter } from '@/navigation';
 import { logInUserAction } from '@/app/actions/userActions';
 import { useTranslations } from 'next-intl';
 import SubmitButton from '../../buttons/SubmitButton';
 import { toast } from 'sonner';
-import { useRouter } from '@/navigation';
 
 export default function LogInForm() {
   const router = useRouter();
