@@ -120,6 +120,7 @@ export default function Sidebar() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-primary">LOGO</h1>
           <button
+            // skipcq: JS-0417
             onClick={() => setMobileMenuOpen(false)}
             className="rounded-md p-2 text-gray-700 hover:bg-gray-100"
           >

@@ -13,6 +13,7 @@ const BranchSpecialClosureForm = ({
   initialData,
 }: any) => {
   const locale = realpath().split('/')[1];
+  // skipcq: JS-C1002
   const t = useTranslations('Partner.specialDays');
   const [closures, setClosures] = useState([{ date: '', closeReason: '' }]);
   const [errors, setErrors] = useState<Record<string, any>>({});
@@ -134,7 +135,10 @@ const BranchSpecialClosureForm = ({
       <div
         className={`flex justify-between space-x-4 ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
       >
-        <button onClick={onPrevious} className="bg-gray-200 hover:bg-gray-300 rounded-md px-4 py-2 text-sm font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 sm:btn-secondary">
+        <button
+          onClick={onPrevious}
+          className="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 sm:btn-secondary hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+        >
           {t('button2')}
         </button>
         <SubmitButton text={t('button3')} isPending={isPending} />

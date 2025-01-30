@@ -29,6 +29,7 @@ export default function RegisterForm() {
   }, [state?.generalError, state?.success, router]);
 
   return (
+    // skipcq: JS-0415
     <>
       <div className="absolute right-5 top-5" />
       <h2 className="col-span-11 mb-4 text-center text-2xl/9 font-bold text-gray-900">
