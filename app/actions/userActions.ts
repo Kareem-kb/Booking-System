@@ -70,10 +70,6 @@ export async function createUserAction(
 
     if (createUserResult.success && createUserResult.email) {
       // Send login email
-      // Create a new FormData instance
-
-
-      // login User 
       const formData = new FormData();
       formData.append('email', createUserResult.email);
       const loginResult = await logInUserAction(null, formData);
