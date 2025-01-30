@@ -25,7 +25,7 @@
       "type": "image/png"
     }
   ],
-  "id": "/",
+  "id": "bookease-pwa-v1",
   "name": "Ease Booking schedule",
   "orientation": "portrait",
   "prefer_related_applications": false,
@@ -53,7 +53,6 @@
       "icons": [{ "src": "/icon96x96.png", "sizes": "96x96" }]
     }
   ],
-  "splash_pages": null,
   "start_url": "/",
   "theme_color": "#ffffff"
 }

@@ -3,14 +3,25 @@ import type { Metadata, Viewport } from 'next';
 
 export const metadata: Metadata = {
   title: 'BookEase ',
-  description: 'Your description from above',
+  description: 'Booking Scheduling system for small to medium businesses',
   manifest: '/manifest.json',
-  openGraph: {
-    type: 'website',
-    url: 'https://yourdomain.com',
+  // openGraph: {
+  //   type: 'website',
+  //   url: 'https://yourdomain.com',
+  //   title: 'BookEase',
+  //   description: 'Your description',
+  //   images: [{ url: '/og-image.png' }], // Add social sharing image
+  // },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'BookEase',
+  },
+  twitter: {
+    card: 'summary_large_image',
     title: 'BookEase',
     description: 'Your description',
-    images: [{ url: '/og-image.png' }], // Add social sharing image
+    creator: '@yourusername',
   },
 };
 
