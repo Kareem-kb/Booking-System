@@ -3,6 +3,7 @@
 import { userExists } from '@/app/components/functions/checkingUsers';
 import { StaffSchema } from '@/validation/staff';
 import { createStaff } from '@/app/lib/createStaff';
+import { Role } from '@prisma/client';
 
 interface StaffResponse {
   success?: string;
@@ -15,7 +16,7 @@ export async function createStaffAction(
 ): Promise<StaffResponse> {
   try {
     const staffData = {
-      role: formData.get('role') as string,
+      role: formData.get('role') as Role,
       email: formData.get('email') as string,
       branchId: formData.get('branchId') as string,
       servicesId: formData.getAll('serviceId') as string[],

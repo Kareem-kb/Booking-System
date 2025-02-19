@@ -132,9 +132,7 @@ export default function StaffForm() {
           <div>
             <InputField
               name="Name_en"
-              type="text"
               label={t('nameEn')}
-              placeholder=""
             />
             {errors.Name_en && (
               <p className="error-message">{errors.Name_en[0]}</p>
@@ -161,9 +159,7 @@ export default function StaffForm() {
           <div>
             <InputField
               name="Name_ar"
-              type="text"
               label={t('nameAr')}
-              placeholder=""
               dir="rtl"
             />
             {errors.Name_ar && (
@@ -188,9 +184,8 @@ export default function StaffForm() {
           <div>
             <InputField
               name="email"
-              type="email"
               label={t('email')}
-              placeholder=""
+              errorHandling={errors.email?.join(',')}
             />
             {errors.email && <p className="error-message">{errors.email[0]}</p>}
           </div>

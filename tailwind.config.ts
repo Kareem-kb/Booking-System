@@ -125,6 +125,12 @@ const config: Config = {
             borderColor: '#5C4E4E',
             boxShadow: '0 0 0 2px rgba(92, 78, 78, 0.2)',
           },
+          '&[readonly]': {
+            backgroundColor: '#D1D0D0',
+            borderColor: '#00000',
+            color: '#B8B8B8',
+            border: '0px',
+          },
         },
         textarea: {
           width: '100%',

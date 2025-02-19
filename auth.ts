@@ -3,7 +3,6 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from '@/prisma';
-// Define types for better type safety
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -120,7 +119,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user = {
           ...session.user, // Preserve existing properties
           id: token.id as string, // Assert type if necessary
-          name: token.name ?? '', // Handle null/undefined
+          name: token.name as string, // Handle null/undefined
           role: token.role as string,
           email: token.email as string, // Assert type if necessary
         };

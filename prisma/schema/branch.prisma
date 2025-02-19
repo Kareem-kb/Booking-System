@@ -1,102 +1,120 @@
 model Branch {
-  id          String                 @id @default(cuid())
-  contactEmail String?
-  phoneNumber String?
-  website     String?
+  id               String                 @id @default(cuid())
+  contactEmail     String?
+  phoneNumber      String?
+  website          String?
+  operatingHours   BranchOperatingHours[]
+  translations     BranchTranslation[]
+  staff            Staff[]
+  services         Service[]
+  appointments     Appointment[]
+  calendarEvents   CalendarEvent[]
+  sales            Sale[]
 
-  // Relationship to the normal weekly operating hours
-  operatingHours BranchOperatingHours[]
-  translations  BranchTranslation[] // Translations for different languages
-  // Relationship to special closures or holidays
-  specialClosures BranchSpecialClosure[]
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  staff       Staff[]
-  services    Service[]
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
 }
-model BranchTranslation {
-  id          String   @id @default(cuid())
-  branchid   String
-  language    String   // 'en', 'ar', etc.
-  name       String
-  address    String
-  branch     Branch  @relation(fields: [branchid], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model BranchTranslation {
+  id        String   @id @default(cuid())
+  branchid  String
+  language  String
+  name      String
+  address   String
+  branch    Branch   @relation(fields: [branchid], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([branchid, language])
 }
 
 model BranchOperatingHours {
-  id        String @id @default(cuid())
-  name      String // monday, tuesday, ...
-  dayOfWeek Int // @see getDay() documentation, 0 for Sunday, 1 for Monday, ...
+  id        String   @id @default(cuid())
+  name      String
+  dayOfWeek Int
   openTime  String
   closeTime String
   isClosed  Boolean
-
-  branchId    String
-  branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  branchId  String
+  branch    Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([branchId, dayOfWeek])
 }
 
-model BranchSpecialClosure {
-  id          String   @id @default(cuid())
-  branchId    String
-  date        DateTime?
-  closeReason String?
-
-  branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@unique([branchId, date])  // Ensures no duplicate closure date for the same branch
-}
-
 model Staff {
-  id            String            @id @default(cuid())
-  userId        String            @unique
-  branchId      String
-  user          User              @relation(fields: [userId], references: [id])
-  branch        Branch            @relation(fields: [branchId], references: [id])
-  role          String
-  profileImage  String?
-  
-  // New relation fields:
-  staffServices StaffService[]
-  translations  StaffTranslation[] // Translations for name and aboutMe
+  id             String            @id @default(cuid())
+  userId         String            @unique
+  branchId       String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  branch         Branch            @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  role           String
+  profileImage   String?
+  staffServices  StaffService[]
+  translations   StaffTranslation[]
+  appointments   Appointment[]
+  calendarEvents CalendarEvent[]
+  sales            Sale[]
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt @default(now())
 
   @@unique([userId, branchId])
 }
 
 model StaffTranslation {
-  id          String   @id @default(cuid())
-  staffId     String
-  language    String   // 'en', 'ar', etc.
-  name        String   // Translated name
-  aboutMe     String?  // Translated aboutMe (optional)
-  staff       Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  staffId   String
+  language  String
+  name      String
+  aboutMe   String?
+  staff     Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  @@unique([staffId, language])
+}
+
+model Service {
+  id            String               @id @default(cuid())
+  category      String?
+  price         Float
+  duration      Int
+  availability  Boolean              @default(true)
+  branchId      String
+  branch        Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  translations  ServiceTranslation[]
+  images        String[]
+  staffServices StaffService[]
+  appointments  Appointment[] 
+  sales            Sale[]
+
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+model ServiceTranslation {
+  id          String   @id @default(cuid())
+  serviceId   String
+  language    String
+  title       String
+  description String
+  service     Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([staffId, language]) // Ensure unique translations per staff and language
+  @@unique([serviceId, language])
 }
 
 model StaffService {
+  // id        String   @id @default(cuid())
   staffId   String
   serviceId String
+  staff     Staff    @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 
-  staff     Staff   @relation(fields: [staffId], references: [id], onDelete: Cascade)
-  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-
-  @@id([staffId, serviceId]) // Composite primary key
+  @@unique([staffId, serviceId])
 }

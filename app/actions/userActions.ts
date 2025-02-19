@@ -33,7 +33,7 @@ export interface LoginUserStates {
 }
 
 export async function createUserAction(
-  prevState: CreateUserStates | null,
+  _prevState: CreateUserStates | null,
   formData: FormData
 ): Promise<CreateUserStates> {
   try {
