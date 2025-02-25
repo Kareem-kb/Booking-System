@@ -12,7 +12,7 @@ enum AppointmentStatus {
 }
 
 enum CalendarEventType {
-  AVAILABILITY
+  AVAILABLE
   APPOINTMENT
   CLOSURE
 }
@@ -50,7 +50,7 @@ model CalendarEvent {
   id            String            @id @default(cuid())
   startDate     DateTime
   endDate       DateTime
-  eventType     CalendarEventType @default(AVAILABILITY)
+  eventType     CalendarEventType @default(AVAILABLE)
   closureReason String?
   
   appointmentId String?  @unique

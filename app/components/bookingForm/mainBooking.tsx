@@ -28,18 +28,21 @@ export default function BookingForm() {
           <InputField
             name="name"
             label="name"
+            autoComplete="name"
             errorHandling={stats?.errors?.name?.join(',')}
           />
 
           <InputField
             name="email"
             label="email"
+            autoComplete="email"
             defaultValue={session?.user?.email}
             readOnly={!!session?.user?.email}
             errorHandling={stats?.errors?.email?.join(',')}
           />
           <InputField
             name="phone"
+            autoComplete="tel"
             label="phone Number"
             errorHandling={stats?.errors?.phone?.join(',')}
           />
@@ -54,12 +57,12 @@ export default function BookingForm() {
           <label className="mb-2 block text-sm font-medium text-gray-700">
             Gender
             <div className="flex gap-4">
-              {['Male', 'Female'].map((gender) => (
+              {['Male', 'Female', 'Other'].map((gender) => (
                 <label key={gender} className="flex items-center">
                   <input
                     type="radio"
                     name="gender"
-                    value={gender.toLowerCase()}
+                    value={gender.toUpperCase()}
                     className="h-4 w-4 text-primary focus:ring-primary"
                   />
                   <span className="ml-2 text-gray-700">{gender}</span>
@@ -105,9 +108,6 @@ export default function BookingForm() {
               Appointment Date
               <input
                 id="appointmentDate"
-                onChange={(e) => {
-                  console.log(e.target.value);
-                }}
                 type="date"
                 name="date"
                 className="w-full rounded-md border border-gray-300 p-2 focus:border-primary focus:ring-primary"
@@ -128,9 +128,6 @@ export default function BookingForm() {
             >
               Appointment Time
               <input
-                onChange={(e) => {
-                  console.log(e.target.value);
-                }}
                 id="appointmentTime"
                 type="time"
                 name="time"

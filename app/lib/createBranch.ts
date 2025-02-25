@@ -44,7 +44,6 @@ export async function createBranch(
   specialClosures: SpecialClosure[]
 ): Promise<BranchResponse> {
   try {
-    console.log('Creating branch...');
     await prisma.$transaction(async (tx) => {
       // Create branch
       const branchBase = await tx.branch.create({

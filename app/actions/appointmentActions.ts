@@ -30,13 +30,24 @@ export async function createAppointAction(
     delete appointmentData.date;
     delete appointmentData.time;
 
+    const finalData = {
+      userId: appointmentData.userId,
+      name: appointmentData.name,
+      email: appointmentData.email,
+      phone: appointmentData.phone,
+      age: Number(appointmentData.age),
+      gender: appointmentData.gender,
+      reason: appointmentData.reason,
+      branchId: appointmentData.branchId,
+      serviceId: appointmentData.serviceId,
+      staffId: appointmentData.staffId,
+      appointmentDate: appointmentDate,
+    };
     // Add the combined DateTime to the appointment data
-    const finalData = { ...appointmentData, appointmentDate };
 
     // Persist finalData to the database
-    console.log('Appointment created:', finalData);
-
-    // const response = await createAppointment(finalData);
+    await createAppointment(finalData);
+    
     return { success: 'Appointment created successfully' };
   } catch (error) {
     console.error('Appointment creation error:', error);

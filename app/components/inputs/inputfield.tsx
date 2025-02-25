@@ -5,6 +5,7 @@ interface InputFieldProps {
   dir?: string;
   defaultValue?: string;
   readOnly?: boolean;
+  autoComplete?: string;
 }
 export default function InputField({
   label,
@@ -13,6 +14,7 @@ export default function InputField({
   dir,
   defaultValue,
   readOnly,
+  autoComplete,
 }: InputFieldProps) {
   return (
     <div className="min-h-16 w-full">
@@ -27,6 +29,7 @@ export default function InputField({
           defaultValue={defaultValue}
           dir={dir}
           readOnly={readOnly}
+          autoComplete={autoComplete}
         />
       </label>
       <div className="h-5">

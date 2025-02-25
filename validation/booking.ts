@@ -11,7 +11,7 @@ export const bookingSchema = z
         .number({ required_error: 'Age is required.' })
         .min(1, { message: 'Age must be a positive number.' })
     ),
-    gender: z.enum(['male', 'female', 'other'], {
+    gender: z.enum(['MALE', 'FEMAle', 'OTHER'], {
       errorMap: () => ({ message: 'Please select a gender.' }),
     }),
     reason: z.string().optional(),
