@@ -121,7 +121,7 @@ export default function StaffForm() {
     >
       <h1 className="h1">{t('title')}</h1>
 
-      <input type="hidden" name="role" value="staff" />
+      <input type="hidden" name="role" value="STAFF" />
 
       {/* English Content */}
       <div>

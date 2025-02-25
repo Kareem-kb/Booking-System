@@ -7,8 +7,8 @@ import { getToken } from 'next-auth/jwt';
 // Define routes configuration
 const routesConfig = {
   public: ['/', '/register', '/login', '/verification', '/not-found', '/logout'],
-  client: ['/aboutUs', '/services-list', '/Process', '/report'],
-  partner: [
+  CLIENT: ['/aboutUs', '/services-list', '/Process', '/report'],
+  PARTNER: [
     '/dashboard',
     '/sales',
     '/add-service',

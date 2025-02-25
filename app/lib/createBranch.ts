@@ -1,4 +1,5 @@
 'use server';
+import { startOfDay, endOfDay } from 'date-fns';
 import { Prisma } from '@prisma/client';
 import prisma from '@/prisma';
 
@@ -43,6 +44,7 @@ export async function createBranch(
   specialClosures: SpecialClosure[]
 ): Promise<BranchResponse> {
   try {
+    console.log('Creating branch...');
     await prisma.$transaction(async (tx) => {
       // Create branch
       const branchBase = await tx.branch.create({
@@ -79,20 +81,18 @@ export async function createBranch(
             },
           },
           // Create special closures
-          specialClosures: {
+          calendarEvents: {
             createMany: {
               data: specialClosures
                 .filter((closure) => closure.date !== null)
                 .map((closure) => ({
-                  date: closure.date,
-                  closeReason: closure.closeReason,
+                  startDate: startOfDay(closure.date as Date),
+                  endDate: endOfDay(closure.date as Date),
+                  closureReason: closure.closeReason,
+                  eventType: 'CLOSURE',
                 })),
             },
           },
-        },
-        include: {
-          operatingHours: true,
-          specialClosures: true,
         },
       });
 

@@ -87,6 +87,7 @@ export async function createBranchAction(
       };
     }
 
+    console.log('All data in the Action:', allData);
     // Create branch with validated data
     try {
       await createBranch(

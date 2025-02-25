@@ -43,7 +43,6 @@ export async function createUserAction(
       email: formData.get('email') as string,
     };
     const validationResult = await clientSchema.safeParseAsync(data);
-
     if (!validationResult.success) {
       const fieldErrors = validationResult.error.flatten().fieldErrors;
       return {
@@ -53,6 +52,7 @@ export async function createUserAction(
         },
       };
     }
+
     const existingUser = await userExists(data.email);
     if (existingUser) {
       return {
