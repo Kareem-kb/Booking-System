@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import LanguageChanger from '@/app/components/inputs/LanguageChanger';
 import { Link } from '@/navigation';
@@ -16,13 +16,24 @@ export default function NavBar() {
   const t = useTranslations('NavBar');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const handleMenuOpen = useCallback(() => {
+    setMobileMenuOpen(true);
+  }, []);
+
+  const handleMenuClose = useCallback(() => {
+    setMobileMenuOpen(false);
+  }, []);
+
   // Close menu when clicking on the overlay:
-  const handleOverlayClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Ensure the click is on the overlay, not on the menu itself
-    if (e.target && (e.target as HTMLElement).id === 'overlay') {
-      setMobileMenuOpen(false);
-    }
-  };
+  const handleOverlayClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Ensure the click is on the overlay, not on the menu itself
+      if (e.target && (e.target as HTMLElement).id === 'overlay') {
+        setMobileMenuOpen(false);
+      }
+    },
+    []
+  );
 
   return (
     // skipcq: JS-0415
@@ -33,7 +44,7 @@ export default function NavBar() {
         className="mx-auto flex w-full max-w-7xl items-center justify-between bg-gray-700 p-6 lg:px-8 lg:backdrop-blur-lg"
       >
         <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
+          <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
             <img
               alt=""
@@ -46,7 +57,7 @@ export default function NavBar() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(true)}
+            onClick={handleMenuOpen}
             className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
           >
             <span className="sr-only">Open main menu</span>
@@ -98,7 +109,7 @@ export default function NavBar() {
       >
         {/* Header row inside panel */}
         <div className="flex items-center justify-between">
-          <a href="#" className="-m-1.5 p-1.5">
+          <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Your Company</span>
             <img
               alt=""
@@ -108,7 +119,7 @@ export default function NavBar() {
           </a>
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={handleMenuClose}
             className="-m-2.5 rounded-md p-2.5 text-gray-700"
           >
             <span className="sr-only">Close menu</span>

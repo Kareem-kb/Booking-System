@@ -104,7 +104,6 @@ export default function Sidebar() {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div
-          role="button"
           className="fixed inset-0 z-50 bg-black/30 transition-opacity md:hidden"
           onClick={handleOverlayClick}
         />
