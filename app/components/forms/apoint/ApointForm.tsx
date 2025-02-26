@@ -2,12 +2,12 @@
 'use client';
 import InputField from '@/app/components/inputs/inputfield';
 import { useActionState } from 'react';
-import BranchServiceStaff from '@/app/components/inputs/bookingSetup';
+import BranchServiceStaff from '@/app/components/inputs/apointsSelector';
 import SubmitButton from '@/app/components/buttons/SubmitButton';
-import { createAppointAction } from '@/app/actions/appointmentActions';
+import { createAppointAction } from '@/app/actions/apontActions';
 import { useSession } from 'next-auth/react';
 
-export default function BookingForm() {
+export default function appointmentForm() {
   const { data: session } = useSession();
   const [stats, formAction, isPending] = useActionState(
     createAppointAction,

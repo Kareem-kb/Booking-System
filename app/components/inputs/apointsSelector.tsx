@@ -2,9 +2,9 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { getAllBranches } from '@/app/lib/createBranch';
-import { getServicesByBranchID } from '@/app/lib/createService';
-import { getStaffByServiceID } from '@/app/lib/createStaff';
+import { getAllBranches } from '@/app/lib/dbBranch';
+import { getServicesByBranchID } from '@/app/lib/dbService';
+import { getStaffByServiceID } from '@/app/lib/dbStaff';
 
 interface DropdownItem {
   id: string;

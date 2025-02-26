@@ -1,5 +1,6 @@
 'use server';
 import { addMinutes } from 'date-fns';
+import { userExists } from '@/helperFns/userExists';
 import { Gender, Role } from '@prisma/client';
 import prisma from '@/prisma';
 
@@ -66,16 +67,14 @@ export async function createAppointment(
 
     // Handle if session user is not available
     if (formData.email) {
-      const userExists = await prisma.user.findUnique({
-        where: { email: formData.email },
-      });
+      const userExist = await userExists(formData.email);
 
-      if (userExists) {
+      if (userExist) {
         const result = await prisma.$transaction(async (tx) => {
           // Create appointment with user relationship
           await tx.appointment.create({
             data: {
-              userId: userExists.id,
+              userId: userExist.id,
               staffId: formData.staffId,
               serviceId: formData.serviceId,
               branchId: formData.branchId,
@@ -104,7 +103,7 @@ export async function createAppointment(
       }
 
       // Handle if user does not exist
-      if (!userExists) {
+      if (!userExist) {
         const result = await prisma.$transaction(async (tx) => {
           await tx.user.create({
             data: {

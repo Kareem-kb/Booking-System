@@ -1,11 +1,11 @@
 'use server';
 
-import { createBranch } from '@/app/lib/createBranch';
+import { createBranch } from '@/app/lib/dbBranch';
 import {
   branchDbSchema,
   operatingHoursSchema,
   specialClosuresSchema,
-} from '@/validation/branch';
+} from '@/validation/validateBranch';
 import { Prisma } from '@prisma/client';
 
 interface BranchResponse {

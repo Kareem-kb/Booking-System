@@ -3,7 +3,7 @@
 import { usePathname } from '@/navigation';
 import NavBar from '@/app/components/bars/NavBar';
 import Footer from '@/app/components/bars/Footer';
-import SplashScreen from '@/app/components/splash-Screen';
+import SplashScreen from '@/helperFns/splash-Screen';
 import { useState, useCallback } from 'react';
 
 export default function ClientLayout({

@@ -4,12 +4,12 @@ import { useState, useRef, ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import DropDown from '@/app/components/inputs/dropDown';
 import InputField from '@/app/components/inputs/inputfield';
-import BranchSelector from '@/app/components/inputs/branchSelector';
+import BranchSelector from '@/app/components/inputs/serviceSelector';
 import { createServicesAction } from '@/app/actions/serviceActions';
 import { uploadImage } from '@/supabase/storage/client';
-import { convertBlobUrlToFile } from '@/app/lib/utils';
+import { convertBlobUrlToFile } from '@/helperFns/imgToFile';
 import SubmitButton from '../../buttons/SubmitButton';
-import { serviceFormSchema } from '@/validation/service';
+import { serviceFormSchema } from '@/validation/validateService';
 import { toast } from 'sonner';
 import { useRouter } from '@/navigation';
 import Image from 'next/image';
@@ -139,12 +139,7 @@ export default function AddServiceForm() {
           <div className="grid sm:grid-cols-2 sm:gap-4">
             <div>
               {' '}
-              <InputField
-                name="price"
-                type="text"
-                label={t('price')}
-                placeholder=""
-              />{' '}
+              <InputField name="price" label={t('price')} />{' '}
               {errors.price && (
                 <p className="error-message">{errors.price[0]}</p>
               )}
@@ -168,12 +163,7 @@ export default function AddServiceForm() {
         <div className="space-y-4">
           <div>
             {' '}
-            <InputField
-              name="title_en"
-              type="text"
-              label={t('content1')}
-              placeholder=""
-            />
+            <InputField name="title_en" label={t('content1')} />
             {errors.title_en && (
               <p className="error-message">{errors.title_en[0]}</p>
             )}
@@ -198,13 +188,7 @@ export default function AddServiceForm() {
         </h2>
         <div className="space-y-4">
           <div>
-            <InputField
-              name="title_ar"
-              type="text"
-              label={t('content2')}
-              placeholder=""
-              dir="rtl"
-            />
+            <InputField name="title_ar" label={t('content2')} dir="rtl" />
             {errors.title_ar && (
               <p className="error-message">{errors.title_ar[0]}</p>
             )}
@@ -230,12 +214,7 @@ export default function AddServiceForm() {
             {/* Category and Availability */}
             <div className="grid grid-cols-2 gap-4 space-y-6">
               <div>
-                <InputField
-                  name="category"
-                  type="text"
-                  label={t('content7')}
-                  placeholder=""
-                />{' '}
+                <InputField name="category" label={t('content7')} />{' '}
                 {errors.category && (
                   <p className="error-message">{errors.category[0]}</p>
                 )}

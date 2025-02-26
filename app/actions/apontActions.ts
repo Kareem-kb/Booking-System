@@ -1,6 +1,6 @@
 'use server';
-import { bookingSchema } from '@/validation/booking';
-import { createAppointment } from '@/app/lib/createAppoint';
+import { bookingSchema } from '@/validation/validateBooking';
+import { createAppointment } from '@/app/lib/dbAppointment';
 
 interface AppointmentResponse {
   success?: string;
@@ -47,7 +47,7 @@ export async function createAppointAction(
 
     // Persist finalData to the database
     await createAppointment(finalData);
-    
+
     return { success: 'Appointment created successfully' };
   } catch (error) {
     console.error('Appointment creation error:', error);

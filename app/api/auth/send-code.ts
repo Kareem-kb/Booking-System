@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma';
-import { generate6DigitCode, sendEmail } from '@/utils/authHelpers';
+import { generate6DigitCode, sendEmail } from '@/helperFns/authHelpers';
 
 export async function POST(req: NextRequest) {
   try {

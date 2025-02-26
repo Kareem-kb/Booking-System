@@ -1,7 +1,7 @@
 // /pages/api/auth/verify-code.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/prisma';
-import { getSessionTokenFor } from '@/utils/authHelpers';
+import { getSessionTokenFor } from '@/helperFns/authHelpers';
 
 export default async function handler(
   req: NextApiRequest,

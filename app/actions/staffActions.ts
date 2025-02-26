@@ -1,8 +1,8 @@
 'use server';
 
-import { userExists } from '@/app/components/functions/checkingUsers';
-import { StaffSchema } from '@/validation/staff';
-import { createStaff } from '@/app/lib/createStaff';
+import { userExists } from '@/helperFns/userExists';
+import { StaffSchema } from '@/validation/validateStaff';
+import { createStaff } from '@/app/lib/dbStaff';
 import { Role } from '@prisma/client';
 
 interface StaffResponse {

@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { branchFormSchema, type BranchFormSchema } from '@/validation/branch';
+import {
+  branchFormSchema,
+  type BranchFormSchema,
+} from '@/validation/validateBranch';
 import InputField from '@/app/components/inputs/inputfield';
 import { useTranslations } from 'next-intl';
 

@@ -1,16 +1,16 @@
 // actions/userActions.ts
 'use server';
 
-import { userExists } from '@/app/components/functions/checkingUsers';
-import { createUser } from '@/app/lib/createUser';
+import { userExists } from '@/helperFns/userExists';
+import { createUser } from '@/app/lib/dbUser';
 import {
   clientSchema,
   loginFormSchema,
   verificationSchema,
-} from '@/validation/client';
+} from '@/validation/validateClient';
 import { Role } from '@prisma/client';
 import { signIn } from '@/auth';
-import { generate6DigitCode, sendEmail } from '@/utils/authHelpers';
+import { generate6DigitCode, sendEmail } from '@/helperFns/authHelpers';
 import prisma from '@/prisma';
 
 interface CreateUserStates {
