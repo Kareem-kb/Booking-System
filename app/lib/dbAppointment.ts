@@ -26,7 +26,9 @@ interface CreateAppointment {
   userId?: string;
   appointmentDate: string;
 }
-
+interface PrismaError extends Error {
+  code?: string;
+}
 export async function createAppointment(
   formData: CreateAppointment
 ): Promise<AppointmentResponse> {
@@ -147,11 +149,12 @@ export async function createAppointment(
 
     // Handle other conditions here later
     return { error: { message: 'User registration required for booking' } };
-  } catch (error: any) {
-    console.error('Appointment creation error:', error);
+  } catch (error) {
+    const prismaError = error as PrismaError;
+    console.error('Appointment creation error:', prismaError);
 
     // Handle Prisma errors
-    if (error.code === 'P2002') {
+    if (prismaError.code === 'P2002') {
       return {
         error: { message: 'Timeslot already booked', code: 'CONFLICT' },
       };
@@ -159,8 +162,8 @@ export async function createAppointment(
 
     return {
       error: {
-        message: error.message || 'Failed to create appointment',
-        code: error.code,
+        message: prismaError.message || 'Failed to create appointment',
+        code: prismaError.code,
       },
     };
   }

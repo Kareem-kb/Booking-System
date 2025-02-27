@@ -104,6 +104,9 @@ export default function Sidebar() {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div
+          role="button" // Adds semantic meaning
+          tabIndex={0} // Makes it focusable
+          aria-label="Close mobile menu overlay" // Describes the purpose for screen readers
           className="fixed inset-0 z-50 bg-black/30 transition-opacity md:hidden"
           onClick={handleOverlayClick}
         />
