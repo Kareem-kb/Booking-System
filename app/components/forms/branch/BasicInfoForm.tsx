@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { branchFormSchema, type BranchFormSchema } from '@/validation/branch';
+import {
+  branchFormSchema,
+  type BranchFormSchema,
+} from '@/validation/validateBranch';
 import InputField from '@/app/components/inputs/inputfield';
 import { useTranslations } from 'next-intl';
 
@@ -38,11 +41,9 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         {/* English Branch Name */}
         <div>
           <InputField
-            type="text"
             name="nameEn"
             label={translations('branchNameEn')}
             defaultValue={initialData.nameEn}
-            placeholder=""
           />
           <div className="h-5">
             {errors.nameEn && (
@@ -54,11 +55,9 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         {/* Arabic Branch Name */}
         <div>
           <InputField
-            type="text"
             name="nameAr"
             label={translations('branchNameAr')}
             defaultValue={initialData.nameAr}
-            placeholder=""
             dir="rtl"
           />
           <div className="h-5">
@@ -71,10 +70,8 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         <div>
           <InputField
             name="phoneNumber"
-            placeholder=""
             label={translations('branchPhone')}
             defaultValue={initialData.phoneNumber}
-            type="text"
           />
           <div className="h-5">
             {errors.phoneNumber && (
@@ -87,9 +84,7 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
           <InputField
             name="contactEmail"
             label={translations('branchEmail')}
-            type="text"
             defaultValue={initialData.contactEmail}
-            placeholder=""
           />
           <div className="h-5">
             {errors.contactEmail && (
@@ -101,8 +96,6 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         {/* English Address */}
         <div>
           <InputField
-            placeholder=""
-            type="text"
             name="addressEn"
             label={translations('branchAddressEn')}
             defaultValue={initialData.addressEn}
@@ -117,8 +110,6 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         {/* Arabic Address */}
         <div>
           <InputField
-            placeholder=""
-            type="text"
             name="addressAr"
             dir="rtl"
             label={translations('branchAddressAr')}
@@ -133,10 +124,8 @@ export default function BasicInfoForm({ onNext, initialData }: Props) {
         {/* website */}
         <div>
           <InputField
-            placeholder=""
             name="website"
             label={translations('branchWebsite')}
-            type="text"
             defaultValue={initialData.website}
           />
           <div className="h-5">

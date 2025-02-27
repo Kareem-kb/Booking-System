@@ -27,18 +27,4 @@ export interface OperatingHour {
   isClosed: boolean;
 }
 
-// Auth.ts
-export interface Token {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-}
-export interface Session {
-  user: {
-    id: string;
-    name: string;
-    role: string;
-    email: string;
-  };
-}
+

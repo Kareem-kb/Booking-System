@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { specialClosuresSchema } from '@/validation/branch';
+import { specialClosuresSchema } from '@/validation/validateBranch';
 import { useTranslations } from 'next-intl';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { usePathname as realpath } from 'next/navigation';

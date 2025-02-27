@@ -1,37 +1,40 @@
 interface InputFieldProps {
   label: string;
-  placeholder: string;
   name: string;
-  type: string;
+  errorHandling?: string;
   dir?: string;
-  classname?: string;
   defaultValue?: string;
+  readOnly?: boolean;
+  autoComplete?: string;
 }
 export default function InputField({
   label,
-  placeholder,
   name,
-  type,
+  errorHandling,
   dir,
-  classname,
   defaultValue,
+  readOnly,
+  autoComplete,
 }: InputFieldProps) {
   return (
-    <div className="w-full min-h-16">
+    <div className="min-h-16 w-full">
       <label
         htmlFor="username"
         className="mb-1 block text-sm font-medium text-gray-900"
       >
         {label}
+        <input
+          name={name}
+          type="text"
+          defaultValue={defaultValue}
+          dir={dir}
+          readOnly={readOnly}
+          autoComplete={autoComplete}
+        />
       </label>
-      <input
-        name={name}
-        type={type}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        className={`${classname} `}
-        dir={dir}
-      />
+      <div className="h-5">
+        {errorHandling && <p className="error-message">{errorHandling}</p>}
+      </div>
     </div>
   );
 }

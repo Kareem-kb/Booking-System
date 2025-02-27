@@ -1,16 +1,16 @@
 // actions/userActions.ts
 'use server';
 
-import { userExists } from '@/app/components/functions/checkingUsers';
-import { createUser } from '@/app/lib/createUser';
+import { userExists } from '@/helperFns/userExists';
+import { createUser } from '@/app/lib/dbUser';
 import {
   clientSchema,
   loginFormSchema,
   verificationSchema,
-} from '@/validation/client';
+} from '@/validation/validateClient';
 import { Role } from '@prisma/client';
 import { signIn } from '@/auth';
-import { generate6DigitCode, sendEmail } from '@/utils/authHelpers';
+import { generate6DigitCode, sendEmail } from '@/helperFns/authHelpers';
 import prisma from '@/prisma';
 
 interface CreateUserStates {
@@ -33,7 +33,7 @@ export interface LoginUserStates {
 }
 
 export async function createUserAction(
-  prevState: CreateUserStates | null,
+  _prevState: CreateUserStates | null,
   formData: FormData
 ): Promise<CreateUserStates> {
   try {
@@ -43,7 +43,6 @@ export async function createUserAction(
       email: formData.get('email') as string,
     };
     const validationResult = await clientSchema.safeParseAsync(data);
-
     if (!validationResult.success) {
       const fieldErrors = validationResult.error.flatten().fieldErrors;
       return {
@@ -53,6 +52,7 @@ export async function createUserAction(
         },
       };
     }
+
     const existingUser = await userExists(data.email);
     if (existingUser) {
       return {

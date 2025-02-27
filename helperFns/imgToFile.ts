@@ -1,3 +1,4 @@
+// Convert a Image URL to a File object to uplede to the bucket
 export async function convertBlobUrlToFile(blobUrl: string) {
     const response = await fetch(blobUrl);
     const blob = await response.blob();

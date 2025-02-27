@@ -2,7 +2,7 @@
 import { z } from 'zod';
 
 export const clientSchema = z.object({
-  role: z.enum(['client'], {
+  role: z.enum(['CLIENT'], {
     required_error: 'Role is required',
     invalid_type_error: 'Invalid role type',
   }),

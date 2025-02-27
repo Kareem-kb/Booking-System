@@ -17,6 +17,8 @@ export async function createUser(
   role: Role
 ): Promise<CreateUserResult> {
   try {
+    console.log('before prisma', name, email, role);
+
     const user = await prisma.user.create({
       data: {
         email: email.toLowerCase().trim(),
@@ -43,8 +45,6 @@ export async function createUser(
           },
         };
       }
-
-      console.error('User creation error:', error);
       return {
         success: false,
         error: {
@@ -53,7 +53,6 @@ export async function createUser(
         },
       };
     }
-
     return {
       success: false,
       error: {

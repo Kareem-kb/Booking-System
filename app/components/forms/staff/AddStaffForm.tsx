@@ -2,13 +2,13 @@
 
 import { useState, useRef, ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { convertBlobUrlToFile } from '@/app/lib/utils';
+import { convertBlobUrlToFile } from '@/helperFns/imgToFile';
 import { uploadImage } from '@/supabase/storage/client';
-import BranchAndService from '@/app/components/inputs/branchandservice';
+import BranchAndService from '@/app/components/inputs/staffSelector';
 import { createStaffAction } from '@/app/actions/staffActions';
 import InputField from '@/app/components/inputs/inputfield';
 import SubmitButton from '../../buttons/SubmitButton';
-import { StaffFormSchema } from '@/validation/staff';
+import { StaffFormSchema } from '@/validation/validateStaff';
 import { toast } from 'sonner';
 import { useRouter } from '@/navigation';
 import Image from 'next/image';
@@ -121,7 +121,7 @@ export default function StaffForm() {
     >
       <h1 className="h1">{t('title')}</h1>
 
-      <input type="hidden" name="role" value="staff" />
+      <input type="hidden" name="role" value="STAFF" />
 
       {/* English Content */}
       <div>
@@ -130,12 +130,7 @@ export default function StaffForm() {
         </h2>
         <div className="space-y-4">
           <div>
-            <InputField
-              name="Name_en"
-              type="text"
-              label={t('nameEn')}
-              placeholder=""
-            />
+            <InputField name="Name_en" label={t('nameEn')} />
             {errors.Name_en && (
               <p className="error-message">{errors.Name_en[0]}</p>
             )}
@@ -159,13 +154,7 @@ export default function StaffForm() {
         </h2>
         <div className="space-y-4">
           <div>
-            <InputField
-              name="Name_ar"
-              type="text"
-              label={t('nameAr')}
-              placeholder=""
-              dir="rtl"
-            />
+            <InputField name="Name_ar" label={t('nameAr')} dir="rtl" />
             {errors.Name_ar && (
               <p className="error-message">{errors.Name_ar[0]}</p>
             )}
@@ -188,9 +177,8 @@ export default function StaffForm() {
           <div>
             <InputField
               name="email"
-              type="email"
               label={t('email')}
-              placeholder=""
+              errorHandling={errors.email?.join(',')}
             />
             {errors.email && <p className="error-message">{errors.email[0]}</p>}
           </div>

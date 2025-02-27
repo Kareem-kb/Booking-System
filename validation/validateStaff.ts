@@ -4,7 +4,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export const StaffFormSchema = z
   .object({
-    role: z.string().default('staff'),
+    role: z.string().default('STAFF'),
     email: z.string().email('Please enter a valid email address'),
     branchId: z.string().min(1, 'Please select a branch'),
     servicesId: z.array(z.string()),

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { getAllBranches } from '@/app/lib/createBranch';
+import { getAllBranches } from '@/app/lib/dbBranch';
 
 interface BranchSelectorProps {
   name: string;
@@ -83,7 +83,7 @@ export default function BranchSelector({
           type="button"
           onClick={handleToggle}
           disabled={isLoading}
-          className="flex w-full items-center justify-between rounded-md border border-primary bg-primary-light px-3 py-2 text-sm text-gray-700 transition  focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex w-full items-center justify-between rounded-md border border-primary bg-primary-light px-3 py-2 text-sm text-gray-700 transition focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? (
             <div className="flex items-center gap-2">
@@ -138,6 +138,7 @@ export default function BranchSelector({
               {branches.map((branch) => (
                 <li
                   key={branch.id}
+                  role='button'
                   className="relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-primary-light"
                   onClick={() => handleSelect(branch.id)}
                 >

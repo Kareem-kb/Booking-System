@@ -36,7 +36,7 @@ export default function RegisterForm() {
         {t('title')}
       </h2>
       <form action={formAction} className="space-y-5">
-        <input type="hidden" name="role" value="client" />
+        <input type="hidden" name="role" value="CLIENT" />
         {/* Name Field */}
         <div>
           <label
@@ -44,13 +44,13 @@ export default function RegisterForm() {
             className="mb-1 block text-sm font-medium text-gray-900"
           >
             {t('name')}
+            <input id="name" name="name" type="text" autoComplete="name" />
+            <div className="h-5">
+              {state?.errors?.name && (
+                <p className="error-message">{state.errors.name}</p>
+              )}
+            </div>
           </label>
-          <input name="name" type="text" className="input" />
-          <div className="h-5">
-            {state?.errors?.name && (
-              <p className="error-message">{state.errors.name}</p>
-            )}
-          </div>
         </div>
 
         {/* Email Field */}
@@ -60,13 +60,13 @@ export default function RegisterForm() {
             className="mb-1 block text-sm font-medium text-gray-900"
           >
             {t('email')}
+            <input id="email" name="email" type="text" autoComplete="email" />
+            <div className="h-5">
+              {state?.errors?.email && (
+                <p className="error-message">{state.errors.email}</p>
+              )}
+            </div>
           </label>
-          <input name="email" type="text" className="" />
-          <div className="h-5">
-            {state?.errors?.email && (
-              <p className="error-message">{state.errors.email}</p>
-            )}
-          </div>
         </div>
 
         {/* Login Link */}

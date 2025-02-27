@@ -1,7 +1,7 @@
 'use server';
 
-import { serviceSchema } from '@/validation/service';
-import { createService } from '@/app/lib/createService';
+import { serviceSchema } from '@/validation/validateService';
+import { createService } from '@/app/lib/dbService';
 
 interface ServiceResponse {
   success?: string;

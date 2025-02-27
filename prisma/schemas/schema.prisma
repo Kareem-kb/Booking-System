@@ -1,44 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// Generator and Datasource
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
+
 enum Role {
-  client
-  admin
-  partner
-  staff
+  CLIENT
+  ADMIN
+  PARTNER
+  STAFF
 }
 
+// Models
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique 
-  emailVerified DateTime?
-  image         String?
-  role          Role          @default(client)
-  staff         Staff?  
-  accounts      Account[]
-  sessions      Session[]
-  // Optional for WebAuthn support
-  Authenticator Authenticator[]
+  id                String           @id @default(cuid())
+  name              String
+  email             String           @unique
+  emailVerified     DateTime?
+  image             String?
+  role              Role             @default(CLIENT)
+  staff             Staff?
+  accounts          Account[]
+  sessions          Session[]
+  authenticators    Authenticator[]
   verificationCodes VerificationCode[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  appointments      Appointment[]
+  sales            Sale[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -59,7 +56,7 @@ model Account {
  
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
@@ -69,7 +66,7 @@ model Session {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
  model VerificationCode {
   id       String   @id @default(uuid())
   userId   String
@@ -86,7 +83,6 @@ model VerificationToken {
  
   @@id([identifier, token])
 }
- 
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
@@ -102,3 +98,13 @@ model Authenticator {
  
   @@id([userId, credentialID])
 }
+
+
+// In the Account model, renamed the following fields from snake_case to camelCase:
+//   – refresh_token → refreshToken
+//   – access_token → accessToken
+//   – expires_at → expiresAt
+//   – token_type → tokenType
+//   – id_token → idToken
+//   – session_state → sessionState
+
